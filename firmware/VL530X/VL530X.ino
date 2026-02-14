@@ -1,56 +1,37 @@
 #include <Wire.h>
-#include "Adafruit_VL53L0X.h"
+#include <Adafruit_VL53L0X.h>
 
-Adafruit_VL53L0X lox;
-
-void setup() {
-  Serial.begin(115200);
-  while (!Serial);
-
-  Serial.println("Start");
-
-  Wire.begin(); // для Mega важно явно
-
-  if (!lox.begin()) {
-    Serial.println("VL53L0X NOT FOUND");
-    while (1);
-  }
-
-  Serial.println("VL53L0X OK");
-}
-
-void loop() {
-}
-
-/*
-#include <Wire.h>
+Adafruit_VL53L0X sensor = Adafruit_VL53L0X();
 
 void setup() {
   Serial.begin(115200);
-  delay(1000);
+  while (!Serial); // Ждём подключения монитора порта (для Leonardo/Micro, но оставлю)
+
   Wire.begin();
-  Serial.println("I2C scan...");
-}
+  delay(100); // Даём датчику время на запуск
 
-void loop() {
-  byte error, address;
-  int found = 0;
-
-  for (address = 1; address < 127; address++) {
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-
-    if (error == 0) {
-      Serial.print("Found at 0x");
-      Serial.println(address, HEX);
-      found++;
+  Serial.println("Инициализация VL53L0X...");
+  if (!sensor.begin()) {
+    Serial.println("Ошибка! Датчик не найден.");
+    Serial.println("Проверьте: питание 3.3V, провода SDA/SCL, подтягивающие резисторы (обычно уже есть).");
+    while (1) {
+      delay(10);
     }
   }
+  Serial.println("Датчик готов!");
+}
 
-  if (found == 0) {
-    Serial.println("No I2C devices found");
+void loop() {
+  VL53L0X_RangingMeasurementData_t measure;
+  sensor.rangingTest(&measure, false); // false — без отладочного вывода
+
+  if (measure.RangeStatus != 4) { // 4 = вне диапазона
+    Serial.print("Расстояние: ");
+    Serial.print(measure.RangeMilliMeter);
+    Serial.println(" mm");
+  } else {
+    Serial.println("Вне диапазона");
   }
 
-  delay(3000);
+  delay(500);
 }
-*/

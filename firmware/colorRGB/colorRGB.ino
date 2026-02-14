@@ -9,7 +9,7 @@ void setup() {
   if (tcs.begin()) {
     Serial.println("найден");
   } else {
-    Serial.println("не найден!");
+    Serial.println("не найден");
     while (1);
   }
 }
