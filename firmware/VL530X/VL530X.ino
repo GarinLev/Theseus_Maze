@@ -22,6 +22,7 @@ void loop() {
     delay(10);
     if (!sensor.begin(0x29)) {
       digitalWrite(xshutPins[i], LOW);
+      continue;
     }
     sensor.setMeasurementTimingBudget(20000);
     VL53L0X_RangingMeasurementData_t measure;

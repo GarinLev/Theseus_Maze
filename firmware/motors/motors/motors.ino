@@ -101,7 +101,6 @@ void setMotors(int s1, int s2, int s3, int s4) {
   setMotor4(s4);
 }
 
-// Остановка всех моторов
 void stopMotors() {
   setMotors(0, 0, 0, 0);
 }
