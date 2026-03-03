@@ -118,6 +118,14 @@ void moveForward(long t, int speed) {
   float errold1 = 0, errold2 = 0, errold3 = 0, errold4 = 0;
   while (1) {
     long a = (encoder1 + encoder2 + encoder3 + encoder4) / 4;
+    Serial.println(encoder1);
+    Serial.print(" ");
+    Serial.print(encoder2);
+    Serial.print(" ");
+    Serial.print(encoder3);
+    Serial.print(" ");
+    Serial.print(encoder4);
+    Serial.print(" ");
     if (a >= t) break;
     float err1 = a - encoder1, err2 = a - encoder2, err3 = a - encoder3, err4 = a - encoder4;
     float d1 = (err1 - errold1) / DT, d2 = (err2 - errold2) / DT, d3 = (err3 - errold3) / DT, d4 = (err4 - errold4) / DT;
@@ -144,9 +152,9 @@ void turnRight(long d, int speed) {
     float d1 = (err1 - errold1) / DT, d3 = (err3 - errold3) / DT;
     float d2 = (err2 - errold2) / DT, d4 = (err4 - errold4) / DT;
     int s1 =  speed + KP * err1 + KD * d1;
-    int s3 =  speed + KP * err3 + KD * d3;
+    int s3 = -speed + KP * err3 + KD * d3;
     int s2 = -speed + KP * err2 + KD * d2;
-    int s4 = -speed + KP * err4 + KD * d4;
+    int s4 =  speed + KP * err4 + KD * d4;
     setMotors(constrain(s1, -255, 255), constrain(s2, -255, 255), constrain(s3, -255, 255), constrain(s4, -255, 255));
     errold1 = err1; errold2 = err2; errold3 = err3; errold4 = err4;
     delay(10);
@@ -166,9 +174,9 @@ void turnLeft(long d, int speed) {
     float d1 = (err1 - errold1) / DT, d3 = (err3 - errold3) / DT;
     float d2 = (err2 - errold2) / DT, d4 = (err4 - errold4) / DT;
     int s1 = -speed + KP * err1 + KD * d1;
-    int s3 = -speed + KP * err3 + KD * d3;
+    int s3 =  speed + KP * err3 + KD * d3;
     int s2 =  speed + KP * err2 + KD * d2;
-    int s4 =  speed + KP * err4 + KD * d4;
+    int s4 = -speed + KP * err4 + KD * d4;
     setMotors(constrain(s1, -255, 255), constrain(s2, -255, 255), constrain(s3, -255, 255), constrain(s4, -255, 255));
     errold1 = err1; errold2 = err2; errold3 = err3; errold4 = err4;
     delay(10);
@@ -187,6 +195,7 @@ void setup() {
   pinMode(MOT3_IN1, OUTPUT);
   pinMode(MOT3_IN2, OUTPUT);
   pinMode(MOT4_IN1, OUTPUT);
+  
   pinMode(MOT4_IN2, OUTPUT);
   pinMode(ENC1_A, INPUT_PULLUP);
   pinMode(ENC1_B, INPUT_PULLUP);
@@ -194,6 +203,7 @@ void setup() {
   pinMode(ENC2_B, INPUT_PULLUP);
   pinMode(ENC3_A, INPUT_PULLUP);
   pinMode(ENC3_B, INPUT_PULLUP);
+  
   pinMode(ENC4_A, INPUT_PULLUP);
   pinMode(ENC4_B, INPUT_PULLUP);
   attachInterrupt(0, encoder1_isr, RISING);
@@ -204,13 +214,7 @@ void setup() {
 }
 
 void loop() {
-  moveForward(500, 150);
-  stopMotors;
-  delay(2000);
-  turnRight(500, 200);
-  stopMotors;
-  delay(2000);
-  turnLeft(500, 200);
-  stopMotors;
-  delay(2000);
+  Serial.println(encoder1); 
+  Serial.print(encoder2); 
+  Serial.print(encoder3); Serial.print(encoder4); 
 }
