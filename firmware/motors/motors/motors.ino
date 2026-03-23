@@ -96,6 +96,13 @@ void moveForward(long t, int speed) {
   resetEncoders();
   float errold1 = 0, errold2 = 0, errold3 = 0, errold4 = 0;
   while (1) {
+    Serial.print(enc1);
+    Serial.print(" ");
+    Serial.print(enc2);
+    Serial.print(" ");
+    Serial.print(enc3);
+    Serial.print(" ");
+    Serial.println(enc4);
     long a = (enc1 + enc2 + enc3 + enc4) / 4;
     if (a >= t) break;
     float err1 = a - enc1, err2 = a - enc2, err3 = a - enc3, err4 = a - enc4;
@@ -146,7 +153,7 @@ void turnLeft(long d, int speed) {
     float ar = (enc2 + enc4) / 2.0;
     
     float err1 = al - enc1, err3 = al - enc3;
-    float err2 = ar - enc23у, err4 = ar - enc4;
+    float err2 = ar - enc2, err4 = ar - enc4;
     
     float d1 = (err1 - errold1) / DT, d3 = (err3 - errold3) / DT;
     float d2 = (err2 - errold2) / DT, d4 = (err4 - errold4) / DT;
@@ -195,7 +202,7 @@ void setup() {
 }
 
 void loop() {
-  turnLeft(1500, 100);
+  moveForward(800, 100);
   stopMotors();
   delay(2000);
 }
