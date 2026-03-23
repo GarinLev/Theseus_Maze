@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <Adafruit_VL53L0X.h>
 
-const uint8_t xshutPins[] = {40, 41, 42, 43, 44, 45};
+const uint8_t xshutPins[] = {32, 33, 34, 14, 15, 16};
 const int numSensors = sizeof(xshutPins);
 
 Adafruit_VL53L0X sensor;
