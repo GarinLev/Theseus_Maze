@@ -1,18 +1,7 @@
-#include <Wire.h>
-#include <Adafruit_VL53L0X.h>
-
-const uint8_t xshutPins[] = {40, 41, 42, 43, 44, 45};
-const int numSensors = sizeof(xshutPins);
-
-Adafruit_VL53L0X sensor;
-uint8_t sensorAddresses[numSensors];
-
-void setup() {
-  Serial.begin(115200);
+void setupVLX() {
   while (!Serial);
 
   Wire.begin();
-  Wire.setClock(100000);
   for (int i = 0; i < numSensors; i++) {
     pinMode(xshutPins[i], OUTPUT);
     digitalWrite(xshutPins[i], LOW);
@@ -104,32 +93,46 @@ int filter2() {
 
 
 
-void loop() {
-  for (int i = 0; i < numSensors; i++) {
-    if (sensorAddresses[i] == 0) {
-      Serial.print("0 ");
-      continue;
-    }
+int get_distance(int i) {
+  if (sensorAddresses[i] == 0)
+    return 0;
 
-    digitalWrite(xshutPins[i], HIGH);
-    delay(100);
-    if (!sensor.begin(sensorAddresses[i])) {
-      digitalWrite(xshutPins[i], LOW);
-      continue;
-    }
+  digitalWrite(xshutPins[i], HIGH);
+  delay(100);
 
-
-    sensor.rangingTest(&measure, false);
-    if (measure.RangeStatus != 4) {
-      Serial.print(measure.RangeMilliMeter);
-    } else {
-      Serial.print("0");
-    }
-    Serial.print(" ");
-
+  if (!sensor.begin(sensorAddresses[i])) {
     digitalWrite(xshutPins[i], LOW);
-    delay(10);
+    return 0;
   }
-  Serial.println();
-  delay(200);
+  int distance;
+  sensor.rangingTest(&measure, false);
+  if (measure.RangeStatus != 4) {
+    distance = measure.RangeMilliMeter ;
+  }
+  else {
+    distance = 0;
+  }
+  return distance;
+}
+
+
+
+bool checkRight() {
+  if (get_distance(2) < 130) {
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+
+
+bool checkForward() {
+  if (get_distance(0) < 100) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }

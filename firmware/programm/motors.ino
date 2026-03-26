@@ -1,10 +1,10 @@
-#define MOT1_IN1 6
-#define MOT1_IN2 7
-#define MOT2_IN1 8
-#define MOT2_IN2 9
-#define MOT3_IN1 10
-#define MOT3_IN2 11
-#define MOT4_IN1 12
+#define MOT1_IN1 4
+#define MOT1_IN2 5
+#define MOT2_IN1 6
+#define MOT2_IN2 7
+#define MOT3_IN1 8
+#define MOT3_IN2 9
+#define MOT4_IN1 10
 #define MOT4_IN2 13
 
 #define KP 1.5
@@ -23,11 +23,12 @@ void ENCB() {
   enc2 = enc2 + ((1 - digitalRead(23)) * 2 - 1);
 }
 void ENCC() {
-  enc3 = enc3 + (digitalRead(24) * 2 - 1);
+  enc3 = enc3 + (digitalRead(25) * 2 - 1);
 }
 void ENCD() {
-  enc4 = enc4 + ((1 - digitalRead(25)) * 2 - 1);
+  enc4 = enc4 + ((1 - digitalRead(24)) * 2 - 1);
 }
+
 
 void setMotor1(int pwm) {
   pwm = constrain(pwm, -255, 255);
@@ -43,24 +44,25 @@ void setMotor1(int pwm) {
 void setMotor2(int pwm) {
   pwm = constrain(pwm, -255, 255);
   if (pwm >= 0) {
-    analogWrite(MOT2_IN1, 0);
-    analogWrite(MOT2_IN2, pwm);
-  } else {
-    analogWrite(MOT2_IN1, -pwm);
+    analogWrite(MOT2_IN1, pwm);
     analogWrite(MOT2_IN2, 0);
+  } else {
+    analogWrite(MOT2_IN1, 0);
+    analogWrite(MOT2_IN2, -pwm);
   }
 }
 
 void setMotor3(int pwm) {
   pwm = constrain(pwm, -255, 255);
   if (pwm >= 0) {
-    analogWrite(MOT3_IN1, pwm);
-    analogWrite(MOT3_IN2, 0);
-  } else {
     analogWrite(MOT3_IN1, 0);
-    analogWrite(MOT3_IN2, -pwm);
+    analogWrite(MOT3_IN2, pwm);
+  } else {
+    analogWrite(MOT3_IN1, -pwm);
+    analogWrite(MOT3_IN2, 0);
   }
 }
+
 void setMotor4(int pwm) {
   pwm = constrain(pwm, -255, 255);
   if (pwm >= 0) {
@@ -94,13 +96,6 @@ void moveForward(long t, int speed) {
   resetEncoders();
   float errold1 = 0, errold2 = 0, errold3 = 0, errold4 = 0;
   while (1) {
-    Serial.print(enc1);
-    Serial.print(" ");
-    Serial.print(enc2);
-    Serial.print(" ");
-    Serial.print(enc3);
-    Serial.print(" ");
-    Serial.println(enc4);
     long a = (enc1 + enc2 + enc3 + enc4) / 4;
     if (a >= t) break;
     float err1 = a - enc1, err2 = a - enc2, err3 = a - enc3, err4 = a - enc4;
@@ -115,7 +110,6 @@ void moveForward(long t, int speed) {
   }
   stopMotors();
 }
-
 void turnRight(long d, int speed) {
   resetEncoders();
   float errold1 = 0, errold2 = 0, errold3 = 0, errold4 = 0;
@@ -177,7 +171,7 @@ void turnLeft(long d, int speed) {
   stopMotors();
 }
 
-void setup() {
+void setupMotors() {
   pinMode(22, INPUT);
   pinMode(23, INPUT);
   pinMode(24, INPUT);
@@ -198,9 +192,4 @@ void setup() {
   attachInterrupt(5, ENCD, FALLING);
 
   Serial.begin(115200);
-}
-
-void loop() {
-  setMotors(100, 100, 100, 100);
-  delay(2000);
 }
