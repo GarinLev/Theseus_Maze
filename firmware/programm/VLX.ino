@@ -1,4 +1,5 @@
 void setupVLX() {
+  Serial.begin(115200);
   while (!Serial);
 
   Wire.begin();
@@ -94,8 +95,9 @@ int filter2() {
 
 
 int get_distance(int i) {
-  if (sensorAddresses[i] == 0)
+  if (sensorAddresses[i] == 0){
     return 0;
+  }
 
   digitalWrite(xshutPins[i], HIGH);
   delay(100);
@@ -112,13 +114,16 @@ int get_distance(int i) {
   else {
     distance = 0;
   }
+  digitalWrite(xshutPins[i], LOW);
+    delay(10);
   return distance;
 }
 
 
 
 bool checkRight() {
-  if (get_distance(2) < 130) {
+  Serial.println(get_distance(2));
+  if (get_distance(2) < 200 && get_distance(2) != 0) {
     return true;
   }
   else {
@@ -129,7 +134,7 @@ bool checkRight() {
 
 
 bool checkForward() {
-  if (get_distance(0) < 100) {
+  if (get_distance(0) < 200 && get_distance(0) != 0) {
     return true;
   }
   else {

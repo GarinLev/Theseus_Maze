@@ -23,10 +23,10 @@ void ENCB() {
   enc2 = enc2 + ((1 - digitalRead(23)) * 2 - 1);
 }
 void ENCC() {
-  enc3 = enc3 + (digitalRead(24) * 2 - 1);
+  enc3 = enc3 + ((digitalRead(24)) * 2 - 1);
 }
 void ENCD() {
-  enc4 = enc4 + ((1 - digitalRead(25)) * 2 - 1);
+  enc4 = enc4 + ((1-digitalRead(25)) * 2 - 1);
 }
 
 void setMotor1(int pwm) {
@@ -122,14 +122,14 @@ void turnRight(long d, int speed) {
   while (1) {
     long df = (enc1 + enc3) - (enc2 + enc4);
     if (df >= d) break;
-    float al = (enc1 + enc3) / 2.0;
-    float ar = (enc2 + enc4) / 2.0;
+    float al = (enc1 + enc4) / 2.0;
+    float ar = (enc2 + enc3) / 2.0;
     float err1 = al - enc1, err3 = al - enc3;
     float err2 = ar - enc2, err4 = ar - enc4;
     float d1 = (err1 - errold1) / DT, d3 = (err3 - errold3) / DT;
     float d2 = (err2 - errold2) / DT, d4 = (err4 - errold4) / DT;
     int s1 =  speed + KP * err1 + KD * d1;
-    int s3 =  speed + KP * err3 + KD * d3;
+    int s3 = speed + KP * err3 + KD * d3;
     int s2 = -speed + KP * err2 + KD * d2;
     int s4 = -speed + KP * err4 + KD * d4;
     
@@ -160,7 +160,7 @@ void turnLeft(long d, int speed) {
     int s1 = -speed + KP * err1 + KD * d1;
     int s3 = -speed + KP * err3 + KD * d3;
     int s2 =  speed + KP * err2 + KD * d2;
-    int s4 =  speed + KP * err4 + KD * d4;
+    int s4 = speed + KP * err4 + KD * d4;
     
     setMotors(constrain(s1, -255, 255), constrain(s2, -255, 255), constrain(s3, -255, 255), constrain(s4, -255, 255));
     
@@ -194,13 +194,21 @@ void setup() {
 
   attachInterrupt(0, ENCA, FALLING);
   attachInterrupt(1, ENCB, FALLING);
-  attachInterrupt(4, ENCC, FALLING);
-  attachInterrupt(5, ENCD, FALLING);
+  attachInterrupt(5, ENCC, FALLING);
+  attachInterrupt(4, ENCD, FALLING);
 
   Serial.begin(115200);
 }
 
 void loop() {
-  setMotors(100, 100, 100, 100);
+  setMotors(-100, -100, -100, 100);
+  //moveForward(700, 200);
+  Serial.print(enc1);
+  Serial.print(" ");
+  Serial.print(enc2);
+  Serial.print(" ");
+  Serial.print(enc3);
+  Serial.print(" ");
+  Serial.println(enc4);
   delay(2000);
 }
