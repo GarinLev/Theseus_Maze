@@ -24,6 +24,9 @@
 #define KD 0.3
 #define DT 0.01
 
+#define CAL_BUTTON 42
+#define COLOR_THRESHOLD 10000
+
 volatile long encoder1 = 0;
 volatile long encoder2 = 0;
 volatile long encoder3 = 0;
@@ -34,11 +37,17 @@ const int numSensors = sizeof(xshutPins) / sizeof(xshutPins[0]);
 Adafruit_VL53L0X sensor;
 uint8_t sensorAddresses[numSensors];
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+uint16_t black_r, black_g, black_b;
+uint16_t red_r, red_g, red_b;
+uint16_t blue_r, blue_g, blue_b;
 
 void setup() {
   Serial.begin(115200);
   setupMotors();
   setupVLX();
+  setupTCS();
+  pinMode(CAL_BUTTON, INPUT_PULLUP);
+  calibrateColors();
 }
 
 void loop() {

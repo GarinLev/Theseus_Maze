@@ -16,6 +16,8 @@ void setupVLX() {
     Serial.println("):");
     digitalWrite(xshutPins[i], HIGH);
     delay(300);
+
+    // Проверяем наличие устройства по адресу 0x29 (на нём может висеть RGB, но это не страшно)
     Wire.beginTransmission(0x29);
     if (Wire.endTransmission() != 0) {
       Serial.println("Не отвечает");
@@ -25,32 +27,42 @@ void setupVLX() {
     }
     Serial.println("ответил");
 
-    if (!sensor.begin(0x29)) {
-      Serial.println("Ошибка инициализации");
-      sensorAddresses[i] = 0;
-      digitalWrite(xshutPins[i], LOW);
-      continue;
-    }
-    Serial.println("Инициализация успешна");
+    // Вручную меняем адрес, не используя sensor.begin (чтобы не конфликтовать с RGB)
     uint8_t newAddr = 0x30 + i;
-    sensor.setAddress(newAddr);
-    sensorAddresses[i] = newAddr;
-    Serial.print("Новый адрес: 0x");
-    Serial.println(newAddr, HEX);
+    bool success = false;
+    // Пытаемся изменить адрес, отправляя команду напрямую через Wire
+    Wire.beginTransmission(0x29);
+    Wire.write(0x8A);          // регистр I2C_SLAVE_DEVICE_ADDRESS
+    Wire.write(newAddr);
+    if (Wire.endTransmission() == 0) {
+      delay(10);
+      // Проверяем, что устройство откликается на новом адресе
+      Wire.beginTransmission(newAddr);
+      if (Wire.endTransmission() == 0) {
+        success = true;
+      }
+    }
+    if (success) {
+      Serial.println("Адрес изменён");
+      sensorAddresses[i] = newAddr;
+    } else {
+      Serial.println("Ошибка изменения адреса");
+      sensorAddresses[i] = 0;
+    }
 
     digitalWrite(xshutPins[i], LOW);
     delay(50);
   }
 
-  Serial.println("Инициализация завершена.");
+  Serial.println("Инициализация лазеров завершена.");
   Serial.println();
 }
-VL53L0X_RangingMeasurementData_t measure;
+
 
 int cmp(const void* a, const void* b) {
   int ia = *(int*)a;
   int ib = *(int*)b;
-  return (ia > ib) - (ia < ib); // или return ia - ib;
+  return (ia > ib) - (ia < ib);
 }
 
 int filter1() {
@@ -58,9 +70,8 @@ int filter1() {
   for (int i = 0; i < 5; i++) {
     sensor.rangingTest(&measure, false);
     if (measure.RangeStatus != 4) {
-      dist[i] = measure.RangeMilliMeter ;
-    }
-    else {
+      dist[i] = measure.RangeMilliMeter;
+    } else {
       dist[i] = 0;
     }
     delay(20);
@@ -73,7 +84,7 @@ int filter1() {
 }
 
 int cmpInt(const void* a, const void* b) {
-  return (*(int*)a - * (int*)b);
+  return (*(int*)a - *(int*)b);
 }
 
 int filter2() {
@@ -81,9 +92,8 @@ int filter2() {
   for (int i = 0; i < 5; i++) {
     sensor.rangingTest(&measure, false);
     if (measure.RangeStatus != 4) {
-      dist[i] = measure.RangeMilliMeter ;
-    }
-    else {
+      dist[i] = measure.RangeMilliMeter;
+    } else {
       dist[i] = 0;
     }
     delay(20);
@@ -92,10 +102,8 @@ int filter2() {
   return dist[2];
 }
 
-
-
 int get_distance(int i) {
-  if (sensorAddresses[i] == 0){
+  if (sensorAddresses[i] == 0) {
     return 0;
   }
 
@@ -109,35 +117,28 @@ int get_distance(int i) {
   int distance;
   sensor.rangingTest(&measure, false);
   if (measure.RangeStatus != 4) {
-    distance = measure.RangeMilliMeter ;
-  }
-  else {
+    distance = measure.RangeMilliMeter;
+  } else {
     distance = 0;
   }
   digitalWrite(xshutPins[i], LOW);
-    delay(10);
+  delay(10);
   return distance;
 }
-
-
 
 bool checkRight() {
   Serial.println(get_distance(2));
   if (get_distance(2) < 200 && get_distance(2) != 0) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
 
-
-
 bool checkForward() {
   if (get_distance(0) < 200 && get_distance(0) != 0) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
