@@ -1,6 +1,8 @@
 #include <Wire.h>
-#include <Adafruit_VL53L0X.h>
 #include <Adafruit_TCS34725.h>
+#include <VL53L0X.h>
+#include <Servo.h>
+#include <microLED.h>
 
 #define MOT1_IN1 6
 #define MOT1_IN2 7
@@ -9,7 +11,7 @@
 #define MOT3_IN1 10
 #define MOT3_IN2 11
 #define MOT4_IN1 12
-#define MOT4_IN2 13
+#define MOT4_IN2 4
 
 #define ENC1_A 2
 #define ENC1_B 22
@@ -32,26 +34,40 @@ volatile long encoder2 = 0;
 volatile long encoder3 = 0;
 volatile long encoder4 = 0;
 
-const uint8_t xshutPins[] = {32, 33, 34, 14, 15, 16};
-const int numSensors = sizeof(xshutPins) / sizeof(xshutPins[0]);
-Adafruit_VL53L0X sensor;
-uint8_t sensorAddresses[numSensors];
+#define NUM_SENSORS 6
+VL53L0X lox[NUM_SENSORS];
+int16_t lox_adresses[NUM_SENSORS] = { 0x31, 0x32, 0x33, 0x34, 0x35, 0x36 };
+int16_t lox_shts[NUM_SENSORS] = { 32, 33, 34, 14, 15, 16 };
+
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 uint16_t black_r, black_g, black_b;
 uint16_t red_r, red_g, red_b;
 uint16_t blue_r, blue_g, blue_b;
 
+Servo myServo;
+
 void setup() {
   Serial.begin(115200);
+  Wire.begin();        
+  myServo.attach(5);// обязательно!
   setupMotors();
-  setupVLX();
-  setupTCS();
+  setupVLX();              // теперь настраиваем лазеры
+  setupTCS();              // затем датчик цвета (адрес 0x29 свободен)
   pinMode(CAL_BUTTON, INPUT_PULLUP);
   calibrateColors();
+  Serial.println(get_distance(0));
+  myServo.write(0); 
 }
 
+
+
 void loop() {
-  bool new_square = false;
+
+  ServoRight();
+  delay(1000);
+  ServoLeft();
+  delay(1000);
+  /*bool new_square = false;
   while (!new_square) {
     if (checkRight()) {
       if (checkForward()) {
@@ -84,5 +100,5 @@ void loop() {
       }
       new_square = true;
     }
-  }
+  }*/
 }

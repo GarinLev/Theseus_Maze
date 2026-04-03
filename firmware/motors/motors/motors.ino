@@ -5,7 +5,7 @@
 #define MOT3_IN1 10
 #define MOT3_IN2 11
 #define MOT4_IN1 12
-#define MOT4_IN2 13
+#define MOT4_IN2 4
 
 #define KP 1.5
 #define KD 0.3
@@ -201,8 +201,8 @@ void setup() {
 }
 
 void loop() {
-  setMotors(-100, -100, -100, 100);
-  //moveForward(700, 200);
+  //setMotors(-100, -100, -100, -100);
+  turnLeft(700, 200);
   Serial.print(enc1);
   Serial.print(" ");
   Serial.print(enc2);

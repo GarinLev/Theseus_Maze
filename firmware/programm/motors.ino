@@ -1,11 +1,4 @@
-#define MOT1_IN1 6
-#define MOT1_IN2 7
-#define MOT2_IN1 8
-#define MOT2_IN2 9
-#define MOT3_IN1 10
-#define MOT3_IN2 11
-#define MOT4_IN1 12
-#define MOT4_IN2 13
+
 
 #define KP 1.5
 #define KD 0.3

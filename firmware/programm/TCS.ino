@@ -1,4 +1,4 @@
-int r1, g1, b1, c1;
+int r1, g1, b1, c1, c;
 int calibrationStep = -1;
 void setupTCS() {
   // Serial уже инициализирован в setupVLX, поэтому здесь не вызываем
@@ -11,11 +11,6 @@ void setupTCS() {
   }
 
   tcs.getRawData(&r1, &g1, &b1, &c1);
-
-  Serial.print("R: "); Serial.print(r1);
-  Serial.print("  G: "); Serial.print(g1);
-  Serial.print("  B: "); Serial.print(b1);
-  Serial.print("  C: "); Serial.println(c1);
 
   delay(500);
 }
@@ -32,21 +27,23 @@ void waitButtonPress() {
 }
 
 void calibrateColors() {
-  tcs.getRawData(&black_r, &black_g, &black_b, NULL);
+  Serial.print("aaa");
+  tcs.getRawData(&black_r, &black_g, &black_b, &c);
+  Serial.print("aaa");
   Serial.print("Чёрный: R="); Serial.print(black_r);
   Serial.print(" G="); Serial.print(black_g);
   Serial.print(" B="); Serial.println(black_b);
 
   waitButtonPress();
-  tcs.getRawData(&red_r, &red_g, &red_b, NULL);
+  tcs.getRawData(&red_r, &red_g, &red_b, &c);
 
   waitButtonPress();
-  tcs.getRawData(&blue_r, &blue_g, &blue_b, NULL);
+  tcs.getRawData(&blue_r, &blue_g, &blue_b, &c);
 
 }
 
 bool isBlack() {
-  get_color(); // обновляет r1, g1, b1
+  tcs.getRawData(&r1, &g1, &b1, &c);
   long dr = (long)r1 - black_r;
   long dg = (long)g1 - black_g;
   long db = (long)b1 - black_b;
@@ -55,7 +52,7 @@ bool isBlack() {
 }
 
 bool isBlue() {
-  get_color();
+  tcs.getRawData(&r1, &g1, &b1, &c);
   long dr = (long)r1 - blue_r;
   long dg = (long)g1 - blue_g;
   long db = (long)b1 - blue_b;
@@ -64,7 +61,7 @@ bool isBlue() {
 }
 
 bool isRed() {
-  get_color();
+  tcs.getRawData(&r1, &g1, &b1, &c);
   long dr = (long)r1 - red_r;
   long dg = (long)g1 - red_g;
   long db = (long)b1 - red_b;

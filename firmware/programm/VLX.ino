@@ -1,65 +1,33 @@
 void setupVLX() {
-  Serial.begin(115200);
-  while (!Serial);
-
-  Wire.begin();
-  for (int i = 0; i < numSensors; i++) {
-    pinMode(xshutPins[i], OUTPUT);
-    digitalWrite(xshutPins[i], LOW);
+  // Сброс всех датчиков (LOW на XSHUT)
+  for (int i = 0; i < sizeof(lox_shts) / sizeof(lox_shts[0]); i++) {
+    pinMode(lox_shts[i], OUTPUT);
+    digitalWrite(lox_shts[i], LOW);
+    delay(10);
   }
-  delay(100);
-  for (int i = 0; i < numSensors; i++) {
+
+  Serial.println("Настройка VL53L0X...");
+
+  // По очереди включаем, меняем адрес, инициализируем
+  for (int i = 0; i < sizeof(lox_shts) / sizeof(lox_shts[0]); i++) {
     Serial.print("Датчик ");
     Serial.print(i);
-    Serial.print(" (пин ");
-    Serial.print(xshutPins[i]);
-    Serial.println("):");
-    digitalWrite(xshutPins[i], HIGH);
-    delay(300);
-
-    // Проверяем наличие устройства по адресу 0x29 (на нём может висеть RGB, но это не страшно)
-    Wire.beginTransmission(0x29);
-    if (Wire.endTransmission() != 0) {
-      Serial.println("Не отвечает");
-      sensorAddresses[i] = 0;
-      digitalWrite(xshutPins[i], LOW);
-      continue;
-    }
-    Serial.println("ответил");
-
-    // Вручную меняем адрес, не используя sensor.begin (чтобы не конфликтовать с RGB)
-    uint8_t newAddr = 0x30 + i;
-    bool success = false;
-    // Пытаемся изменить адрес, отправляя команду напрямую через Wire
-    Wire.beginTransmission(0x29);
-    Wire.write(0x8A);          // регистр I2C_SLAVE_DEVICE_ADDRESS
-    Wire.write(newAddr);
-    if (Wire.endTransmission() == 0) {
-      delay(10);
-      // Проверяем, что устройство откликается на новом адресе
-      Wire.beginTransmission(newAddr);
-      if (Wire.endTransmission() == 0) {
-        success = true;
-      }
-    }
-    if (success) {
-      Serial.println("Адрес изменён");
-      sensorAddresses[i] = newAddr;
+    delay(10);
+    digitalWrite(lox_shts[i], HIGH);   // включаем питание датчика
+    delay(10);
+    lox[i].setAddress(lox_adresses[i]); // меняем I2C адрес
+    if (!lox[i].init()) {
+      Serial.println(" - Ошибка инициализации");
     } else {
-      Serial.println("Ошибка изменения адреса");
-      sensorAddresses[i] = 0;
+      lox[i].startContinuous();         // непрерывный режим
+      Serial.println(" - OK");
     }
-
-    digitalWrite(xshutPins[i], LOW);
-    delay(50);
+    delay(10);
   }
-
-  Serial.println("Инициализация лазеров завершена.");
-  Serial.println();
+  Serial.println("Все VL53L0X готовы");
 }
 
-
-int cmp(const void* a, const void* b) {
+/*int cmp(const void* a, const void* b) {
   int ia = *(int*)a;
   int ib = *(int*)b;
   return (ia > ib) - (ia < ib);
@@ -100,31 +68,16 @@ int filter2() {
   }
   qsort(dist, 5, sizeof(int), cmp);
   return dist[2];
-}
+}*/
 
 int get_distance(int i) {
-  if (sensorAddresses[i] == 0) {
-    return 0;
-  }
-
-  digitalWrite(xshutPins[i], HIGH);
-  delay(100);
-
-  if (!sensor.begin(sensorAddresses[i])) {
-    digitalWrite(xshutPins[i], LOW);
-    return 0;
-  }
-  int distance;
-  sensor.rangingTest(&measure, false);
-  if (measure.RangeStatus != 4) {
-    distance = measure.RangeMilliMeter;
-  } else {
-    distance = 0;
-  }
-  digitalWrite(xshutPins[i], LOW);
-  delay(10);
-  return distance;
+  if (i < 0 || i >= 6) return 0;
+  uint16_t dist = lox[i].readRangeContinuousMillimeters();
+  // Проверка таймаута (если измерение невалидно)
+  if (lox[i].timeoutOccurred()) return 0;
+  return dist;
 }
+
 
 bool checkRight() {
   Serial.println(get_distance(2));
