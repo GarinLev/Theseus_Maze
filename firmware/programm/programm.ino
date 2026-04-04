@@ -61,13 +61,8 @@ void setup() {
 
 
 
-void loop() {
-
-  ServoRight();
-  delay(1000);
-  ServoLeft();
-  delay(1000);
-  /*bool new_square = false;
+void rightArm(){
+  bool new_square = false;
   while (!new_square) {
     if (checkRight()) {
       if (checkForward()) {
@@ -100,5 +95,58 @@ void loop() {
       }
       new_square = true;
     }
-  }*/
+  }
+}
+
+
+void leftArm(){
+  bool new_square = false;
+  while (!new_square) {
+  if (checkLeft()) {
+    if (checkForward()) {
+      setMotors(150, 150, 150, 150);
+      delay(200);
+      stopMotors;
+      delay(400);
+      moveBack(15, 200);
+      stopMotors;
+      delay(400);
+      turnRight(1400, 200);  
+    }
+    else {                     
+      moveForward(600, 200);
+      if (checkForward()) {
+        moveBack(15, 200);
+        stopMotors;
+        delay(400);
+      }
+      new_square = true;
+    }
+  }
+  else {                      
+    turnLeft(1400, 200);
+    moveForward(600, 200);
+    if (get_distance(0) < 60 && get_distance(0) != 0) {
+      moveBack(25, 200);
+      stopMotors;
+      delay(400);
+    }
+    new_square = true;
+  }
+}
+}
+
+
+void loop() {
+  int squares = 0;
+  while(squares < 50){ 
+    rightArm();
+    squares++;
+  }
+  while(!checkLeft){
+    rightArm();
+  }
+  while(){
+    leftArm();
+  }
 }

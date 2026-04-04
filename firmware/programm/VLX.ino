@@ -87,6 +87,14 @@ bool checkRight() {
     return false;
   }
 }
+bool checkLeft() {
+  Serial.println(get_distance(5));
+  if (get_distance(5) < 200 && get_distance(5) != 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 bool checkForward() {
   if (get_distance(0) < 200 && get_distance(0) != 0) {
