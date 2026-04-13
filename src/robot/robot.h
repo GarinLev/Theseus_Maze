@@ -1,0 +1,19 @@
+#pragma once
+#include "../controller/controller_wheel.h"
+
+namespace robot {
+    extern WheelController wheelA1;
+    extern WheelController wheelA2;
+    extern WheelController wheelB1;
+    extern WheelController wheelB2;
+
+    void init();
+    void loop();
+
+    void isr_encoder_A1();
+    void isr_encoder_A2();
+    void isr_encoder_B1();
+    void isr_encoder_B2();
+    
+    void apdateVelocity(float rpm);
+}

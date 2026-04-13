@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Library Files">
+      <UniqueIdentifier>{e2d35157-47dc-4a21-b8e1-788983c17a65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller">
+      <UniqueIdentifier>{cdfe155f-7c74-427a-b9bd-b3eafcabb21b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node">
+      <UniqueIdentifier>{c2d79c5a-1d2d-4b5c-9789-893fef63f03f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\encoder">
+      <UniqueIdentifier>{0bd744fa-1b78-4895-8564-5ee7c97795d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\led">
+      <UniqueIdentifier>{e7b893aa-6333-4691-96cc-3e80a27af85f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\motor">
+      <UniqueIdentifier>{623bd7ef-d9d1-486e-94c9-58a5d283d08b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\pi">
+      <UniqueIdentifier>{79272cb5-076f-4c31-b7e6-6d48e04fbd2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\robot">
+      <UniqueIdentifier>{7a7314d5-0db7-483b-b630-6e8ef2c1510f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="maze.ino" />
+    <ClCompile Include="src\controller\bindMotorEncoderPI.cpp">
+      <Filter>Source Files\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\encoder\node_encoder.cpp">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\encoder\isr_encoder.cpp">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\led\node_led.cpp">
+      <Filter>Source Files\node\led</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\motor\node_motor.cpp">
+      <Filter>Source Files\node\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\pi\node_pi.cpp">
+      <Filter>Source Files\node\pi</Filter>
+    </ClCompile>
+    <ClCompile Include="src\robot\loop.cpp">
+      <Filter>Source Files\robot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\robot\init.cpp">
+      <Filter>Source Files\robot</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="__vm\.maze.vsarduino.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc.h">
+      <Filter>Library Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc-addrlabels.h">
+      <Filter>Library Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc-switch.h">
+      <Filter>Library Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt.h">
+      <Filter>Library Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt-sem.h">
+      <Filter>Library Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt-timer.h">
+      <Filter>Library Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\macro.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\bind.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_wheel.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\nodes.h">
+      <Filter>Source Files\node</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\encoder\node_encoder.h">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\encoder\topic_encoder.h">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\led\node_led.h">
+      <Filter>Source Files\node\led</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\led\topic_led.h">
+      <Filter>Source Files\node\led</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\motor\node_motor.h">
+      <Filter>Source Files\node\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\motor\topic_motor.h">
+      <Filter>Source Files\node\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\pi\node_pi.h">
+      <Filter>Source Files\node\pi</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\pi\topic_pi.h">
+      <Filter>Source Files\node\pi</Filter>
+    </ClInclude>
+    <ClInclude Include="src\robot\robot.h">
+      <Filter>Source Files\robot</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soft_move.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
