@@ -29,12 +29,8 @@ namespace robot {
         wheelB2.setMotor(8, 4, true);
         wheelB2.setEncoder(19, 25, robot::isr_encoder_B2);
         wheelB2.setPI(Kp, Ki);
-    }
 
-    void apdateVelocity(float rpm) {
-        wheelA1.setSpeed(rpm);
-        wheelA2.setSpeed(rpm); 
-        wheelB1.setSpeed(rpm);
-        wheelB2.setSpeed(rpm);
+        wheelA1.notifyEncoderSpeed(50, 80, 0.3, 0.01);
+
     }
 }

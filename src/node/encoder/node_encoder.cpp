@@ -8,7 +8,7 @@ void node_encoder_init(EncoderNode &ctx) {
     pinMode(ctx.pin_int, INPUT);
 
     if (digitalPinToInterrupt(ctx.pin_int) == -1)
-        LOOP_FOREVER;
+        for(;;);
     
     attachInterrupt(digitalPinToInterrupt(ctx.pin_int), ctx.func, RISING);
 }

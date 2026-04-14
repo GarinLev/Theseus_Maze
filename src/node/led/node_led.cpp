@@ -14,7 +14,7 @@ int node_led_run(LedNode &ctx) {
     PT_BEGIN(&ctx.pt);
     (void)PT_YIELD_FLAG;
 
-    LOOP_FOREVER {
+    for(;;) {
         WAIT_NEW_DATA(ctx);
 
         gio::write(ctx.pin, ctx.topic->state);

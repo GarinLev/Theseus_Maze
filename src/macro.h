@@ -20,6 +20,4 @@ typedef uint8_t seq_t;
 
 #define NOTIFY_TOPIC(topic_ptr) ((topic_ptr)->seq++)
 
-#define LOOP_FOREVER for(;;)
-
 #define PIN_NONE 255

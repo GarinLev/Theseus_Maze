@@ -16,8 +16,9 @@ struct PI_Node {
 
     float Kp, Ki;
 
+    float value_out;
     PI_Topic* topic;
 };
 
 void node_pi_init(PI_Node& ctx);
-int node_pi_run(PI_Node& ctx, float* input_value);
+int node_pi_run(PI_Node& ctx);

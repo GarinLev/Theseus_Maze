@@ -23,7 +23,7 @@ int node_motor_run(MotorNode &ctx)
     PT_BEGIN(&ctx.pt);
     (void)PT_YIELD_FLAG;
     
-    LOOP_FOREVER {
+    for(;;) {
         WAIT_NEW_DATA(ctx);
 
         int16_t raw_speed = ctx.topic->speed;

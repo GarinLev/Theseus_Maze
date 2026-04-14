@@ -29,12 +29,12 @@
     <Filter Include="Source Files\robot">
       <UniqueIdentifier>{7a7314d5-0db7-483b-b630-6e8ef2c1510f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\node\motor_target">
+      <UniqueIdentifier>{7b19a333-8524-49e5-9df9-8bcf2f24c5f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="maze.ino" />
-    <ClCompile Include="src\controller\bindMotorEncoderPI.cpp">
-      <Filter>Source Files\controller</Filter>
-    </ClCompile>
     <ClCompile Include="src\node\encoder\node_encoder.cpp">
       <Filter>Source Files\node\encoder</Filter>
     </ClCompile>
@@ -44,9 +44,6 @@
     <ClCompile Include="src\node\led\node_led.cpp">
       <Filter>Source Files\node\led</Filter>
     </ClCompile>
-    <ClCompile Include="src\node\motor\node_motor.cpp">
-      <Filter>Source Files\node\motor</Filter>
-    </ClCompile>
     <ClCompile Include="src\node\pi\node_pi.cpp">
       <Filter>Source Files\node\pi</Filter>
     </ClCompile>
@@ -55,6 +52,12 @@
     </ClCompile>
     <ClCompile Include="src\robot\init.cpp">
       <Filter>Source Files\robot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\motor\node_motor.cpp">
+      <Filter>Source Files\node\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\motor_target\node_motorT.cpp">
+      <Filter>Source Files\node\motor_target</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,9 +85,6 @@
     <ClInclude Include="src\macro.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\controller\bind.h">
-      <Filter>Source Files\controller</Filter>
-    </ClInclude>
     <ClInclude Include="src\controller\controller_wheel.h">
       <Filter>Source Files\controller</Filter>
     </ClInclude>
@@ -103,12 +103,6 @@
     <ClInclude Include="src\node\led\topic_led.h">
       <Filter>Source Files\node\led</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\motor\node_motor.h">
-      <Filter>Source Files\node\motor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\node\motor\topic_motor.h">
-      <Filter>Source Files\node\motor</Filter>
-    </ClInclude>
     <ClInclude Include="src\node\pi\node_pi.h">
       <Filter>Source Files\node\pi</Filter>
     </ClInclude>
@@ -121,5 +115,20 @@
     <ClInclude Include="src\soft_move.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\node\motor\node_motor.h">
+      <Filter>Source Files\node\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\motor\topic_motor.h">
+      <Filter>Source Files\node\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\motor_target\node_motorT.h">
+      <Filter>Source Files\node\motor_target</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\motor_target\topic_motorT.h">
+      <Filter>Source Files\node\motor_target</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

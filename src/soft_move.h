@@ -4,17 +4,15 @@
 struct SoftMove {
     float x0, x1;
     float a, Vmax;
-    unsigned long startTime;
 };
 
-inline int SoftSign(float val) {
+static inline int SoftSign(float val) {
     return (0.0f < val) - (val < 0.0f);
 }
 
-inline float SoftGet(SoftMove* state) {
+inline float SoftGet(SoftMove* state, float x) {
     if (!state) return 0.0f;
 
-    float x = (millis() - state->startTime) / 1000.0f;
     float t0 = 0.0f;
 
     const float x0 = state->x0;

@@ -25,11 +25,11 @@ void bind::MotorEncoderPI(MotorNode *motorNode, EncoderNode *encoderNode, PI_Nod
         piNode->integral = 0.0f;
     }
     
-    node_pi_run(*piNode, &current_rpm);
+    // node_pi_run(*piNode, &current_rpm);
     
     float base_pwm = (setpoint / 140.0f) * 255.0f;
     
-    float output_pwm = base_pwm + piNode->topic->value;
+    float output_pwm = base_pwm + piNode->topic_out->value;
     
     if (output_pwm > 255.0f) output_pwm = 255.0f;
     if (output_pwm < 0.0f) output_pwm = 0.0f;

@@ -14,6 +14,4 @@ namespace robot {
     void isr_encoder_A2();
     void isr_encoder_B1();
     void isr_encoder_B2();
-    
-    void apdateVelocity(float rpm);
 }
