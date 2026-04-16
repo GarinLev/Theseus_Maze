@@ -19,7 +19,7 @@ void isr_encoder_A1() {
     NOTIFY_TOPIC(&wheelA1.encoderTopic);
 }
 
-void isr_encoder_A2() {
+/*void isr_encoder_A2() {
     uint32_t now = micros();
     wheelA2.encoderTopic.period = now - wheelA2.encoderNode.timer;
     
@@ -59,6 +59,6 @@ void isr_encoder_B2() {
     
     wheelB2.encoderNode.timer = now;
     NOTIFY_TOPIC(&wheelB2.encoderTopic);
-}
+}*/
 
 } // namespace robot
