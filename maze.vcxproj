@@ -52,8 +52,8 @@
     <ClCompile Include="src\node\encoder\node_encoder.cpp" />
     <ClCompile Include="src\node\led\node_led.cpp" />
     <ClCompile Include="src\node\motor\node_motor.cpp" />
-    <ClCompile Include="src\node\motor_target\node_motorT.cpp" />
     <ClCompile Include="src\node\pi\node_pi.cpp" />
+    <ClCompile Include="src\node\servo\node_servo.cpp" />
     <ClCompile Include="src\robot\init.cpp" />
     <ClCompile Include="src\robot\loop.cpp" />
   </ItemGroup>
@@ -75,11 +75,11 @@
     <ClInclude Include="src\node\led\topic_led.h" />
     <ClInclude Include="src\node\motor\node_motor.h" />
     <ClInclude Include="src\node\motor\topic_motor.h" />
-    <ClInclude Include="src\node\motor_target\node_motorT.h" />
-    <ClInclude Include="src\node\motor_target\topic_motorT.h" />
     <ClInclude Include="src\node\nodes.h" />
     <ClInclude Include="src\node\pi\node_pi.h" />
     <ClInclude Include="src\node\pi\topic_pi.h" />
+    <ClInclude Include="src\node\servo\node_servo.h" />
+    <ClInclude Include="src\node\servo\topic_servo.h" />
     <ClInclude Include="src\robot\robot.h" />
     <ClInclude Include="src\soft_move.h" />
     <ClInclude Include="__vm\.maze.vsarduino.h" />
@@ -97,7 +97,7 @@
     <ValidateArchitecture>false</ValidateArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>$(ProjectDir)..\maze;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include</IncludePath>
+    <IncludePath>$(ProjectDir)..\maze;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src</IncludePath>
     <RemoteCCompileToolExe>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</RemoteCCompileToolExe>
     <RemoteCppCompileToolExe>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</RemoteCppCompileToolExe>
     <ValidateArchitecture>false</ValidateArchitecture>
@@ -118,7 +118,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\maze;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\maze;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GccToolChain>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</GccToolChain>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <CLanguageStandard>gnu11</CLanguageStandard>

@@ -26,8 +26,9 @@ namespace robot {
 
         wheelA1.init(500.0f, 140.0f);
         wheelA1.setPins(10, 12, false, 18, 24, robot::isr_encoder_A1);
-        wheelA1.setProfile(2500, 0, 0.5f, 15.0f);
 
+        int dist = 500;
+        wheelA1.goTo(100, (dist / 2) - 10, dist);
 /*
         wheelA2.init(500.0f, 140.0f);
         wheelA2.setPins(10, 12, false, 18, 24, robot::isr_encoder_A2);

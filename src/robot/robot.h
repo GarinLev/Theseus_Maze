@@ -5,7 +5,7 @@ namespace robot {
     extern WheelController wheelA1;
 /*    extern WheelController wheelA2;
     extern WheelController wheelB1;
-    extern WheelController wheelB2;*/
+    extern WheelController wheelB2;*
 
     void init();
     void loop();

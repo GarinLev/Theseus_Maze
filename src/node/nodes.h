@@ -11,6 +11,3 @@
 
 #include "pi/node_pi.h"
 #include "pi/topic_pi.h"
-
-#include "motor_target/node_motorT.h"
-#include "motor_target/topic_motorT.h"

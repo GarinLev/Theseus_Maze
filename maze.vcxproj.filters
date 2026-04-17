@@ -29,8 +29,8 @@
     <Filter Include="Source Files\robot">
       <UniqueIdentifier>{7a7314d5-0db7-483b-b630-6e8ef2c1510f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\node\motor_target">
-      <UniqueIdentifier>{7b19a333-8524-49e5-9df9-8bcf2f24c5f1}</UniqueIdentifier>
+    <Filter Include="Source Files\node\servo">
+      <UniqueIdentifier>{95ee0db8-9969-47ec-9c8e-3fabd177f127}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -56,8 +56,8 @@
     <ClCompile Include="src\node\motor\node_motor.cpp">
       <Filter>Source Files\node\motor</Filter>
     </ClCompile>
-    <ClCompile Include="src\node\motor_target\node_motorT.cpp">
-      <Filter>Source Files\node\motor_target</Filter>
+    <ClCompile Include="src\node\servo\node_servo.cpp">
+      <Filter>Source Files\node\servo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,11 +121,11 @@
     <ClInclude Include="src\node\motor\topic_motor.h">
       <Filter>Source Files\node\motor</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\motor_target\node_motorT.h">
-      <Filter>Source Files\node\motor_target</Filter>
+    <ClInclude Include="src\node\servo\node_servo.h">
+      <Filter>Source Files\node\servo</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\motor_target\topic_motorT.h">
-      <Filter>Source Files\node\motor_target</Filter>
+    <ClInclude Include="src\node\servo\topic_servo.h">
+      <Filter>Source Files\node\servo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
