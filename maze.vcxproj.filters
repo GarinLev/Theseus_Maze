@@ -32,6 +32,21 @@
     <Filter Include="Source Files\node\servo">
       <UniqueIdentifier>{95ee0db8-9969-47ec-9c8e-3fabd177f127}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\node\dist">
+      <UniqueIdentifier>{43285255-a34a-4416-9094-a9767cea31fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\pt">
+      <UniqueIdentifier>{760e6a6b-3a15-4639-90fa-5a7f4fc62445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\gio">
+      <UniqueIdentifier>{f4cac3ff-ad53-48fe-af7e-228422da2a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\AceSorting">
+      <UniqueIdentifier>{918f23e9-d7f8-458e-8f61-e95b6ea7f8d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\VL53L0X">
+      <UniqueIdentifier>{2701567b-076d-463d-a931-76ed4a21ca22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="maze.ino" />
@@ -59,28 +74,16 @@
     <ClCompile Include="src\node\servo\node_servo.cpp">
       <Filter>Source Files\node\servo</Filter>
     </ClCompile>
+    <ClCompile Include="src\node\dist\node_dist.cpp">
+      <Filter>Source Files\node\dist</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VL53L0X\VL53L0X_mod.cpp">
+      <Filter>Library Files\VL53L0X</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.maze.vsarduino.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\pt\lc.h">
-      <Filter>Library Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\pt\lc-addrlabels.h">
-      <Filter>Library Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\pt\lc-switch.h">
-      <Filter>Library Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\pt\pt.h">
-      <Filter>Library Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\pt\pt-sem.h">
-      <Filter>Library Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\pt\pt-timer.h">
-      <Filter>Library Files</Filter>
     </ClInclude>
     <ClInclude Include="src\macro.h">
       <Filter>Source Files</Filter>
@@ -127,8 +130,60 @@
     <ClInclude Include="src\node\servo\topic_servo.h">
       <Filter>Source Files\node\servo</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
+    <ClInclude Include="lib\pt\lc.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc-addrlabels.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc-switch.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt-sem.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt-timer.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GyverIO\GyverIO.h">
+      <Filter>Library Files\gio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\dist\node_dist.h">
+      <Filter>Source Files\node\dist</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_wall.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\bubbleSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\combSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\insertionSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\quickSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\selectionSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\shellSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\swap.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\AceSorting.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VL53L0X\VL53L0X_mod.h">
+      <Filter>Library Files\VL53L0X</Filter>
+    </ClInclude>
+    <ClInclude Include="__vm\.firmware.vsarduino.h" />
   </ItemGroup>
 </Project>

@@ -11,3 +11,5 @@
 
 #include "pi/node_pi.h"
 #include "pi/topic_pi.h"
+
+#include "dist/node_dist.h"

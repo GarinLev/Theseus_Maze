@@ -30,6 +30,7 @@ struct WheelController {
     void init(float tpr, float rpm, float min_rpm = 50.0f) {
         PT_INIT(&pt_control);
         PT_INIT(&pt_task);
+
         encoder_ticks_per_rev = tpr;
         max_rpm = rpm;
         min_start_rpm = min_rpm;
@@ -86,14 +87,6 @@ struct WheelController {
                 speedTopic.value = getCurrentRPM();
                 speedNode.setpoint = (int16_t)constrain(target_rpm, -max_rpm, max_rpm);
 
-                if (millis() - timer > 75) {
-                    timer = millis();
-                    Serial.print(getCurrentRPM());
-                    Serial.print(",");
-                    Serial.println(target_rpm);
-
-                }
-
                 motorTopic.speed = (int)constrain(speedNode.value_out, -255, 255);
                 NOTIFY_TOPIC(&motorTopic);
             }
@@ -123,8 +116,8 @@ struct WheelController {
         motorTopic.speed = 0;
         NOTIFY_TOPIC(&motorTopic);
 
-        digitalWrite(10, HIGH);
-        digitalWrite(12, HIGH);
+        digitalWrite(motorNode.pin_in1, HIGH);
+        digitalWrite(motorNode.pin_in1, HIGH);
 
         PT_END(&pt_task);
     }
