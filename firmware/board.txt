@@ -1,0 +1,3 @@
+recipe.cpp.combine.pattern.flags=-Ofast
+compiler.cpp.extra_flags=-Ofast
+compiler.c.extra_flags=-Ofast
