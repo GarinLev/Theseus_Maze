@@ -1,7 +1,6 @@
 #include "robot.h"
 #include "../soft_move.h"
 
-
 void robot::loop() {
     wallRight.update();
     wallLeft.update();

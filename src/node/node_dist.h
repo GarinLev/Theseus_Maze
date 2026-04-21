@@ -14,9 +14,6 @@ struct DistNode {
     uint8_t addr;
     uint8_t pin_sht;
     TwoWire* wire;
-
-    uint32_t dt;
-    uint32_t last_time;
     
     Optional<uint16_t> dist;
 

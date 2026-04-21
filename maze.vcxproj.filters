@@ -29,9 +29,6 @@
     <Filter Include="Source Files\robot">
       <UniqueIdentifier>{7a7314d5-0db7-483b-b630-6e8ef2c1510f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\node\servo">
-      <UniqueIdentifier>{95ee0db8-9969-47ec-9c8e-3fabd177f127}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\node\dist">
       <UniqueIdentifier>{43285255-a34a-4416-9094-a9767cea31fe}</UniqueIdentifier>
     </Filter>
@@ -53,6 +50,9 @@
     <Filter Include="Source Files\node\angel">
       <UniqueIdentifier>{764f8efc-f52b-4c89-bff7-6ad315796e82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Library Files\MPU6050">
+      <UniqueIdentifier>{9c04f8c7-81ec-450f-8256-e7334fb9363d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="maze.ino" />
@@ -64,9 +64,6 @@
     </ClCompile>
     <ClCompile Include="lib\VL53L0X\VL53L0X_mod.cpp">
       <Filter>Library Files\VL53L0X</Filter>
-    </ClCompile>
-    <ClCompile Include="src\node\node_servo.cpp">
-      <Filter>Source Files\node\servo</Filter>
     </ClCompile>
     <ClCompile Include="src\node\node_motor.cpp">
       <Filter>Source Files\node\motor</Filter>
@@ -85,6 +82,24 @@
     </ClCompile>
     <ClCompile Include="src\node\node_pi.cpp">
       <Filter>Source Files\node\pi</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\I2Cdev.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050_6Axis_MotionApps20.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050_6Axis_MotionApps612.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050_9Axis_MotionApps41.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_angel.cpp">
+      <Filter>Source Files\node\angel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -158,12 +173,6 @@
     <ClInclude Include="src\controller\controller_wall.h">
       <Filter>Source Files\controller</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\node_servo.h">
-      <Filter>Source Files\node\servo</Filter>
-    </ClInclude>
-    <ClInclude Include="src\node\topic_servo.h">
-      <Filter>Source Files\node\servo</Filter>
-    </ClInclude>
     <ClInclude Include="src\node\node_pi.h">
       <Filter>Source Files\node\pi</Filter>
     </ClInclude>
@@ -199,6 +208,30 @@
     </ClInclude>
     <ClInclude Include="lib\Optional\Optional.h">
       <Filter>Library Files\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\helper_3dmath.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\I2Cdev.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050_6Axis_MotionApps20.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050_6Axis_MotionApps612.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050_9Axis_MotionApps41.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_angel.h">
+      <Filter>Source Files\node\angel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_rotate.h">
+      <Filter>Source Files\controller</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
