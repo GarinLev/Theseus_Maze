@@ -1,4 +1,4 @@
-#include "../../../lib/GyverIO/GyverIO.h"
+#include "../../lib/GyverIO/GyverIO.h"
 #include "node_motor.h"
 
 #define SPEED_MAX 255

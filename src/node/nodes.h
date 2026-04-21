@@ -1,15 +1,15 @@
 #pragma once
 
-#include "led/node_led.h"
-#include "led/topic_led.h"
+#include "node_led.h"
+#include "topic_led.h"
 
-#include "motor/node_motor.h"
-#include "motor/topic_motor.h"
+#include "node_motor.h"
+#include "topic_motor.h"
 
-#include "encoder/node_encoder.h"
-#include "encoder/topic_encoder.h"
+#include "node_encoder.h"
+#include "topic_encoder.h"
 
-#include "pi/node_pi.h"
-#include "pi/topic_pi.h"
+#include "node_pi.h"
+#include "topic_pi.h"
 
-#include "dist/node_dist.h"
+#include "node_dist.h"

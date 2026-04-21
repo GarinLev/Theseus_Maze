@@ -49,13 +49,13 @@
     <ClCompile Include="maze.ino">
       <DeploymentContent>true</DeploymentContent>
     </ClCompile>
-    <ClCompile Include="src\node\dist\node_dist.cpp" />
-    <ClCompile Include="src\node\encoder\isr_encoder.cpp" />
-    <ClCompile Include="src\node\encoder\node_encoder.cpp" />
-    <ClCompile Include="src\node\led\node_led.cpp" />
-    <ClCompile Include="src\node\motor\node_motor.cpp" />
-    <ClCompile Include="src\node\pi\node_pi.cpp" />
-    <ClCompile Include="src\node\servo\node_servo.cpp" />
+    <ClCompile Include="src\node\isr_encoder.cpp" />
+    <ClCompile Include="src\node\node_dist.cpp" />
+    <ClCompile Include="src\node\node_encoder.cpp" />
+    <ClCompile Include="src\node\node_led.cpp" />
+    <ClCompile Include="src\node\node_motor.cpp" />
+    <ClCompile Include="src\node\node_pi.cpp" />
+    <ClCompile Include="src\node\node_servo.cpp" />
     <ClCompile Include="src\robot\init.cpp" />
     <ClCompile Include="src\robot\loop.cpp" />
   </ItemGroup>
@@ -72,6 +72,7 @@
     <ClInclude Include="lib\AceSorting\ace_sorting\shellSort.h" />
     <ClInclude Include="lib\AceSorting\ace_sorting\swap.h" />
     <ClInclude Include="lib\GyverIO\GyverIO.h" />
+    <ClInclude Include="lib\Optional\Optional.h" />
     <ClInclude Include="lib\pt\lc-addrlabels.h" />
     <ClInclude Include="lib\pt\lc-switch.h" />
     <ClInclude Include="lib\pt\lc.h" />
@@ -80,20 +81,22 @@
     <ClInclude Include="lib\pt\pt.h" />
     <ClInclude Include="lib\VL53L0X\VL53L0X_mod.h" />
     <ClInclude Include="src\controller\controller_wall.h" />
+    <ClInclude Include="src\controller\controller_wallManager.h" />
     <ClInclude Include="src\controller\controller_wheel.h" />
     <ClInclude Include="src\macro.h" />
-    <ClInclude Include="src\node\dist\node_dist.h" />
-    <ClInclude Include="src\node\encoder\node_encoder.h" />
-    <ClInclude Include="src\node\encoder\topic_encoder.h" />
-    <ClInclude Include="src\node\led\node_led.h" />
-    <ClInclude Include="src\node\led\topic_led.h" />
-    <ClInclude Include="src\node\motor\node_motor.h" />
-    <ClInclude Include="src\node\motor\topic_motor.h" />
     <ClInclude Include="src\node\nodes.h" />
-    <ClInclude Include="src\node\pi\node_pi.h" />
-    <ClInclude Include="src\node\pi\topic_pi.h" />
-    <ClInclude Include="src\node\servo\node_servo.h" />
-    <ClInclude Include="src\node\servo\topic_servo.h" />
+    <ClInclude Include="src\node\node_dist.h" />
+    <ClInclude Include="src\node\node_encoder.h" />
+    <ClInclude Include="src\node\node_led.h" />
+    <ClInclude Include="src\node\node_motor.h" />
+    <ClInclude Include="src\node\node_pi.h" />
+    <ClInclude Include="src\node\node_servo.h" />
+    <ClInclude Include="src\node\topic_dist.h" />
+    <ClInclude Include="src\node\topic_encoder.h" />
+    <ClInclude Include="src\node\topic_led.h" />
+    <ClInclude Include="src\node\topic_motor.h" />
+    <ClInclude Include="src\node\topic_pi.h" />
+    <ClInclude Include="src\node\topic_servo.h" />
     <ClInclude Include="src\robot\robot.h" />
     <ClInclude Include="src\soft_move.h" />
     <ClInclude Include="__vm\.firmware.vsarduino.h" />
@@ -109,9 +112,9 @@
     <ValidateArchitecture>false</ValidateArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include</IncludePath>
-    <RemoteCCompileToolExe>$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</RemoteCCompileToolExe>
-    <RemoteCppCompileToolExe>$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</RemoteCppCompileToolExe>
+    <IncludePath>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include</IncludePath>
+    <RemoteCCompileToolExe>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</RemoteCCompileToolExe>
+    <RemoteCppCompileToolExe>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</RemoteCppCompileToolExe>
     <ValidateArchitecture>false</ValidateArchitecture>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -130,13 +133,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <GccToolChain>$(ProjectDir)..\..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</GccToolChain>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\libraries\Wire\src;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\libraries\Servo\src;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\arduino\avr\variants\mega;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\lib\gcc\avr\7.3.0\include-fixed;$(ProjectDir)..\..\..\..\..\program files (x86)\arduino\hardware\tools\avr\avr\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <GccToolChain>$(ProjectDir)..\..\..\..\..\Program Files (x86)\Arduino\hardware\tools\avr\bin\avr-g++</GccToolChain>
       <CppLanguageStandard>gnu++11</CppLanguageStandard>
       <CLanguageStandard>gnu11</CLanguageStandard>
       <CAdditionalWarning />
       <CppAdditionalWarning />
-      <ForcedIncludeFiles>$(ProjectDir)..\..\..\..\..\..\program files\microsoft visual studio\18\community\common7\ide\extensions\2bqx1gfn.tss\Micro Platforms\default\vm-intelli-pre.h;$(ProjectDir)..\..\..\..\AppData\Local\Temp\VMBuilds\maze\mega_atmega2560\Release\.vmintelli\b09740a8a14c4d2d91fc1d10ba06fe82\vm-intelli-gcc-defines.h;$(ProjectDir)..\..\..\..\..\..\program files\microsoft visual studio\18\community\common7\ide\extensions\2bqx1gfn.tss\Micro Platforms\default\vm-intelli-post.h;$(ProjectDir)__vm\.firmware.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(ProjectDir)..\..\..\..\..\program files\microsoft visual studio\18\community\common7\ide\extensions\2bqx1gfn.tss\Micro Platforms\default\vm-intelli-pre.h;$(ProjectDir)..\..\..\AppData\Local\Temp\VMBuilds\maze\mega_atmega2560\Release\.vmintelli\b09740a8a14c4d2d91fc1d10ba06fe82\vm-intelli-gcc-defines.h;$(ProjectDir)..\..\..\..\..\program files\microsoft visual studio\18\community\common7\ide\extensions\2bqx1gfn.tss\Micro Platforms\default\vm-intelli-post.h;$(ProjectDir)__vm\.maze.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <UndefineAllPreprocessorDefinitions>true</UndefineAllPreprocessorDefinitions>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>_VMICRO_INTELLISENSE;__AVR_atmega2560__;__AVR_ATmega2560__;F_CPU=16000000L;ARDUINO=108019;ARDUINO_AVR_MEGA2560;ARDUINO_ARCH_AVR;%(PreprocessorDefinitions)</PreprocessorDefinitions>

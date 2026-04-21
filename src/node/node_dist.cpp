@@ -1,7 +1,7 @@
-#include "../../../lib/GyverIO/GyverIO.h"
+#include "../../lib/GyverIO/GyverIO.h"
 #include "node_dist.h"
-#include "../../../lib/pt/pt.h"
-#include "../../../lib/AceSorting/AceSorting.h"
+#include "../../lib/pt/pt.h"
+#include "../../lib/AceSorting/AceSorting.h"
 
 #define MAX_VALID_RANGE 230
 
@@ -26,7 +26,6 @@ void node_dist_init(DistNode& ctx) {
 
     ctx.lox.startContinuous();
 }
-
 int node_dist_run(DistNode& ctx) {
     PT_BEGIN(&ctx.pt);
 
@@ -35,25 +34,20 @@ int node_dist_run(DistNode& ctx) {
 
         PT_WAIT_UNTIL(&ctx.pt, ctx.lox.readRangeNoBlocking(current_range));
 
-        if (current_range < MAX_VALID_RANGE && !ctx.lox.timeoutOccurred()) {
+        if (current_range < MAX_VALID_RANGE) {
             ctx.dist_arr_buff[ctx.dist_arr_idx] = current_range;
-
             if (++ctx.dist_arr_idx >= DIST_ARRAY_LEN) {
                 ctx.dist_arr_idx = 0;
             }
-            ctx.outOfRange = false;
-        }
-        else {
-            ctx.outOfRange = true;
-        }
 
-        if (!ctx.outOfRange) {
             uint16_t dist_arr_sort[DIST_ARRAY_LEN];
             memcpy(dist_arr_sort, ctx.dist_arr_buff, sizeof(dist_arr_sort));
-
             ace_sorting::shellSortKnuth(dist_arr_sort, DIST_ARRAY_LEN);
 
-            ctx.dist_out = dist_arr_sort[DIST_ARRAY_LEN / 2];
+            ctx.dist = dist_arr_sort[DIST_ARRAY_LEN / 2];
+        }
+        else {
+            ctx.dist.reset();
         }
 
         PT_YIELD(&ctx.pt);

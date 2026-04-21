@@ -1,7 +1,7 @@
-#include "../../robot/robot.h"
+#include "../robot/robot.h"
 
 #include <Arduino.h>
-#include "../../../lib/GyverIO/GyverIO.h"
+#include "../../lib/GyverIO/GyverIO.h"
 
 namespace robot {
 

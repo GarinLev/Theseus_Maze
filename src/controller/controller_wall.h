@@ -10,7 +10,7 @@ struct WallController {
 	struct pt pt_task;
 	uint32_t  last_time = 0;
 
-	uint16_t offset = 0;
+	Optional<uint16_t> offset = 0;
 
 	void init() {
 		wallNode.topic = &wallTopic;
@@ -18,6 +18,7 @@ struct WallController {
 		wallNode.Kp = 1;
 		wallNode.Ki = 0;
 		wallNode.dt = 25;
+		wallNode.setpoint = 0;
 
 		PT_INIT(&pt_task);
 	}
@@ -42,26 +43,27 @@ struct WallController {
 	int task_process() {
 		PT_BEGIN(&pt_task);
 
-		HERE:
+		for (;;)
 		{
 			PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - last_time) >= 25);
 			last_time = millis();
 
-			wallNode.setpoint = 0;
-			
-			uint16_t d1 = nodeWall.dist_out;
-			uint16_t d2 = nodeUp.dist_out;
-			uint16_t d1x = l1 + d1;
-			uint16_t d2x = l2 + COS45 * d2;
-			int16_t error = d1x - d2x;
+			if (nodeUp.dist.hasValue() && nodeWall.dist.hasValue()) {
+				uint16_t d1 = nodeWall.dist.getValue();
+				uint16_t d2 = nodeUp.dist.getValue();
+				uint16_t d1x = l1 + d1;
+				uint16_t d2x = l2 + COS45 * d2;
+				int16_t error = d1x - d2x;
 
-			wallTopic.value = error;
-			NOTIFY_TOPIC(&wallTopic);
+				wallTopic.value = error;
+				NOTIFY_TOPIC(&wallTopic);
 
-			offset = wallNode.value_out;
-			goto HERE;
+				offset = wallNode.value_out;
+			}
+			else {
+				offset.reset();
+			}
 		}
-
 		PT_END(&pt_task);
 	}
 

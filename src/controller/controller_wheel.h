@@ -4,9 +4,20 @@
 #include "../node/nodes.h"
 #include "../soft_move.h"
 
+#define WC_Radius 70 / 2.0f
+#define WC_TICKS_PER_REV 500.0f
+#define WC_MM_TO_TICKS(mm) ((mm) * WC_TICKS_PER_REV / (TWO_PI * WC_Radius))
+
 struct WheelController {
     struct pt pt_control;
     struct pt pt_task;
+
+    enum States {
+        STOP,
+        SET,
+        SOFT
+    };
+    States state = STOP;
 
     MotorNode       motorNode;
     MotorTopic      motorTopic;
@@ -14,6 +25,7 @@ struct WheelController {
     EncoderTopic    encoderTopic;
     PI_Node         speedNode;
     PI_Topic        speedTopic;
+    uint16_t        speed_offset = 0;
 
     SoftMove        profile;
     uint32_t        last_process_time = 0;
@@ -26,6 +38,18 @@ struct WheelController {
     uint32_t _accel_ticks;
     uint32_t _total_ticks;
     float    _start_pos;
+
+
+    void stop() {
+        state = STOP;
+        is_moving = false;
+    }
+
+    void setSpeed(float rpm) {
+        state = SET;
+        speedNode.setpoint = (int16_t)constrain(rpm, -max_rpm, max_rpm);
+        is_moving = true;
+    }
 
     void init(float tpr, float rpm, float min_rpm = 50.0f) {
         PT_INIT(&pt_control);
@@ -52,9 +76,11 @@ struct WheelController {
         _total_ticks = total_ticks;
         _start_pos = (float)encoderTopic.value;
 
+        state = SOFT;
         PT_INIT(&pt_task);
         is_moving = true;
     }
+
 
     void setPins(int m1, int m2, bool rev, int encA, int encB, void (*isr)()) {
         motorNode.pin_in1 = (uint8_t)m1;
@@ -75,29 +101,35 @@ struct WheelController {
         task_process();
     }
 
-    int timer = 0;
     int control_process() {
         PT_BEGIN(&pt_control);
         for (;;) {
             PT_WAIT_UNTIL(&pt_control, (uint32_t)(millis() - last_process_time) >= 25);
             last_process_time = millis();
 
-            if (is_moving) {
-                float target_rpm = SoftGet(&profile, (float)encoderTopic.value);
-                speedTopic.value = getCurrentRPM();
-                speedNode.setpoint = (int16_t)constrain(target_rpm, -max_rpm, max_rpm);
+            speedTopic.value = getCurrentRPM();
 
-                motorTopic.speed = (int)constrain(speedNode.value_out, -255, 255);
-                NOTIFY_TOPIC(&motorTopic);
-            }
-            else {
+            if (state == STOP) {
                 speedNode.setpoint = 0;
                 speedNode.value_out = 0;
                 speedNode.integral = 0;
-
                 motorTopic.speed = 0;
-                NOTIFY_TOPIC(&motorTopic);
             }
+            else if (state == SET) {
+                float target = speedNode.setpoint + speed_offset;
+                speedNode.setpoint = (int16_t)constrain(target, -max_rpm, max_rpm);
+
+                motorTopic.speed = (int)constrain(speedNode.value_out, -255, 255);
+            }
+            else if (state == SOFT) {
+                float profile_rpm = SoftGet(&profile, (float)encoderTopic.value);
+                float target = profile_rpm + speed_offset;
+
+                speedNode.setpoint = (int16_t)constrain(target, -max_rpm, max_rpm);
+                motorTopic.speed = (int)constrain(speedNode.value_out, -255, 255);
+            }
+
+            NOTIFY_TOPIC(&motorTopic);
         }
         PT_END(&pt_control);
     }
@@ -105,19 +137,16 @@ struct WheelController {
     int task_process() {
         PT_BEGIN(&pt_task);
 
-        setMove(_start_pos, _total_ticks, _accel_ticks, _target_v);
+        if (state == SOFT) {
+            setMove(_start_pos, _total_ticks, _accel_ticks, _target_v);
 
-        PT_WAIT_UNTIL(&pt_task, abs(encoderTopic.value - _start_pos) >= (_total_ticks - 10));
+            PT_WAIT_UNTIL(&pt_task, abs(encoderTopic.value - _start_pos) >= (_total_ticks - 10));
 
-        is_moving = false;
+            state = STOP;
 
-        speedNode.integral = 0;
-        speedNode.setpoint = 0;
-        motorTopic.speed = 0;
-        NOTIFY_TOPIC(&motorTopic);
-
-        digitalWrite(motorNode.pin_in1, HIGH);
-        digitalWrite(motorNode.pin_in1, HIGH);
+            digitalWrite(motorNode.pin_in1, HIGH);
+            digitalWrite(motorNode.pin_in2, HIGH);
+        }
 
         PT_END(&pt_task);
     }

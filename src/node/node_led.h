@@ -2,8 +2,8 @@
 
 #include "topic_led.h"
 
-#include "../../../lib/pt/pt.h"
-#include "../../macro.h"
+#include "../../lib/pt/pt.h"
+#include "../macro.h"
 
 struct LedNode {
     struct pt pt;

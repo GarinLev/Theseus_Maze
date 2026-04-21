@@ -2,11 +2,13 @@
 
 #include "../controller/controller_wheel.h"
 #include "../controller/controller_wall.h"
+#include "../controller/controller_wallManager.h"
 
 namespace robot {
+    extern WallManagerController wallManager;
+    extern WallController wallRight;
     extern WallController wallLeft;
-    // extern WallController wallRight;
-    
+
     extern WheelController wheelA1;
     extern WheelController wheelA2;
     extern WheelController wheelB1;

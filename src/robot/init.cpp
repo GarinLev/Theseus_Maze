@@ -1,8 +1,9 @@
 #include "robot.h"
 
 namespace robot {
+    WallManagerController wallManager;
+    WallController wallRight;
     WallController wallLeft;
-    //WallController wallRight;
 
     WheelController wheelA1;
     WheelController wheelA2;
@@ -29,7 +30,18 @@ namespace robot {
     }
 
     static void initWall() {
+        wallRight.init();
+        wallRight.setPins(&Wire, PIN_NONE, PIN_NONE, PIN_NONE, PIN_NONE);
 
+        wallLeft.init();
+        wallLeft.setPins(&Wire, PIN_NONE, PIN_NONE, PIN_NONE, PIN_NONE);
+
+        wallManager.wheelA1 = &wheelA1;
+        wallManager.wheelA2 = &wheelA2;
+        wallManager.wheelB1 = &wheelB1;
+        wallManager.wheelB2 = &wheelB2;
+        wallManager.sens_right = &wallRight;
+        wallManager.sens_left= &wallLeft;
     }
     
     void init() {

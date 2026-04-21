@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../../lib/pt/pt.h"
-#include "../../macro.h"
+#include "../../lib/pt/pt.h"
+#include "../macro.h"
 #include "topic_pi.h"
 
 struct PI_Node {

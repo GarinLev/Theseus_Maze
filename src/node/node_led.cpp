@@ -1,6 +1,6 @@
-#include "../../../lib/GyverIO/GyverIO.h"
+#include "../../lib/GyverIO/GyverIO.h"
 #include "node_led.h"
-#include "../../../lib/pt/pt.h"
+#include "../../lib/pt/pt.h"
 
 void node_led_init(LedNode &ctx) {
     PT_INIT(&ctx.pt);

@@ -1,8 +1,8 @@
 #pragma once
 
 
-#include "../../../lib/pt/pt.h"
-#include "../../macro.h"
+#include "../../lib/pt/pt.h"
+#include "../macro.h"
 
 #include "topic_encoder.h"
 

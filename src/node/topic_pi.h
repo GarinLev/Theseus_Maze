@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../macro.h"
+#include "../macro.h"
 
 struct PI_Topic {
     TOPIC_FIELDS;

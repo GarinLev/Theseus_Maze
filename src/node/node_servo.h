@@ -1,9 +1,9 @@
 #pragma once
 #include <Servo.h>
 #include "topic_servo.h"
-#include "../../../lib/pt/pt.h"
-#include "../../macro.h"
-#include "../../soft_move.h"
+#include "../../lib/pt/pt.h"
+#include "../macro.h"
+#include "../soft_move.h"
 
 struct ServoNode {
     struct pt pt;

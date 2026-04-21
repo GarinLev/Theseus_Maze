@@ -1,5 +1,5 @@
 #pragma once
-#include "../../macro.h"
+#include "../macro.h"
 
 struct ServoTopic {
     TOPIC_FIELDS;
