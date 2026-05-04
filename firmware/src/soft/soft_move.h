@@ -2,13 +2,13 @@
 #include <Arduino.h>
 
 struct SoftMove {
-    float x_start;
-    float L_total;
-    float y0, y1;
-    float d_acc;
+    float x_start = 0;
+    float L_total = 0;
+    float y0 = 0, y1 = 0;
+    float d_acc = 0;
 };
 
-inline float SoftGet(SoftMove* state, float current_x) {
+inline float SoftMoveGet(SoftMove* state, float current_x) {
     if (!state) return 0.0f;
 
     float x = abs(current_x - state->x_start);

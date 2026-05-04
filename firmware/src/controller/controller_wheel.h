@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "../../lib/pt/pt.h"
 #include "../node/nodes.h"
-#include "../soft_move.h"
+#include "../soft/soft_move.h"
 
 #define WC_Radius 70 / 2.0f
 #define WC_TICKS_PER_REV 500.0f
@@ -25,10 +25,12 @@ struct WheelController {
     EncoderTopic    encoderTopic;
     PI_Node         speedNode;
     PI_Topic        speedTopic;
-    uint16_t        speed_offset = 0;
+
+    int16_t         speed_offset = 0;
+    int16_t         base_rpm = 0;
 
     SoftMove        profile;
-    uint32_t        last_process_time = 0;
+    uint32_t        timer = 0;
     float           max_rpm = 140.0f;
     float           encoder_ticks_per_rev = 500.0f;
     float           min_start_rpm = 50.0f;
@@ -39,15 +41,15 @@ struct WheelController {
     uint32_t _total_ticks;
     float    _start_pos;
 
-
     void stop() {
         state = STOP;
         is_moving = false;
+        speed_offset = 0;
     }
 
-    void setSpeed(float rpm) {
+    void setSpeed(int16_t rpm) {
         state = SET;
-        speedNode.setpoint = (int16_t)constrain(rpm, -max_rpm, max_rpm);
+        base_rpm = rpm;
         is_moving = true;
     }
 
@@ -65,7 +67,7 @@ struct WheelController {
 
         speedNode.dt = 25;
         speedNode.Kp = 2.5;
-        speedNode.Ki = 0.8;
+        speedNode.Ki = 5;
 
         node_pi_init(speedNode);
     }
@@ -80,7 +82,6 @@ struct WheelController {
         PT_INIT(&pt_task);
         is_moving = true;
     }
-
 
     void setPins(int m1, int m2, bool rev, int encA, int encB, void (*isr)()) {
         motorNode.pin_in1 = (uint8_t)m1;
@@ -104,8 +105,8 @@ struct WheelController {
     int control_process() {
         PT_BEGIN(&pt_control);
         for (;;) {
-            PT_WAIT_UNTIL(&pt_control, (uint32_t)(millis() - last_process_time) >= 25);
-            last_process_time = millis();
+            PT_WAIT_UNTIL(&pt_control, (uint32_t)(millis() - timer) >= 25);
+            timer = millis();
 
             speedTopic.value = getCurrentRPM();
 
@@ -116,14 +117,13 @@ struct WheelController {
                 motorTopic.speed = 0;
             }
             else if (state == SET) {
-                float target = speedNode.setpoint + speed_offset;
+                float target = (float)base_rpm + (float)speed_offset;
                 speedNode.setpoint = (int16_t)constrain(target, -max_rpm, max_rpm);
-
                 motorTopic.speed = (int)constrain(speedNode.value_out, -255, 255);
             }
             else if (state == SOFT) {
-                float profile_rpm = SoftGet(&profile, (float)encoderTopic.value);
-                float target = profile_rpm + speed_offset;
+                float profile_rpm = SoftMoveGet(&profile, (float)encoderTopic.value);
+                float target = profile_rpm + (float)speed_offset;
 
                 speedNode.setpoint = (int16_t)constrain(target, -max_rpm, max_rpm);
                 motorTopic.speed = (int)constrain(speedNode.value_out, -255, 255);
@@ -140,7 +140,7 @@ struct WheelController {
         if (state == SOFT) {
             setMove(_start_pos, _total_ticks, _accel_ticks, _target_v);
 
-            PT_WAIT_UNTIL(&pt_task, abs(encoderTopic.value - _start_pos) >= (_total_ticks - 10));
+            PT_WAIT_UNTIL(&pt_task, abs(encoderTopic.value - _start_pos) >= (_total_ticks - 10) || state == STOP);
 
             state = STOP;
 
@@ -160,8 +160,10 @@ struct WheelController {
     }
 
     float getCurrentRPM() {
+        if (micros() - encoderNode.timer > 100000) return 0.0f;
         if (encoderTopic.period > 0) {
-            return (1000000.0f / (float)encoderTopic.period) / encoder_ticks_per_rev * 60.0f;
+            float abs_rpm = (1000000.0f / (float)encoderTopic.period) / encoder_ticks_per_rev * 60.0f;
+            return encoderTopic.reverse ? abs_rpm : -abs_rpm;
         }
         return 0.0f;
     }

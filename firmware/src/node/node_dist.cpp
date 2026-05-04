@@ -3,51 +3,55 @@
 #include "../../lib/pt/pt.h"
 #include "../../lib/AceSorting/AceSorting.h"
 
-#define MAX_VALID_RANGE 230
+#define MAX_VALID_RANGE 8000
 
 void node_dist_init(DistNode& ctx) {
     PT_INIT(&ctx.pt);
 
     gio::mode(ctx.pin_sht, OUTPUT);
-    gio::write(ctx.pin_sht, LOW);
-    delay(10);
+
+    node_dist_reset(ctx);
+}
+
+void node_dist_unreset(DistNode& ctx) {
     gio::write(ctx.pin_sht, HIGH);
     delay(10);
-
-    ctx.lox.setBus(ctx.wire);
-    if (!ctx.lox.init()) {
-        Serial.println(F("Failed to boot VL53L0X"));
-        for (;;);
-    }
-
-    ctx.lox.setAddress(ctx.addr);
-    ctx.lox.setTimeout(0);
-
-
-    ctx.lox.startContinuous();
 }
+
+void node_dist_reset(DistNode& ctx) {
+    gio::write(ctx.pin_sht, LOW);
+    delay(10);
+}
+
 int node_dist_run(DistNode& ctx) {
     PT_BEGIN(&ctx.pt);
 
     for (;;) {
-        uint16_t current_range;
+        PT_WAIT_UNTIL(&ctx.pt, (uint32_t)(millis() - ctx.last_read) >= 20);
+        ctx.last_read = millis();
 
-        PT_WAIT_UNTIL(&ctx.pt, ctx.lox.readRangeNoBlocking(current_range));
+        uint8_t status = ctx.lox.readReg(VL53L0X_mod::RESULT_INTERRUPT_STATUS);
+        if (status & 0x07) {
+            uint16_t range = ctx.lox.readReg16Bit(VL53L0X_mod::RESULT_RANGE_STATUS + 10);
+            ctx.lox.writeReg(VL53L0X_mod::SYSTEM_INTERRUPT_CLEAR, 0x01);
 
-        if (current_range < MAX_VALID_RANGE) {
-            ctx.dist_arr_buff[ctx.dist_arr_idx] = current_range;
-            if (++ctx.dist_arr_idx >= DIST_ARRAY_LEN) {
-                ctx.dist_arr_idx = 0;
+            if (range < MAX_VALID_RANGE) {
+
+                ctx.dist_arr_buff[ctx.dist_arr_idx] = range;
+                if (++ctx.dist_arr_idx >= DIST_ARRAY_LEN) {
+                    ctx.dist_arr_idx = 0;
+                }
+
+                uint16_t dist_arr_sort[DIST_ARRAY_LEN];
+                memcpy(dist_arr_sort, ctx.dist_arr_buff, sizeof(dist_arr_sort));
+                ace_sorting::insertionSort(dist_arr_sort, DIST_ARRAY_LEN);
+
+                ctx.dist = dist_arr_sort[DIST_ARRAY_LEN / 2];
+                ctx.dist_valid = true;
             }
-
-            uint16_t dist_arr_sort[DIST_ARRAY_LEN];
-            memcpy(dist_arr_sort, ctx.dist_arr_buff, sizeof(dist_arr_sort));
-            ace_sorting::shellSortKnuth(dist_arr_sort, DIST_ARRAY_LEN);
-
-            ctx.dist = dist_arr_sort[DIST_ARRAY_LEN / 2];
-        }
-        else {
-            ctx.dist.reset();
+            else {
+                ctx.dist_valid = false;
+            }
         }
 
         PT_YIELD(&ctx.pt);

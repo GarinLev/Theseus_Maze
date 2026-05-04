@@ -17,12 +17,6 @@
     <Filter Include="Source Files\node\encoder">
       <UniqueIdentifier>{0bd744fa-1b78-4895-8564-5ee7c97795d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\node\led">
-      <UniqueIdentifier>{e7b893aa-6333-4691-96cc-3e80a27af85f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\node\motor">
-      <UniqueIdentifier>{623bd7ef-d9d1-486e-94c9-58a5d283d08b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\node\pi">
       <UniqueIdentifier>{79272cb5-076f-4c31-b7e6-6d48e04fbd2a}</UniqueIdentifier>
     </Filter>
@@ -53,10 +47,28 @@
     <Filter Include="Library Files\MPU6050">
       <UniqueIdentifier>{9c04f8c7-81ec-450f-8256-e7334fb9363d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\node\motor">
+      <UniqueIdentifier>{623bd7ef-d9d1-486e-94c9-58a5d283d08b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\com">
+      <UniqueIdentifier>{f0e1d145-e0f5-4aa6-97fe-83781c0a6900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\soft">
+      <UniqueIdentifier>{2381d214-bd27-4f95-b317-5bc80e93cd7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\servo">
+      <UniqueIdentifier>{5a56ad2c-69a8-48cf-88d9-c7b02afa5079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\color">
+      <UniqueIdentifier>{33c05992-141a-4fd5-a419-0dde0452a645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\TCS34725">
+      <UniqueIdentifier>{5f472670-307c-4c70-a614-41eef3757a8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="maze.ino" />
-    <ClCompile Include="src\robot\loop.cpp">
+    <ClCompile Include="src\robot\state.cpp">
       <Filter>Source Files\robot</Filter>
     </ClCompile>
     <ClCompile Include="src\robot\init.cpp">
@@ -67,9 +79,6 @@
     </ClCompile>
     <ClCompile Include="src\node\node_motor.cpp">
       <Filter>Source Files\node\motor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\node\node_led.cpp">
-      <Filter>Source Files\node\led</Filter>
     </ClCompile>
     <ClCompile Include="src\node\isr_encoder.cpp">
       <Filter>Source Files\node\encoder</Filter>
@@ -101,6 +110,24 @@
     <ClCompile Include="src\node\node_angel.cpp">
       <Filter>Source Files\node\angel</Filter>
     </ClCompile>
+    <ClCompile Include="src\controller\controller_debug.cpp">
+      <Filter>Source Files\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_com.cpp">
+      <Filter>Source Files\node\com</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_servo.cpp">
+      <Filter>Source Files\node\servo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_color.cpp">
+      <Filter>Source Files\node\color</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TCS34725\Adafruit_TCS34725.cpp">
+      <Filter>Library Files\TCS34725</Filter>
+    </ClCompile>
+    <ClCompile Include="src\robot\handle.cpp">
+      <Filter>Source Files\robot</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.maze.vsarduino.h">
@@ -117,9 +144,6 @@
     </ClInclude>
     <ClInclude Include="src\robot\robot.h">
       <Filter>Source Files\robot</Filter>
-    </ClInclude>
-    <ClInclude Include="src\soft_move.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\pt\lc.h">
       <Filter>Library Files\pt</Filter>
@@ -185,12 +209,6 @@
     <ClInclude Include="src\node\topic_motor.h">
       <Filter>Source Files\node\motor</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\node_led.h">
-      <Filter>Source Files\node\led</Filter>
-    </ClInclude>
-    <ClInclude Include="src\node\topic_led.h">
-      <Filter>Source Files\node\led</Filter>
-    </ClInclude>
     <ClInclude Include="src\node\node_encoder.h">
       <Filter>Source Files\node\encoder</Filter>
     </ClInclude>
@@ -200,10 +218,7 @@
     <ClInclude Include="src\node\node_dist.h">
       <Filter>Source Files\node\dist</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\topic_dist.h">
-      <Filter>Source Files\node\dist</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller\controller_wallManager.h">
+    <ClInclude Include="src\controller\manager_wall.h">
       <Filter>Source Files\controller</Filter>
     </ClInclude>
     <ClInclude Include="lib\Optional\Optional.h">
@@ -231,6 +246,33 @@
       <Filter>Source Files\node\angel</Filter>
     </ClInclude>
     <ClInclude Include="src\controller\controller_rotate.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_debug.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_com.h">
+      <Filter>Source Files\node\com</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\protocol_defs.h">
+      <Filter>Source Files\node\com</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soft\soft_move.h">
+      <Filter>Source Files\soft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soft\soft_set.h">
+      <Filter>Source Files\soft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_servo.h">
+      <Filter>Source Files\node\servo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_color.h">
+      <Filter>Source Files\node\color</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TCS34725\Adafruit_TCS34725.h">
+      <Filter>Library Files\TCS34725</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\manager_wheel.h">
       <Filter>Source Files\controller</Filter>
     </ClInclude>
   </ItemGroup>

@@ -19,9 +19,9 @@ void MotorSet(int speed, int pinA, int pinB) {
 }
 
 void SetAll(int speed) {
-  MotorSet(speed, 4, 5);
+  MotorSet(-speed, 4, 5);
   MotorSet(speed, 6, 7);
-  MotorSet(speed, 8, 9);
+  MotorSet(-speed, 8, 9);
   MotorSet(speed, 10, 12);
 }
 
@@ -46,5 +46,5 @@ void loop() {
 //    flag = false;
 //
 
-  SetAll(100);
+  SetAll(255);
 }

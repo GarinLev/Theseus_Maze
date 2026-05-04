@@ -3,8 +3,6 @@
 #include "../../lib/pt/pt.h"
 #include "../../lib/AceSorting/AceSorting.h"
 
-#define MAX_VALID_RANGE 230
-
 void node_angel_init(AngelNode& ctx) {
     PT_INIT(&ctx.pt);
 
@@ -14,34 +12,40 @@ void node_angel_init(AngelNode& ctx) {
         for (;;);
     }
 
-    ctx.mpu.setXAccelOffset(0); ctx.mpu.setYAccelOffset(0); ctx.mpu.setZAccelOffset(0);
-    ctx.mpu.setXGyroOffset(0); ctx.mpu.setYGyroOffset(0); ctx.mpu.setZGyroOffset(0);
-
-    ctx.mpu.CalibrateAccel(6);
-    ctx.mpu.CalibrateGyro(6);
-    ctx.mpu.PrintActiveOffsets();
-
-    uint8_t devStatus = ctx.mpu.dmpInitialize();
-
-    if (devStatus == 0) {
-        ctx.mpu.setDMPEnabled(true);
+    if (!ctx.mpu.testConnection()) {
+        Serial.println(F("MPURepo -> MPU6050 error connection"));
+        for (;;);
     }
-    else {
-        Serial.print(F("DMP Initialization failed. Code: "));
+
+    const uint8_t devStatus = ctx.mpu.dmpInitialize();
+    if (devStatus != 0 && devStatus != 1) {
+        Serial.print(F("MPURepo -> DMP Initialization failed - code: "));
         Serial.println(devStatus);
         for (;;);
     }
+    
+    
+    ctx.mpu.setXAccelOffset(-2242);
+    ctx.mpu.setYAccelOffset(-3245);
+    ctx.mpu.setZAccelOffset(2878);
+    ctx.mpu.setXGyroOffset(-1127);
+    ctx.mpu.setYGyroOffset(-39);
+    ctx.mpu.setZGyroOffset(-11);
+
+
+    Serial.println(F("Enabling DMP..."));
+    ctx.mpu.setDMPEnabled(true);
+
+    ctx.mpu.resetFIFO();
+
+    ctx.mpu.getIntStatus();
+
+    Serial.println(F("MPURepo -> DMP Initialization successful"));
 }
 
 
-
 int node_angel_run(AngelNode& ctx) {
-    PT_BEGIN(&ctx.pt);
-
-    for (;;) {
-        PT_WAIT_UNTIL(&ctx.pt, (uint32_t)(millis() - ctx.last_time) >= (uint32_t)ctx.dt);
-        ctx.last_time = millis();
-
+    if (ctx.mpu.dmpGetCurrentFIFOPacket(ctx.fifoBuffer)) {
         Quaternion q;
         VectorFloat gravity;
 
@@ -49,8 +53,8 @@ int node_angel_run(AngelNode& ctx) {
         ctx.mpu.dmpGetGravity(&gravity, &q);
         ctx.mpu.dmpGetYawPitchRoll(ctx.ypr, &q, &gravity);
 
-        PT_YIELD(&ctx.pt);
+        ctx.ypr[0] = ctx.ypr[0] * 180 / PI;
+        ctx.ypr[1] = ctx.ypr[1] * 180 / PI;
+        ctx.ypr[2] = ctx.ypr[2] * 180 / PI;
     }
-
-    PT_END(&ctx.pt);
 }

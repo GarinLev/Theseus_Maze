@@ -9,13 +9,10 @@ struct AngelNode {
     struct pt pt;
 
     MPU6050 mpu;
-
-    uint32_t dt;
-    uint32_t last_time;
     
-    uint8_t fifoBuffer[45];
+    uint8_t fifoBuffer[45] = {};
 
-    float ypr[3];
+    float ypr[3] = {};
 };
 
 void node_angel_init(AngelNode&ctx);
