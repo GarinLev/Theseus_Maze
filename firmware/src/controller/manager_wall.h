@@ -23,7 +23,7 @@ struct WallManager {
         PT_INIT(&pt_task);
 
         centerNode.topic = &centerTopic;
-        centerNode.Kp = 0.05f;
+        centerNode.Kp = 0.1f;
         centerNode.Ki = 0.0f;
         centerNode.dt = 25;
         centerNode.setpoint = 0;
@@ -60,12 +60,8 @@ struct WallManager {
                     float angle_out = centerNode.value_out;
                     
 
-
                     sens_left->wallNode.setpoint = angle_out;
                     sens_right->wallNode.setpoint = -angle_out;
-
-                    Serial.print("center-ok"); Serial.print("\t");
-                    Serial.print(angle_out); Serial.print("\t");
                 }
                 else {
                     centerNode.integral = 0;
@@ -74,35 +70,29 @@ struct WallManager {
                 }
 
                 int16_t target_correction = 0;
-
+                  
                 if (left_ok && right_ok) {
-                    target_correction = -sens_right->correction;
-
-                    Serial.print("rl-ok"); Serial.print("\t");
-                    Serial.print(sens_right->correction); Serial.print("\t");
-                    Serial.print(sens_right->correction);
+                    if (abs(sens_left->correction) < abs(sens_right->correction)) {
+                        target_correction = sens_left->correction;
+                    }
+                    else {
+                        target_correction = sens_right->correction;
+                    }
                 }
                 else if (right_ok) {
-                    Serial.print("r-ok"); Serial.print("\t");
-                    Serial.print(sens_right->correction); Serial.print("\t");
-
-                    target_correction = -sens_right->correction;
+                    target_correction = sens_right->correction;
                 }
                 else if (left_ok) {
-                    Serial.print("l-ok"); Serial.print("\t");
-                    Serial.print(sens_left->correction); Serial.print("\t");
-
                     target_correction = sens_left->correction;
                 }
 
-                Serial.print('\n');
 
 
 
-                wheelA1->speed_offset = -target_correction;
-                wheelA2->speed_offset = -target_correction;
-                wheelB1->speed_offset = target_correction;
-                wheelB2->speed_offset = target_correction;
+                wheelA1->speed_offset = target_correction;
+                wheelA2->speed_offset = target_correction;
+                wheelB1->speed_offset = -target_correction;
+                wheelB2->speed_offset = -target_correction;
             }
 
             else {

@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM" />
+    <Platform Name="ARM64" />
+  </Configurations>
+  <Project Path="maze.vcxproj" Id="228af307-09fc-441c-9bc8-803692b42bbb">
+    <Deploy />
+  </Project>
+</Solution>

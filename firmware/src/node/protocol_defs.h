@@ -1,33 +1,28 @@
 #pragma once
 #include <Arduino.h>
 
-const uint8_t PROTOCOL_START_BYTE = 0xAB;
-const uint8_t MAX_PACKET_SIZE = 20;
+#define PD_COMMAND_LEN 3
 
-const uint8_t PROTOCOL_RESP_START_BITS = 0x0A;
-const uint8_t PROTOCOL_SHIFT = 4;
-const uint8_t PROTOCOL_MASK = 0x0F;
+#define PD_START 0b10101011
 
-enum Command : uint8_t {
-    CMD_PING = 0b0001,
-    CMD_MOVE = 0b0010,
-    CMD_SEND_SENSORS = 0b0011,
-    CMD_SET_KIT = 0b0100,
-    CMD_COLOR_NOTIFY = 0b0101,
-    CMD_STATUS_REQ = 0b0110,
-    CMD_TASK_DONE = 0b0111
-};
+#define PD_COMMAND_PING 0b0001
+#define PD_COMMAND_STEP    0b0010
+#define PD_COMMAND_STEP_UP  0b0001
+#define PD_COMMAND_STEP_DOWN  0b0010
+#define PD_COMMAND_STEP_LEFT  0b0100
+#define PD_COMMAND_STEP_RIGHT  0b1000
+#define PD_COMMAND_PACK    0b0011
+#define PD_COMMAND_PACK_L1 0b0001
+#define PD_COMMAND_PACK_R1 0b0010
+#define PD_COMMAND_PACK_L2 0b0100
+#define PD_COMMAND_PACK_R2 0b1000
 
-enum Response : uint8_t {
-    RESP_PONG = 0b1111,
-    RESP_OK = 0b1001,
-    RESP_SENSORS = 0b1010,
-    RESP_STATE = 0b1011,
-    RESP_ERR_STRUCT = 0b1110,
-    RESP_ERR_CRC = 0b1101
-};
+#define PD_RESPONSE_PING		0b11111111
+#define PD_RESPONSE_OK			0b10000001
+#define PD_RESPONSE_SENS		0b10000010
+#define PD_RESPONSE_ERR_COMMAND	0b11000001
+#define PD_RESPONSE_ERR_CRC8	0b11000010
 
-struct __attribute__((__packed__)) SensorsPayload {
-    uint16_t dist[6];
-    uint8_t color;
-};
+#define PD_USE_START 0b1000001
+#define PD_USE_BTN_S 0b1000010	
+#define PD_USE_BTN_E 0b1000100

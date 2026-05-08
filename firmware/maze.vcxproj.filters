@@ -8,9 +8,6 @@
     <Filter Include="Library Files">
       <UniqueIdentifier>{e2d35157-47dc-4a21-b8e1-788983c17a65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\controller">
-      <UniqueIdentifier>{cdfe155f-7c74-427a-b9bd-b3eafcabb21b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\node">
       <UniqueIdentifier>{c2d79c5a-1d2d-4b5c-9789-893fef63f03f}</UniqueIdentifier>
     </Filter>
@@ -53,9 +50,6 @@
     <Filter Include="Source Files\node\com">
       <UniqueIdentifier>{f0e1d145-e0f5-4aa6-97fe-83781c0a6900}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\soft">
-      <UniqueIdentifier>{2381d214-bd27-4f95-b317-5bc80e93cd7f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\node\servo">
       <UniqueIdentifier>{5a56ad2c-69a8-48cf-88d9-c7b02afa5079}</UniqueIdentifier>
     </Filter>
@@ -65,13 +59,40 @@
     <Filter Include="Library Files\TCS34725">
       <UniqueIdentifier>{5f472670-307c-4c70-a614-41eef3757a8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\node\light">
+      <UniqueIdentifier>{bf26b0d5-1267-4db7-8f1f-c590b0bc372e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\soft">
+      <UniqueIdentifier>{2381d214-bd27-4f95-b317-5bc80e93cd7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller">
+      <UniqueIdentifier>{cdfe155f-7c74-427a-b9bd-b3eafcabb21b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\debug">
+      <UniqueIdentifier>{7582eadc-96a6-43d0-998e-a0b715866496}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\rotate">
+      <UniqueIdentifier>{63fd28ca-c4d8-41e5-819c-6715eae6ad62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\servo">
+      <UniqueIdentifier>{947e9e07-82da-41d7-8b6b-4ca043f0bacb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\manager">
+      <UniqueIdentifier>{4c760d04-aeb3-432c-a7f4-1cfe873f7c58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\wall">
+      <UniqueIdentifier>{30993734-bb20-4405-9c41-d4181695151e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\wheel">
+      <UniqueIdentifier>{8a1a4def-6580-4398-9e68-153cdbc3ffa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\com">
+      <UniqueIdentifier>{ccfcc79b-3fc8-44f2-8bc9-efa64e621efe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="maze.ino" />
-    <ClCompile Include="src\robot\state.cpp">
-      <Filter>Source Files\robot</Filter>
-    </ClCompile>
-    <ClCompile Include="src\robot\init.cpp">
+    <ClCompile Include="src\robot\robot.cpp">
       <Filter>Source Files\robot</Filter>
     </ClCompile>
     <ClCompile Include="lib\VL53L0X\VL53L0X_mod.cpp">
@@ -110,9 +131,6 @@
     <ClCompile Include="src\node\node_angel.cpp">
       <Filter>Source Files\node\angel</Filter>
     </ClCompile>
-    <ClCompile Include="src\controller\controller_debug.cpp">
-      <Filter>Source Files\controller</Filter>
-    </ClCompile>
     <ClCompile Include="src\node\node_com.cpp">
       <Filter>Source Files\node\com</Filter>
     </ClCompile>
@@ -125,8 +143,26 @@
     <ClCompile Include="lib\TCS34725\Adafruit_TCS34725.cpp">
       <Filter>Library Files\TCS34725</Filter>
     </ClCompile>
-    <ClCompile Include="src\robot\handle.cpp">
-      <Filter>Source Files\robot</Filter>
+    <ClCompile Include="src\node\node_light.cpp">
+      <Filter>Source Files\node\light</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_debug.cpp">
+      <Filter>Source Files\controller\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_servo.cpp">
+      <Filter>Source Files\controller\servo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_wall.cpp">
+      <Filter>Source Files\controller\wall</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\manager_wheel.cpp">
+      <Filter>Source Files\controller\wheel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_com.cpp">
+      <Filter>Source Files\controller\com</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_rotate.cpp">
+      <Filter>Source Files\controller\rotate</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -135,9 +171,6 @@
     </ClInclude>
     <ClInclude Include="src\macro.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller\controller_wheel.h">
-      <Filter>Source Files\controller</Filter>
     </ClInclude>
     <ClInclude Include="src\node\nodes.h">
       <Filter>Source Files\node</Filter>
@@ -194,9 +227,6 @@
       <Filter>Library Files\VL53L0X</Filter>
     </ClInclude>
     <ClInclude Include="__vm\.firmware.vsarduino.h" />
-    <ClInclude Include="src\controller\controller_wall.h">
-      <Filter>Source Files\controller</Filter>
-    </ClInclude>
     <ClInclude Include="src\node\node_pi.h">
       <Filter>Source Files\node\pi</Filter>
     </ClInclude>
@@ -217,9 +247,6 @@
     </ClInclude>
     <ClInclude Include="src\node\node_dist.h">
       <Filter>Source Files\node\dist</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller\manager_wall.h">
-      <Filter>Source Files\controller</Filter>
     </ClInclude>
     <ClInclude Include="lib\Optional\Optional.h">
       <Filter>Library Files\Optional</Filter>
@@ -245,12 +272,6 @@
     <ClInclude Include="src\node\node_angel.h">
       <Filter>Source Files\node\angel</Filter>
     </ClInclude>
-    <ClInclude Include="src\controller\controller_rotate.h">
-      <Filter>Source Files\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller\controller_debug.h">
-      <Filter>Source Files\controller</Filter>
-    </ClInclude>
     <ClInclude Include="src\node\node_com.h">
       <Filter>Source Files\node\com</Filter>
     </ClInclude>
@@ -272,8 +293,32 @@
     <ClInclude Include="lib\TCS34725\Adafruit_TCS34725.h">
       <Filter>Library Files\TCS34725</Filter>
     </ClInclude>
+    <ClInclude Include="src\node\node_light.h">
+      <Filter>Source Files\node\light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_debug.h">
+      <Filter>Source Files\controller\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_rotate.h">
+      <Filter>Source Files\controller\rotate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_servo.h">
+      <Filter>Source Files\controller\servo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\manager_wall.h">
+      <Filter>Source Files\manager</Filter>
+    </ClInclude>
     <ClInclude Include="src\controller\manager_wheel.h">
-      <Filter>Source Files\controller</Filter>
+      <Filter>Source Files\manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_wall.h">
+      <Filter>Source Files\controller\wall</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_wheel.h">
+      <Filter>Source Files\controller\wheel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_com.h">
+      <Filter>Source Files\controller\com</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

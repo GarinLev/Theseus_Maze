@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Library Files">
+      <UniqueIdentifier>{e2d35157-47dc-4a21-b8e1-788983c17a65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller">
+      <UniqueIdentifier>{cdfe155f-7c74-427a-b9bd-b3eafcabb21b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node">
+      <UniqueIdentifier>{c2d79c5a-1d2d-4b5c-9789-893fef63f03f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\encoder">
+      <UniqueIdentifier>{0bd744fa-1b78-4895-8564-5ee7c97795d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\pi">
+      <UniqueIdentifier>{79272cb5-076f-4c31-b7e6-6d48e04fbd2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\robot">
+      <UniqueIdentifier>{7a7314d5-0db7-483b-b630-6e8ef2c1510f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\dist">
+      <UniqueIdentifier>{43285255-a34a-4416-9094-a9767cea31fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\pt">
+      <UniqueIdentifier>{760e6a6b-3a15-4639-90fa-5a7f4fc62445}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\gio">
+      <UniqueIdentifier>{f4cac3ff-ad53-48fe-af7e-228422da2a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\AceSorting">
+      <UniqueIdentifier>{918f23e9-d7f8-458e-8f61-e95b6ea7f8d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\VL53L0X">
+      <UniqueIdentifier>{2701567b-076d-463d-a931-76ed4a21ca22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\Optional">
+      <UniqueIdentifier>{106d28e5-734b-4f2a-b43e-4b32a5615f7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\angel">
+      <UniqueIdentifier>{764f8efc-f52b-4c89-bff7-6ad315796e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\MPU6050">
+      <UniqueIdentifier>{9c04f8c7-81ec-450f-8256-e7334fb9363d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\motor">
+      <UniqueIdentifier>{623bd7ef-d9d1-486e-94c9-58a5d283d08b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\com">
+      <UniqueIdentifier>{f0e1d145-e0f5-4aa6-97fe-83781c0a6900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\soft">
+      <UniqueIdentifier>{2381d214-bd27-4f95-b317-5bc80e93cd7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\servo">
+      <UniqueIdentifier>{5a56ad2c-69a8-48cf-88d9-c7b02afa5079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\color">
+      <UniqueIdentifier>{33c05992-141a-4fd5-a419-0dde0452a645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\TCS34725">
+      <UniqueIdentifier>{5f472670-307c-4c70-a614-41eef3757a8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\light">
+      <UniqueIdentifier>{bf26b0d5-1267-4db7-8f1f-c590b0bc372e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="maze.ino" />
+    <ClCompile Include="src\robot\state.cpp">
+      <Filter>Source Files\robot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\robot\init.cpp">
+      <Filter>Source Files\robot</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\VL53L0X\VL53L0X_mod.cpp">
+      <Filter>Library Files\VL53L0X</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_motor.cpp">
+      <Filter>Source Files\node\motor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\isr_encoder.cpp">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_encoder.cpp">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_dist.cpp">
+      <Filter>Source Files\node\dist</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_pi.cpp">
+      <Filter>Source Files\node\pi</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\I2Cdev.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050_6Axis_MotionApps20.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050_6Axis_MotionApps612.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\MPU6050\MPU6050_9Axis_MotionApps41.cpp">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_angel.cpp">
+      <Filter>Source Files\node\angel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_debug.cpp">
+      <Filter>Source Files\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_com.cpp">
+      <Filter>Source Files\node\com</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_servo.cpp">
+      <Filter>Source Files\node\servo</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_color.cpp">
+      <Filter>Source Files\node\color</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\TCS34725\Adafruit_TCS34725.cpp">
+      <Filter>Library Files\TCS34725</Filter>
+    </ClCompile>
+    <ClCompile Include="src\robot\handle.cpp">
+      <Filter>Source Files\robot</Filter>
+    </ClCompile>
+    <ClCompile Include="src\node\node_light.cpp">
+      <Filter>Source Files\node\light</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="__vm\.maze.vsarduino.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\macro.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_wheel.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\nodes.h">
+      <Filter>Source Files\node</Filter>
+    </ClInclude>
+    <ClInclude Include="src\robot\robot.h">
+      <Filter>Source Files\robot</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc-addrlabels.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\lc-switch.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt-sem.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\pt\pt-timer.h">
+      <Filter>Library Files\pt</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\GyverIO\GyverIO.h">
+      <Filter>Library Files\gio</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\bubbleSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\combSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\insertionSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\quickSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\selectionSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\shellSort.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\ace_sorting\swap.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\AceSorting\AceSorting.h">
+      <Filter>Library Files\AceSorting</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\VL53L0X\VL53L0X_mod.h">
+      <Filter>Library Files\VL53L0X</Filter>
+    </ClInclude>
+    <ClInclude Include="__vm\.firmware.vsarduino.h" />
+    <ClInclude Include="src\controller\controller_wall.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_pi.h">
+      <Filter>Source Files\node\pi</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\topic_pi.h">
+      <Filter>Source Files\node\pi</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_motor.h">
+      <Filter>Source Files\node\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\topic_motor.h">
+      <Filter>Source Files\node\motor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_encoder.h">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\topic_encoder.h">
+      <Filter>Source Files\node\encoder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_dist.h">
+      <Filter>Source Files\node\dist</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\manager_wall.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\Optional\Optional.h">
+      <Filter>Library Files\Optional</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\helper_3dmath.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\I2Cdev.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050_6Axis_MotionApps20.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050_6Axis_MotionApps612.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\MPU6050\MPU6050_9Axis_MotionApps41.h">
+      <Filter>Library Files\MPU6050</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_angel.h">
+      <Filter>Source Files\node\angel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_rotate.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_debug.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_com.h">
+      <Filter>Source Files\node\com</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\protocol_defs.h">
+      <Filter>Source Files\node\com</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soft\soft_move.h">
+      <Filter>Source Files\soft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\soft\soft_set.h">
+      <Filter>Source Files\soft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_servo.h">
+      <Filter>Source Files\node\servo</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_color.h">
+      <Filter>Source Files\node\color</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\TCS34725\Adafruit_TCS34725.h">
+      <Filter>Library Files\TCS34725</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\manager_wheel.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_hit.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\node\node_light.h">
+      <Filter>Source Files\node\light</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_servo.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_com.h">
+      <Filter>Source Files\controller</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

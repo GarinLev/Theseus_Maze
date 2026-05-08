@@ -33,14 +33,11 @@ void node_angel_init(AngelNode& ctx) {
     ctx.mpu.setZGyroOffset(-11);
 
 
-    Serial.println(F("Enabling DMP..."));
     ctx.mpu.setDMPEnabled(true);
 
     ctx.mpu.resetFIFO();
 
     ctx.mpu.getIntStatus();
-
-    Serial.println(F("MPURepo -> DMP Initialization successful"));
 }
 
 
@@ -54,7 +51,7 @@ int node_angel_run(AngelNode& ctx) {
         ctx.mpu.dmpGetYawPitchRoll(ctx.ypr, &q, &gravity);
 
         ctx.ypr[0] = ctx.ypr[0] * 180 / PI;
-        ctx.ypr[1] = ctx.ypr[1] * 180 / PI;
+        ctx.ypr[1] = - ctx.ypr[1] * 180 / PI;
         ctx.ypr[2] = ctx.ypr[2] * 180 / PI;
     }
 }

@@ -18,7 +18,7 @@ int DebugController::update()
 
     for (;;) {
         timer = millis();
-        PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - timer) >= 25);
+        PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - timer) >= 250);
 
         print();
     }

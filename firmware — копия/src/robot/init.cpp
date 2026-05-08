@@ -1,17 +1,22 @@
 #include "robot.h"
 
 namespace robot {
-    pt task;
-    StateRobot stateRobot;
+    struct pt thread;
+    StateRobot state = StateRobot_WAIT;
     StateFunc stateTable[] = {
             &robot::handleWait,
             &robot::handleMove,
-            &robot::handleRotate
+            &robot::handleRotate,
+            &robot::handleVictim
     };
+    TaskRobot task = TaskRobot_WAIT;
+
+    // ComController comController;
 
     WallManager wallManager;
     WallController wallRight;
     WallController wallLeft;
+    HitController hitController;
 
     WheelManager wheelManager;
     WheelController wheelA1;
@@ -22,6 +27,7 @@ namespace robot {
     DebugController debug;
     AngelNode mpu;
     RotateController rotateManager;
+    ServoController servoController;
 
     static void initWheel() {
         wheelA1.init(500.0f, 140.0f);
@@ -43,13 +49,8 @@ namespace robot {
     }
 
     static void initWall() {
-        pinMode(37, OUTPUT);
-        pinMode(36, OUTPUT);
-        pinMode(33, OUTPUT);
-        pinMode(34, OUTPUT);
-
-        wallRight.setPins(&Wire, 0x30, 0x31, 37, 36);
-        wallLeft.setPins(&Wire, 0x32, 0x33, 33, 34);
+        wallRight.setPins(&Wire, 0x30, 0x31, 0x32, 37, 36, 32);
+        wallLeft.setPins(&Wire, 0x33, 0x34, 0x35, 33, 34, 35);
 
         wallRight.reset();
         wallLeft.reset();
@@ -70,7 +71,7 @@ namespace robot {
         wallManager.init();
     }
 
-    void initRotate() {
+    static void initRotate() {
         rotateManager.init();
 
         rotateManager.wheelA1 = &wheelA1;
@@ -79,15 +80,34 @@ namespace robot {
         rotateManager.wheelB2 = &wheelB2;
     }
 
+    static void initHit() {
+        hitController.pinA = 40;
+        hitController.pinB = 41;
+        hitController.wheelManager = &wheelManager;
+        hitController.sens = &wallRight.nodeExtra;
+
+        hitController.init();
+    }
+
+    static void initServo() {
+        servoController.pin = 44;
+        servoController.init();
+    }
+
+
     void init() {
         Serial.begin(115200);
         Wire.begin();
-        // Wire.setClock(400000);
+        Wire.setClock(400000);
 
         initWheel();
         initWall();
         initRotate();
+        initHit();
+        initServo();
 
-        PT_INIT(&task);
+        PT_INIT(&thread);
     }
 }
+
+ 
