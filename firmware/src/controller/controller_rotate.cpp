@@ -1,5 +1,5 @@
 #include "controller_rotate.h"
-#include "controller_wheel.h" // ТЕПЕРЬ МОЖНО ПОЛЬЗОВАТЬСЯ ПОЛЯМИ КОЛЕС
+#include "controller_wheel.h"
 #include <Arduino.h>
 
 void RotateController::init() {
@@ -51,14 +51,26 @@ void RotateController::stopWheels() {
     wheelB1->stop(); wheelB2->stop();
 }
 
-void RotateController::run(float total_angel, float target_v) {
+
+void RotateController::run(float total_angle, float target_v) {
     PT_INIT(&pt_task);
+
+
+    if (total_angle == 0) {
+        is_active = false;
+        return;
+    }
+
     start_yaw = angel.ypr[0];
-    target_total_angle = total_angel;
+    target_total_angle = total_angle;
+
+    float abs_angle = fabsf((float)total_angle);
+
     profile.x_start = 0;
-    profile.L_total = fabsf(total_angel);
-    profile.d_acc = fabsf(total_angel) * 0.4f;
+    profile.L_total = abs_angle;
+    profile.d_acc = abs_angle * 0.4f;
     profile.y0 = min_start_rpm;
     profile.y1 = target_v;
+
     is_active = true;
 }

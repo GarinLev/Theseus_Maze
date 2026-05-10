@@ -3,7 +3,7 @@
 #include "../node/node_angel.h"
 #include "../soft/soft_move.h"
 
-struct WheelController; // Forward declaration
+struct WheelController;
 
 struct RotateController {
     struct pt pt_task;
@@ -11,6 +11,7 @@ struct RotateController {
     SoftMove profile;
 
     WheelController* wheelA1, * wheelA2, * wheelB1, * wheelB2;
+    
 
     float start_yaw = 0;
     float target_total_angle = 0;
@@ -23,6 +24,5 @@ struct RotateController {
     int update();
     void applySpeed(float speed);
     void stopWheels();
-    void run(float total_angel, float target_v);
-    bool isMoving();
+    void run(float total_angle, float target_v);
 };

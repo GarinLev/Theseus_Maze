@@ -6,8 +6,8 @@
 struct ComController {
     struct pt pt_task;
     ComNode node;
-    uint16_t last_seq;
 
     void init();
     int update(robot::TaskRobot* task);
+    void ComController::sentData(uint16_t walls[4], bool black, bool graw, uint8_t step_count);
 };

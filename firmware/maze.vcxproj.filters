@@ -20,9 +20,6 @@
     <Filter Include="Source Files\robot">
       <UniqueIdentifier>{7a7314d5-0db7-483b-b630-6e8ef2c1510f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\node\dist">
-      <UniqueIdentifier>{43285255-a34a-4416-9094-a9767cea31fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Library Files\pt">
       <UniqueIdentifier>{760e6a6b-3a15-4639-90fa-5a7f4fc62445}</UniqueIdentifier>
     </Filter>
@@ -50,17 +47,11 @@
     <Filter Include="Source Files\node\com">
       <UniqueIdentifier>{f0e1d145-e0f5-4aa6-97fe-83781c0a6900}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\node\servo">
-      <UniqueIdentifier>{5a56ad2c-69a8-48cf-88d9-c7b02afa5079}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\node\color">
       <UniqueIdentifier>{33c05992-141a-4fd5-a419-0dde0452a645}</UniqueIdentifier>
     </Filter>
     <Filter Include="Library Files\TCS34725">
       <UniqueIdentifier>{5f472670-307c-4c70-a614-41eef3757a8e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\node\light">
-      <UniqueIdentifier>{bf26b0d5-1267-4db7-8f1f-c590b0bc372e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\soft">
       <UniqueIdentifier>{2381d214-bd27-4f95-b317-5bc80e93cd7f}</UniqueIdentifier>
@@ -77,9 +68,6 @@
     <Filter Include="Source Files\controller\servo">
       <UniqueIdentifier>{947e9e07-82da-41d7-8b6b-4ca043f0bacb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\manager">
-      <UniqueIdentifier>{4c760d04-aeb3-432c-a7f4-1cfe873f7c58}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\controller\wall">
       <UniqueIdentifier>{30993734-bb20-4405-9c41-d4181695151e}</UniqueIdentifier>
     </Filter>
@@ -88,6 +76,21 @@
     </Filter>
     <Filter Include="Source Files\controller\com">
       <UniqueIdentifier>{ccfcc79b-3fc8-44f2-8bc9-efa64e621efe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\EncButton">
+      <UniqueIdentifier>{53cfd24e-24f3-4578-8fbc-763664076499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\node\dist">
+      <UniqueIdentifier>{43285255-a34a-4416-9094-a9767cea31fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\manager">
+      <UniqueIdentifier>{4c760d04-aeb3-432c-a7f4-1cfe873f7c58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\light">
+      <UniqueIdentifier>{b115d6b5-6b9a-410d-908d-e3b222a23596}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library Files\microLED">
+      <UniqueIdentifier>{236d4523-b6e9-40be-b760-e5f24cafb282}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -134,17 +137,11 @@
     <ClCompile Include="src\node\node_com.cpp">
       <Filter>Source Files\node\com</Filter>
     </ClCompile>
-    <ClCompile Include="src\node\node_servo.cpp">
-      <Filter>Source Files\node\servo</Filter>
-    </ClCompile>
     <ClCompile Include="src\node\node_color.cpp">
       <Filter>Source Files\node\color</Filter>
     </ClCompile>
     <ClCompile Include="lib\TCS34725\Adafruit_TCS34725.cpp">
       <Filter>Library Files\TCS34725</Filter>
-    </ClCompile>
-    <ClCompile Include="src\node\node_light.cpp">
-      <Filter>Source Files\node\light</Filter>
     </ClCompile>
     <ClCompile Include="src\controller\controller_debug.cpp">
       <Filter>Source Files\controller\debug</Filter>
@@ -155,7 +152,7 @@
     <ClCompile Include="src\controller\controller_wall.cpp">
       <Filter>Source Files\controller\wall</Filter>
     </ClCompile>
-    <ClCompile Include="src\controller\manager_wheel.cpp">
+    <ClCompile Include="src\controller\controller_wheel.cpp">
       <Filter>Source Files\controller\wheel</Filter>
     </ClCompile>
     <ClCompile Include="src\controller\controller_com.cpp">
@@ -163,6 +160,24 @@
     </ClCompile>
     <ClCompile Include="src\controller\controller_rotate.cpp">
       <Filter>Source Files\controller\rotate</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\EncButton\core\io.cpp">
+      <Filter>Library Files\EncButton</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\EncButton\core\self.cpp">
+      <Filter>Library Files\EncButton</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controller\controller_light.cpp">
+      <Filter>Source Files\controller\light</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\microLED\color_utility.cpp">
+      <Filter>Library Files\microLED</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\microLED\FastLEDsupport.cpp">
+      <Filter>Library Files\microLED</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\microLED\microLED.cpp">
+      <Filter>Library Files\microLED</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -275,26 +290,17 @@
     <ClInclude Include="src\node\node_com.h">
       <Filter>Source Files\node\com</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\protocol_defs.h">
-      <Filter>Source Files\node\com</Filter>
-    </ClInclude>
     <ClInclude Include="src\soft\soft_move.h">
       <Filter>Source Files\soft</Filter>
     </ClInclude>
     <ClInclude Include="src\soft\soft_set.h">
       <Filter>Source Files\soft</Filter>
     </ClInclude>
-    <ClInclude Include="src\node\node_servo.h">
-      <Filter>Source Files\node\servo</Filter>
-    </ClInclude>
     <ClInclude Include="src\node\node_color.h">
       <Filter>Source Files\node\color</Filter>
     </ClInclude>
     <ClInclude Include="lib\TCS34725\Adafruit_TCS34725.h">
       <Filter>Library Files\TCS34725</Filter>
-    </ClInclude>
-    <ClInclude Include="src\node\node_light.h">
-      <Filter>Source Files\node\light</Filter>
     </ClInclude>
     <ClInclude Include="src\controller\controller_debug.h">
       <Filter>Source Files\controller\debug</Filter>
@@ -320,5 +326,57 @@
     <ClInclude Include="src\controller\controller_com.h">
       <Filter>Source Files\controller\com</Filter>
     </ClInclude>
+    <ClInclude Include="lib\EncButton\EncButton.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\Button.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\EncButton.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\Encoder.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\flags.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\io.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\MultiButton.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\self.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\VirtButton.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\VirtEncButton.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\EncButton\core\VirtEncoder.h">
+      <Filter>Library Files\EncButton</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controller\controller_light.h">
+      <Filter>Source Files\controller\light</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\microLED\color_utility.h">
+      <Filter>Library Files\microLED</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\microLED\FastLEDsupport.h">
+      <Filter>Library Files\microLED</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\microLED\microLED.h">
+      <Filter>Library Files\microLED</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\microLED\tinyLED.h">
+      <Filter>Library Files\microLED</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\microLED\types.h">
+      <Filter>Library Files\microLED</Filter>
+    </ClInclude>
+    <ClInclude Include="__vm\.firmware — копия.vsarduino.h" />
   </ItemGroup>
 </Project>
