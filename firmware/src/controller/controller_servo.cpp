@@ -1,23 +1,46 @@
-#pragma once
-#include "../../lib/pt/pt.h"
-#include "../soft/soft_set.h"
-#include <Servo.h>
+#include "controller_servo.h"
 
-#define ServoController_Right 0
-#define ServoController_Left 140
-#define ServoController_CloseStart 70
+void ServoController::init() {
+    PT_INIT(&pt_task);
 
-struct ServoController {
-    struct pt pt_task;
-    Servo servo;
-    uint16_t pin;
-    SoftSet soft;
-    uint32_t timer = 0;
-    uint32_t start_time;
-    float position = ServoController_CloseStart;
-    bool is_active = false;
+    soft.x0 = 0;
+    soft.x1 = 0;
+    soft.y0 = 0;
+    soft.y1 = 0;
 
-    void init();
-    void set(float _pos);
-    int update();
-};
+    servo.attach(pin);
+    servo.write(ServoController_CloseStart);
+    set(ServoController_CloseStart);
+}
+
+void ServoController::set(float _pos) {
+    start_time = millis();
+    is_active = true;
+
+    soft.x0 = 0;
+    soft.x1 = 1500;
+    soft.y0 = (float)position;
+    soft.y1 = (float)_pos;
+}
+
+int ServoController::update() {
+    PT_BEGIN(&pt_task);
+    for (;;) {
+        timer = millis();
+        PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - timer) >= 50);
+
+        if (is_active) {
+            uint32_t elapsed = millis() - start_time;
+
+            float pos = SoftSetGet(&soft, elapsed);
+            servo.write((int)pos);
+
+            if (elapsed >= 1500) {
+                is_active = false;
+                position = soft.y1;
+                servo.write((int)soft.y1);
+            }
+        }
+    }
+    PT_END(&pt_task);
+}

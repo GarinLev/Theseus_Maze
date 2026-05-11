@@ -3,8 +3,13 @@
 #include "../controller/controller_com.h"
 
 namespace robot {
+    struct pt task_step;
+    struct pt task_victim;
+
     TaskRobot task = TaskRobot_WAIT;
+    TaskRobot saved_task = TaskRobot_WAIT;
     StateRobot state = StateRobot_WAIT;
+    SubTask current_sub_step = SUB_START;
 
     WallManager wallManager;
     WallController wallRight, wallLeft;
@@ -17,8 +22,7 @@ namespace robot {
 
 #ifdef COM_ENABLE
     ComController comController;
-#endif // COM_ENABLE
-
+#endif 
 
     static void sentData();
     static void waitForSensors(uint32_t timeout_ms);
@@ -26,7 +30,6 @@ namespace robot {
     void init() {
         Serial.begin(115200);
         Serial2.begin(9600);
-
         Wire.begin();
         Wire.setClock(400000);
 
@@ -35,56 +38,34 @@ namespace robot {
         wheelB1.init(500, 140); wheelB1.setPins(6, 7, true, 3, 23, robot::encoder::isr_B1);
         wheelB2.init(500, 140); wheelB2.setPins(10, 12, true, 19, 25, robot::encoder::isr_B2);
 
-        wheelManager.fr = &wheelA1;
-        wheelManager.fl = &wheelA2;
-        wheelManager.br = &wheelB1;
-        wheelManager.bl = &wheelB2;
+        wheelManager.fr = &wheelA1; wheelManager.fl = &wheelA2;
+        wheelManager.br = &wheelB1; wheelManager.bl = &wheelB2;
         wheelManager.init();
         wheelManager.setDistSource(&wallRight.nodeExtra);
         wheelManager.setPitchSource(&rotateController.angel.ypr[1]);
 
         wallRight.setPins(&Wire, 0x30, 0x31, 0x32, 37, 36, 32);
         wallLeft.setPins(&Wire, 0x33, 0x34, 0x35, 33, 34, 35);
-
-        wallRight.reset();
-        wallLeft.reset();
-
+        wallRight.reset(); wallLeft.reset();
         delay(50);
+        wallRight.setAddr(); wallLeft.setAddr();
+        wallRight.init(); wallLeft.init();
 
-        wallRight.setAddr();
-        wallLeft.setAddr();
-        
-
-        wallRight.init();
-        wallLeft.init();
-
-
-        wallManager.wheelA1 = &wheelA1;
-        wallManager.wheelA2 = &wheelA2;
-        wallManager.wheelB1 = &wheelB1;
-        wallManager.wheelB2 = &wheelB2;
-        wallManager.sens_left = &wallLeft;
-        wallManager.sens_right = &wallRight;
-        wallManager.init();
-        Serial.print(3);
-
-        rotateController.wheelA1 = &wheelA1;
-        rotateController.wheelA2 = &wheelA2;
-        rotateController.wheelB1 = &wheelB1;
-        rotateController.wheelB2 = &wheelB2;
+        rotateController.wheelA1 = &wheelA1; rotateController.wheelA2 = &wheelA2;
+        rotateController.wheelB1 = &wheelB1; rotateController.wheelB2 = &wheelB2;
         rotateController.init();
-        Serial.print(2);
 
         servoController.pin = 44;
         servoController.init();
-
         lightController.init();
+        lightController.on();
+
+        // PT_INIT(&task_step);
+        // PT_INIT(&task_victim);
 
 #ifdef COM_ENABLE
         comController.init();
-        Serial.print(1);
         for (;;) {
-
             comController.node.request[0] = 0;
             node_com_run(comController.node);
             if (comController.node.command == 's') break;
@@ -94,9 +75,7 @@ namespace robot {
         }
         waitForSensors(800);
         sentData();
-#endif // COM_ENABLE
-
-
+#endif
         delay(500);
     }
 
@@ -109,13 +88,20 @@ namespace robot {
         comController.update(&task);
 #endif
 
-        state_update();
-
         node_dist_run(wallRight.nodeWall);
         node_dist_run(wallLeft.nodeWall);
         node_dist_run(wallRight.nodeExtra);
         node_dist_run(wallLeft.nodeExtra);
 
+        if (task >= TaskRobot_VICTIM_LEFT && task <= TaskRobot_VICTIM_RIGHT_X2) {
+            update_victim();
+        }
+        else if (task >= TaskRobot_STEP_UP && task <= TaskRobot_STEP_DOWN) {
+            update_step();
+        }
+        else {
+            state = StateRobot_WAIT;
+        }
 
         if (state == StateRobot_WAIT) handleWait();
         else if (state == StateRobot_MOVE) handleMove();
@@ -126,8 +112,91 @@ namespace robot {
         wheelManager.update();
     }
 
+
+    int update_step() {
+        PT_BEGIN(&task_step);
+        static uint32_t timer;
+
+        if (current_sub_step == SUB_START) {
+            Serial.println("SUB_START - S");
+            state = StateRobot_ROTATE;
+            if (task == TaskRobot_STEP_DOWN) rotateController.run(175, 100);
+            else if (task == TaskRobot_STEP_RIGHT) rotateController.run(85, 100);
+            else if (task == TaskRobot_STEP_LEFT) rotateController.run(-85, 100);
+
+            current_sub_step = SUB_ROTATING;
+
+            Serial.println("SUB_START - E");
+        }
+
+        if (current_sub_step == SUB_ROTATING) {
+            Serial.println("SUB_ROTATE - S");
+            if (task != TaskRobot_STEP_UP) {
+                PT_WAIT_WHILE(&task_step, rotateController.is_active);
+                timer = millis();
+                PT_WAIT_WHILE(&task_step, millis() - timer < 200);
+            }
+            current_sub_step = SUB_MOVING;
+            Serial.println("SUB_ROTATE - E");
+        }
+
+        if (current_sub_step == SUB_MOVING) {
+            Serial.println("SUB_MOVING - S");
+            state = StateRobot_MOVE;
+            wheelManager.moveDistance(300.0f, 100.0f, nullptr);
+            PT_WAIT_WHILE(&task_step, wheelManager.is_moving);
+
+            timer = millis();
+            PT_WAIT_WHILE(&task_step, millis() - timer < 200);
+            current_sub_step = SUB_DONE;
+            Serial.println("SUB_MOVING - E");
+        }
+
+        Serial.println("SUB_SEND");
+        sentData();
+        task = TaskRobot_WAIT;
+        current_sub_step = SUB_START;
+
+        Serial.println("SUB_END");
+        PT_END(&task_step);
+    }
+
+    int update_victim() {
+        PT_BEGIN(&task_victim);
+        static bool isLeft, isX2;
+
+        state = StateRobot_VICTIM;
+        isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
+        isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
+
+        servoController.set(isLeft ? ServoController_Left : ServoController_Right);
+        PT_WAIT_WHILE(&task_victim, servoController.is_active);
+        servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
+        PT_WAIT_WHILE(&task_victim, servoController.is_active);
+
+        if (isX2) {
+            servoController.set(isLeft ? ServoController_Left : ServoController_Right);
+            PT_WAIT_WHILE(&task_victim, servoController.is_active);
+            servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
+            PT_WAIT_WHILE(&task_victim, servoController.is_active);
+        }
+
+        if (robot::saved_task != TaskRobot_WAIT) {
+            task = robot::saved_task;
+            robot::saved_task = TaskRobot_WAIT;
+            PT_INIT(&task_step);
+        }
+        else {
+            task = TaskRobot_WAIT;
+            current_sub_step = SUB_START;
+            sentData();
+        }
+
+        PT_END(&task_victim);
+    }
+
+ 
     static void waitForSensors(uint32_t timeout_ms) {
-#ifdef COM_ENABLE
         uint32_t start = millis();
         while (millis() - start < timeout_ms) {
             node_dist_run(wallRight.nodeUp);
@@ -136,157 +205,28 @@ namespace robot {
             node_dist_run(wallLeft.nodeUp);
             node_dist_run(wallLeft.nodeWall);
             node_dist_run(wallLeft.nodeExtra);
-
             delay(5);
         }
-#endif // COM_ENABLE
     }
 
     static void sentData() {
 #ifdef COM_ENABLE
-
-        node_dist_run(wallRight.nodeWall);
-        node_dist_run(wallLeft.nodeWall);
-        node_dist_run(wallRight.nodeExtra);
-        node_dist_run(wallLeft.nodeExtra);
-
-        uint16_t distUp    = wallRight.nodeExtra.dist_valid ? wallRight.nodeExtra.dist : (uint16_t)0;
-        uint16_t distLeft  = wallLeft.nodeWall.dist_valid ? wallLeft.nodeWall.dist : (uint16_t)0;
-        uint16_t distDown  = wallLeft.nodeExtra.dist_valid ? wallLeft.nodeExtra.dist : (uint16_t)0;
-        uint16_t distRight = wallRight.nodeWall.dist_valid ? wallRight.nodeWall.dist : (uint16_t)0;
-        uint16_t wallsRobot[4] = { distUp, distLeft, distDown, distRight };
+        uint16_t distUp = wallRight.nodeExtra.dist_valid ? wallRight.nodeExtra.dist : 0;
+        uint16_t distLeft = wallLeft.nodeWall.dist_valid ? wallLeft.nodeWall.dist : 0;
+        uint16_t distDown = wallLeft.nodeExtra.dist_valid ? wallLeft.nodeExtra.dist : 0;
+        uint16_t distRight = wallRight.nodeWall.dist_valid ? wallRight.nodeWall.dist : 0;
 
         uint16_t walls[4] = { distUp, distLeft, distDown, distRight };
-
-        uint8_t step_count = 1;
-        if (wheelManager.hasDouble) {
-            wheelManager.hasDouble = false;
-            step_count = 2;
-        }
-
-        Serial.print(distUp); Serial.print("\t");
-        Serial.print(distLeft); Serial.print("\t");
-        Serial.print(distDown); Serial.print("\t");
-        Serial.println(distRight);
+        uint8_t step_count = wheelManager.hasDouble ? 2 : 1;
+        wheelManager.hasDouble = false;
 
         comController.sentData(walls, false, false, step_count);
-        comController.update(&task);
-
-#endif // COM_ENABLE
-    } 
-
-
-    void state_update() {
-        static bool executing = false;
-        static uint8_t sub_state = 0;
-        static uint32_t wait_timer = 0;
-        
-        if (task == TaskRobot_WAIT) {
-            state = StateRobot_WAIT;
-            executing = false;
-            sub_state = 0;
-            return;
-        }
-
-        if (task == TaskRobot_STEP_UP || task == TaskRobot_STEP_LEFT ||
-            task == TaskRobot_STEP_RIGHT || task == TaskRobot_STEP_DOWN) {
-
-            if (!executing) {
-                state = StateRobot_ROTATE;
-
-                if (task == TaskRobot_STEP_DOWN)
-                    rotateController.run(175, 100);
-                else if (task == TaskRobot_STEP_RIGHT) 
-                    rotateController.run(85, 100);
-                else if (task == TaskRobot_STEP_LEFT) 
-                    rotateController.run(-85, 100);
-                executing = true;
-                return;
-            }
-
-            if (state == StateRobot_ROTATE) {
-                if (rotateController.is_active) return;
-                state = StateRobot_WAIT;
-                wait_timer = millis();
-                sub_state = 10;
-                return;
-            }
-
-            if (sub_state == 10) {
-                if (millis() - wait_timer < 500) return;
-                state = StateRobot_MOVE;
-                wheelManager.moveDistance(300.0f, 100.0f, nullptr);
-                sub_state = 0;
-                return;
-            }
-
-            if (state == StateRobot_MOVE) {
-                if (wheelManager.is_moving) return;
-                state = StateRobot_WAIT;
-                wait_timer = millis();
-                sub_state = 11;
-                return;
-            }
-
-            if (sub_state == 11) {
-                if (millis() - wait_timer < 500) return;
-                task = TaskRobot_WAIT;
-                executing = false;
-                sub_state = 0;
-
-                waitForSensors(1000);
-                sentData();
-            }
-        }
-
-        else if (task == TaskRobot_VICTIM_RIGHT || task == TaskRobot_VICTIM_RIGHT_X2 ||
-            task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2) {
-
-            state = StateRobot_VICTIM;
-            bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
-            bool isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
-
-            if (sub_state == 0) {
-                servoController.set(isLeft ? 1 : 2);
-                sub_state = 1;
-                return;
-            }
-            if (sub_state == 1) {
-                if (servoController.is_active) return;
-                servoController.set(isLeft ? 3 : 4);
-                sub_state = 2;
-                return;
-            }
-            if (sub_state == 2) {
-                if (servoController.is_active) return;
-                if (isX2) {
-                    servoController.set(isLeft ? 1 : 2);
-                    sub_state = 3;
-                }
-                else {
-                    sub_state = 5;
-                }
-                return;
-            }
-            if (sub_state == 3) {
-                if (servoController.is_active) return;
-                servoController.set(isLeft ? 3 : 4);
-                sub_state = 5;
-                return;
-            }
-            if (sub_state == 5) {
-                if (servoController.is_active) return;
-                Serial.println("END VICTIM");
-                task = TaskRobot_WAIT;
-                sub_state = 0;
-            }
-        }
+#endif
     }
 
-    void handleWait() {
-        wheelManager.stop();
-    }
-
+    void handleWait() { wheelManager.stop(); }
+    void handleRotate() { rotateController.update(); }
+    void handleVictim() { servoController.update(); }
     void handleMove() {
         node_angel_run(rotateController.angel);
         if (!wheelManager.wall_disable) {
@@ -299,13 +239,4 @@ namespace robot {
             wheelB1.speed_offset = wheelB2.speed_offset = 0;
         }
     }
-
-    void handleRotate() {
-        rotateController.update();
-    }
-
-    void handleVictim() {
-        servoController.update();
-    }
-
-} // namespace robot
+}

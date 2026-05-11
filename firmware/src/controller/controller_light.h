@@ -5,7 +5,7 @@
 #define COLOR_DEBTH 3
 #include "../../lib/microLED/microLED.h"
     
-#define LightController_Time 5000
+#define LightController_Time 500
 
 struct LightController {
     struct pt pt_task;
