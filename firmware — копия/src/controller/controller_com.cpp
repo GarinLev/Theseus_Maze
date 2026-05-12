@@ -16,7 +16,7 @@ void ComController::update(robot::TaskRobot* task) {
 
         if (cmd == 'u' || cmd == 'l' || cmd == 'r' || cmd == 'd') {
             PT_INIT(&robot::task_step);
-            robot::last_task = robot::TaskRobot_WAIT;
+            robot::saved_task = robot::TaskRobot_WAIT;
             robot::current_sub_step = robot::SUB_START;
 
             if (cmd == 'u')      *task = robot::TaskRobot_STEP_UP;
@@ -24,9 +24,9 @@ void ComController::update(robot::TaskRobot* task) {
             else if (cmd == 'r') *task = robot::TaskRobot_STEP_RIGHT;
             else if (cmd == 'd') *task = robot::TaskRobot_STEP_DOWN;
         }
-        else if (cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm') {
+        else         if (cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm') {
             if (*task >= robot::TaskRobot_STEP_UP && *task <= robot::TaskRobot_STEP_DOWN) {
-                robot::last_task = *task;
+                robot::saved_task = *task;
                 robot::current_sub_step = robot::SUB_START;
                 PT_INIT(&robot::task_step);
                 robot::wheelManager.stop();
@@ -48,9 +48,9 @@ void ComController::sentData(uint16_t walls[4], bool graw, uint8_t step_count)
     else if (step_count == 1) step_char = '1';
     else if (step_count == 2) step_char = '2';
     node.request[0] = (walls[0] < MAX_DIST_UP && walls[0] != 0) ? '1' : '0';
-    node.request[1] = (walls[1] < MAX_DIST && walls[1] != 0) ? '1' : '0';
-    node.request[2] = (walls[2] < MAX_DIST && walls[2] != 0) ? '1' : '0';
-    node.request[3] = (walls[3] < MAX_DIST && walls[3] != 0) ? '1' : '0';
+    node.request[1] = (walls[1] < MAX_DIST    && walls[1] != 0) ? '1' : '0';
+    node.request[2] = (walls[2] < MAX_DIST    && walls[2] != 0) ? '1' : '0';
+    node.request[3] = (walls[3] < MAX_DIST    && walls[3] != 0) ? '1' : '0';
     node.request[4] = graw ? '1' : '0';
     node.request[5] = step_char;
 }

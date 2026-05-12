@@ -17,3 +17,4 @@ struct AngelNode {
 
 void node_angel_init(AngelNode&ctx);
 int  node_angel_run(AngelNode&ctx);
+void node_angel_offsets(AngelNode& ctx);

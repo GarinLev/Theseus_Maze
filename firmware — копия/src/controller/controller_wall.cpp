@@ -3,7 +3,7 @@
 void WallController::init() {
     wallNode.topic = &wallTopic;
     wallNode.Kp = 0.6f;
-    wallNode.Ki = 0.01f;
+    wallNode.Ki = 0.005f;
     wallNode.dt = 25;
     wallNode.setpoint = 0;
     wallNode.integral = 0;
@@ -37,12 +37,15 @@ void WallController::reset() {
 
 void WallController::setAddr() {
     auto setupNode = [](DistNode& node) {
+        // 1. "Будим" конкретно этот датчик
         node_dist_unreset(node);
-        delay(20);
+        delay(20); // Даем время проснуться
 
         node.lox.setBus(node.wire);
         node.lox.setTimeout(500);
 
+        // 2. МЕНЯЕМ АДРЕС СРАЗУ (пока он еще 0x29)
+        // Библиотека отправит команду на 0x29, и датчик переедет на node.addr
         node.lox.setAddress(node.addr);
         delay(10);
 

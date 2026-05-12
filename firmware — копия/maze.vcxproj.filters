@@ -59,8 +59,14 @@
     <Filter Include="Source Files\controller\debug">
       <UniqueIdentifier>{7582eadc-96a6-43d0-998e-a0b715866496}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\controller\rotate">
+      <UniqueIdentifier>{63fd28ca-c4d8-41e5-819c-6715eae6ad62}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\controller\wall">
       <UniqueIdentifier>{30993734-bb20-4405-9c41-d4181695151e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\controller\wheel">
+      <UniqueIdentifier>{8a1a4def-6580-4398-9e68-153cdbc3ffa4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\controller\com">
       <UniqueIdentifier>{ccfcc79b-3fc8-44f2-8bc9-efa64e621efe}</UniqueIdentifier>
@@ -88,12 +94,6 @@
     </Filter>
     <Filter Include="Source Files\controller\servo">
       <UniqueIdentifier>{947e9e07-82da-41d7-8b6b-4ca043f0bacb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controller\rotate">
-      <UniqueIdentifier>{63fd28ca-c4d8-41e5-819c-6715eae6ad62}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\controller\wheel">
-      <UniqueIdentifier>{8a1a4def-6580-4398-9e68-153cdbc3ffa4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

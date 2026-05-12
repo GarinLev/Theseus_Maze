@@ -1,16 +1,24 @@
 #pragma once
 #include <Arduino.h>
+#include "../../lib/pt/pt.h"
 
 #define COLOR_DEBTH 3
 #include "../../lib/microLED/microLED.h"
+    
+#define LightController_Time 5000
 
 struct LightController {
-    uint32_t timer;
+    struct pt pt_task;
+    uint16_t timer;
+
     COLORS color;
-    COLORS last_color;
 
     microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
+    bool isEnable = false;
 
     void init();
-    void update();
+    void on();
+    void off();
+    int  update();
+    void calibrate();
 };

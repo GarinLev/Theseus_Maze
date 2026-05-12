@@ -1,7 +1,6 @@
 int r1, g1, b1, c1, c;
 int calibrationStep = -1;
 void setupTCS() {
-  // Serial уже инициализирован в setupVLX, поэтому здесь не вызываем
   pinMode(13, OUTPUT);
   if (tcs.begin()) {
     Serial.println("найден");

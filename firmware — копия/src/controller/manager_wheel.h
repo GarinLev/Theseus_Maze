@@ -41,7 +41,7 @@ struct WheelManager {
     }
 
     void commandAll(float v, uint32_t acc, int32_t ticks) {
-        fl->goTo(v, acc, ticks, yaw_ptr);
+        fl->goTo(v, acc, ticks, yaw_ptr); 
         fr->goTo(v, acc, ticks, yaw_ptr);
         bl->goTo(v, acc, ticks, yaw_ptr);
         br->goTo(v, acc, ticks, yaw_ptr);
@@ -69,17 +69,17 @@ struct WheelManager {
         fl->stop(); fr->stop(); bl->stop(); br->stop();
         state = IDLE;
         is_moving = false;
-        wall_disable = false; // Важно сбросить здесь
     }
 
     void update() {
         fl->update(); fr->update(); bl->update(); br->update();
         if (wall_sens) node_dist_run(*wall_sens);
         task_process();
-    }
+    }  
 
     int task_process() {
         PT_BEGIN(&pt_task);
+
         for (;;) {
             if (state == IDLE) {
                 PT_YIELD(&pt_task);
@@ -87,24 +87,13 @@ struct WheelManager {
             }
 
             if (state == MOVE_SOFT) {
-                if (gio::read(pinHitA) == LOW && gio::read(pinHitB) != HIGH) {
-                    fr->speed_offset = -40;
-                    fl->speed_offset = -40;
-                    br->speed_offset = 40;
-                    bl->speed_offset = 40;
-                }
-                if (gio::read(pinHitB) == LOW && gio::read(pinHitA) != HIGH) {
-                    fr->speed_offset = 40;
-                    fl->speed_offset = 40;
-                    br->speed_offset = -40;
-                    bl->speed_offset = -40;
+                PT_WAIT_UNTIL(&pt_task, !fl->is_moving || (pitch_ptr && (*pitch_ptr > 15.0f || *pitch_ptr < -15.0f)));
+                
+                if (pitch_ptr) {
+                    if (*pitch_ptr > 15.0f) { state = SLOPE_UP; continue; }
+                    if (*pitch_ptr < -15.0f) { state = SLOPE_DOWN; continue; }
                 }
 
-                PT_WAIT_UNTIL(&pt_task, !fl->is_moving || (pitch_ptr && abs(*pitch_ptr) > 15.0f));
-                if (pitch_ptr && abs(*pitch_ptr) > 15.0f) {
-                    state = (*pitch_ptr > 15.0f) ? SLOPE_UP : SLOPE_DOWN;
-                    continue;
-                }
                 state = HIT;
                 continue;
             }
@@ -112,37 +101,47 @@ struct WheelManager {
             if (state == SLOPE_UP || state == SLOPE_DOWN) {
                 hasDouble = true;
                 wall_disable = true;
-                setAllSpeed(state == SLOPE_UP ? 120 : 60);
 
-                PT_WAIT_UNTIL(&pt_task, (state == SLOPE_UP ? *pitch_ptr < 5.0f : *pitch_ptr > -5.0f) || state == IDLE);
+                if (state == SLOPE_UP) setAllSpeed(120);
+                else setAllSpeed(60);
+
+                PT_WAIT_UNTIL(&pt_task, (state == SLOPE_UP 
+                    ? *pitch_ptr < 9.0f : *pitch_ptr > -59.0f) || state == IDLE);
 
                 if (state != IDLE) {
                     commandAll(_target_v, (uint32_t)WC_MM_TO_TICKS(40), (int32_t)WC_MM_TO_TICKS(150));
                     PT_WAIT_UNTIL(&pt_task, !fl->is_moving || state == IDLE);
                 }
-                wall_disable = false;
                 state = HIT;
                 continue;
+                wall_disable = false;
+
             }
+
             if (state == HIT) {
-                if (wall_sens && wall_sens->dist_valid && wall_sens->dist <= 200) {
+                if (wall_sens && wall_sens->dist_valid && wall_sens->dist <= 190) {
+
                     if (!getHitBtn()) {
                         setAllSpeed(60);
-                        _timer = millis();
-
-                        PT_WAIT_UNTIL(&pt_task, getHitBtn() || (millis() - _timer > 2000) || state == IDLE);
+                        PT_WAIT_UNTIL(&pt_task, getHitBtn() || state == IDLE);
                     }
-
                     stop();
 
+
+                    commandAll(_target_v, -(uint32_t)WC_MM_TO_TICKS(10), -(int32_t)WC_MM_TO_TICKS(40));
+                    PT_WAIT_UNTIL(&pt_task, !fl->is_moving || state == IDLE);
+                    
                     _timer = millis();
                     PT_WAIT_UNTIL(&pt_task, millis() - _timer > 150);
+
+                    PT_WAIT_UNTIL(&pt_task, !fl->is_moving || state == IDLE);
                 }
+                
                 state = IDLE;
                 is_moving = false;
-                wall_disable = false;
             }
         }
+
         PT_END(&pt_task);
     }
 };

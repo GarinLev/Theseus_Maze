@@ -58,7 +58,7 @@ namespace robot {
 
     extern TaskRobot task;
     extern StateRobot state;
-    extern TaskRobot last_task;
+    extern TaskRobot saved_task;
     extern SubTask current_sub_step;
 
     extern WallManager wallManager;
@@ -71,9 +71,6 @@ namespace robot {
     extern LightController lightController;
     extern ColorController colorController;
     extern EncButton button;
-
-    extern const int16_t OFFSETS_MPU[6] PROGMEM;
-    extern const float   OFFSETS_COLOR[8] PROGMEM;
 
 #ifdef COM_ENABLE
     extern ComController comController;
