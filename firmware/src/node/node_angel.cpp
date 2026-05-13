@@ -28,7 +28,6 @@ void node_angel_init(AngelNode& ctx) {
 }
 
 int node_angel_run(AngelNode& ctx) {
-    // Читаем только если в буфере есть данные
     if (ctx.mpu.dmpGetCurrentFIFOPacket(ctx.fifoBuffer)) {
         Quaternion q;
         VectorFloat gravity;
@@ -37,7 +36,6 @@ int node_angel_run(AngelNode& ctx) {
         ctx.mpu.dmpGetGravity(&gravity, &q);
         ctx.mpu.dmpGetYawPitchRoll(ctx.ypr, &q, &gravity);
 
-        // Перевод в градусы
         ctx.ypr[0] = ctx.ypr[0] * 180.0f / M_PI;
         ctx.ypr[1] = -ctx.ypr[1] * 180.0f / M_PI;
         ctx.ypr[2] = ctx.ypr[2] * 180.0f / M_PI;

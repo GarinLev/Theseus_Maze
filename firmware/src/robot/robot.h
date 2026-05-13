@@ -50,12 +50,6 @@ namespace robot {
 
     extern TaskRobot task;
     extern StateRobot state;
-    extern TaskRobot saved_task;
-
-
-    extern uint16_t step_local_state;
-    extern uint16_t victim_local_state;
-    extern uint32_t step_timer;
 
     extern WallManager wallManager;
     extern WallController wallRight, wallLeft;

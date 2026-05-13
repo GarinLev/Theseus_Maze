@@ -5,11 +5,6 @@
 namespace robot {
     TaskRobot task = TaskRobot_WAIT;
     StateRobot state = StateRobot_WAIT;
-    TaskRobot saved_task = TaskRobot_WAIT;
-
-    uint16_t step_local_state = 0;
-    uint16_t victim_local_state = 0;
-    uint32_t step_timer = 0;
 
     WallManager wallManager;
     WallController wallRight, wallLeft;
@@ -110,7 +105,10 @@ namespace robot {
         debug.ups_update();
 
 #ifdef COM_ENABLE
-        comController.update(&task);
+        if (state != StateRobot_VICTIM)
+        {
+            comController.update(&task);
+        }
 #endif
 
         static bool last_btn = HIGH;
@@ -152,8 +150,18 @@ namespace robot {
         lightController.update();
         wheelManager.update();
     }
+
+
+
+       
+    static TaskRobot task_step;
     void update_step() {
+        static uint16_t step_local_state = 0;
+        static uint16_t step_timer = 0;
+        
         if (step_local_state == 0) {
+            Serial.println("s0");
+            task_step = task;
             if (task == TaskRobot_STEP_UP) {
                 step_local_state = 3;
             }
@@ -166,15 +174,21 @@ namespace robot {
             }
         }
         else if (step_local_state == 1) {
-            if (rotateController.is_active) return;
+            if (rotateController.is_active) {
+                state = StateRobot_ROTATE;
+                return;
+            }
+            Serial.println("s1");
             step_timer = millis();
             step_local_state = 2;
         }
         else if (step_local_state == 2) {
             if (millis() - step_timer < 200) return;
+            Serial.println("s2");
             step_local_state = 3;
         }
         else if (step_local_state == 3) {
+            Serial.println("s3");
             state = StateRobot_MOVE;
             if (!wheelManager.is_moving) {
                 wheelManager.moveDistance(310.0f, 85.0f, &rotateController.angel.ypr[1]);
@@ -182,8 +196,13 @@ namespace robot {
             step_local_state = 4;
         }
         else if (step_local_state == 4) {
-            if (wheelManager.is_moving) return;
+            if (wheelManager.is_moving) {
+                state = StateRobot_MOVE;
+                return;
+            }
+            Serial.println("s4");
             sentData();
+            task_step = TaskRobot_WAIT;
             task = TaskRobot_WAIT;
             step_local_state = 0;
         }
@@ -192,54 +211,54 @@ namespace robot {
     void update_victim() {
         bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
         bool isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
+        static uint16_t victim_local_state = 0;
 
-        state = StateRobot_VICTIM;
 
         if (victim_local_state == 0) {
-            wheelManager.stop();
+            Serial.println("v0");
+            state = StateRobot_VICTIM;
             servoController.set(isLeft ? ServoController_Left : ServoController_Right);
             victim_local_state = 1;
         }
         else if (victim_local_state == 1) {
             if (servoController.is_active) return;
+            Serial.println("v1");
             victim_local_state = 2;
         }
         else if (victim_local_state == 2) {
             servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
+            Serial.println("v2");
             victim_local_state = 3;
         }
         else if (victim_local_state == 3) {
             if (servoController.is_active) return;
+            Serial.println("v3");
             victim_local_state = isX2 ? 4 : 8;
         }
         else if (victim_local_state == 4) {
             servoController.set(isLeft ? ServoController_Left : ServoController_Right);
+            Serial.println("v4");
             victim_local_state = 5;
         }
         else if (victim_local_state == 5) {
             if (servoController.is_active) return;
+            Serial.println("v5");
             victim_local_state = 6;
         }
         else if (victim_local_state == 6) {
+            Serial.println("v6");
             servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
             victim_local_state = 7;
         }
         else if (victim_local_state == 7) {
             if (servoController.is_active) return;
+            Serial.println("v7");
             victim_local_state = 8;
         }
         else if (victim_local_state == 8) {
-            if (saved_task != TaskRobot_WAIT) {
-                task = saved_task;
-                saved_task = TaskRobot_WAIT;
-
-                if (step_local_state < 3) {
-                    step_local_state = 0;
-                }
-            }
-            else {
-                task = TaskRobot_WAIT;
-            }
+            Serial.println("v8");
+            task = task_step;
+            state = StateRobot_WAIT;
             victim_local_state = 0;
         }
     }
@@ -313,7 +332,7 @@ namespace robot {
      
     void handleWait() { wheelManager.stop(); }
     void handleRotate() { rotateController.update(); }
-    void handleVictim() { servoController.update(); lightController.update(); }
+    void handleVictim() { servoController.update(); }
     void handleMove() {
         node_angel_run(rotateController.angel);
         if (!wheelManager.wall_disable) {

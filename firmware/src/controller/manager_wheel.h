@@ -100,7 +100,6 @@ struct WheelManager {
 
             if (state == SLOPE_UP || state == SLOPE_DOWN) {
                 hasDouble = true;
-                wall_disable = true;
                 setAllSpeed(state == SLOPE_UP ? 120 : 60);
 
                 PT_WAIT_UNTIL(&pt_task, (state == SLOPE_UP ? *pitch_ptr < 5.0f : *pitch_ptr > -5.0f) || state == IDLE);
@@ -109,11 +108,11 @@ struct WheelManager {
                     commandAll(_target_v, (uint32_t)WC_MM_TO_TICKS(40), (int32_t)WC_MM_TO_TICKS(150));
                     PT_WAIT_UNTIL(&pt_task, !fl->is_moving || state == IDLE);
                 }
-                wall_disable = false;
                 state = HIT;
                 continue;
             }
             if (state == HIT) {
+                wall_disable = true;
                 if (wall_sens && wall_sens->dist_valid && wall_sens->dist <= 200) {
                     if (!getHitBtn()) {
                         setAllSpeed(60);
@@ -126,6 +125,8 @@ struct WheelManager {
 
                     _timer = millis();
                     PT_WAIT_UNTIL(&pt_task, millis() - _timer > 150);
+                    wall_disable = false;
+
                 }
                 state = IDLE;
                 is_moving = false;

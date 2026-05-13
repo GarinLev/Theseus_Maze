@@ -26,8 +26,15 @@ int ColorController::update() {
 
         rgb_to_hsv(r, g, b, c, h, s, v);
 
-        if (s < 0.1 || v < 0.1) {
+        if (s < 0.1 && v < 0.05) {
             h = 0;
+
+            Serial.print(isBlack()); Serial.print(" ");
+            Serial.print(isBlue()); Serial.print(" ");
+            Serial.println(isGrey());
+
+/*
+        if (s < 0.1 && v < 0.05) {
             Serial.print("H: -");
         } else {
             Serial.print("H: "); Serial.print(h);
@@ -35,7 +42,7 @@ int ColorController::update() {
 
         Serial.print(" S: "); Serial.print(s * 100);
         Serial.print(" V: "); Serial.print(v * 100);
-        Serial.print(" C: "); Serial.println(c);
+        Serial.print(" C: "); Serial.println(c);*/
 
         last_update_ms = millis();
         PT_WAIT_UNTIL(&pt_task, millis() - last_update_ms >= 120);
@@ -79,16 +86,17 @@ void ColorController::calibrateColor() {
     Serial.print(" C: "); Serial.println(c);
 }
 
-bool ColorController::isGrey() {
+bool ColorController::isBlack() {
+    return (c < robot::OFFSETS_COLOR[4] * 0.75) && (h == 0);
+}
 
+bool ColorController::isGrey() {
+    
 }
 
 bool ColorController::isBlue() {
-
-}
-
-bool ColorController::isBlack() {
-
+    return (h != 0) && (h < robot::OFFSETS_COLOR[3] + 20)
+        && (h > robot::OFFSETS_COLOR[4] - 20);
 }
 
 void ColorController::rgb_to_hsv(uint16_t r, uint16_t g, uint16_t b, uint16_t c,

@@ -24,6 +24,7 @@ private:
     Adafruit_TCS34725 tcs;
     pt pt_task;
     unsigned long last_update_ms;
+
     uint16_t r, g, b, c;
     float h, s, v;
 };

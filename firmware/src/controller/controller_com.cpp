@@ -14,10 +14,7 @@ void ComController::update(robot::TaskRobot* task) {
         char cmd = node.command;
         node.command = 0;
 
-        
         if (cmd == 'u' || cmd == 'l' || cmd == 'r' || cmd == 'd') {
-            robot::saved_task = robot::TaskRobot_WAIT;
-            robot::step_local_state = 0;
 
             if (cmd == 'u')      *task = robot::TaskRobot_STEP_UP;
             else if (cmd == 'l') *task = robot::TaskRobot_STEP_LEFT;
@@ -25,16 +22,10 @@ void ComController::update(robot::TaskRobot* task) {
             else if (cmd == 'd') *task = robot::TaskRobot_STEP_DOWN;
         }
         else if (cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm') {
-            if (*task >= robot::TaskRobot_STEP_UP && *task <= robot::TaskRobot_STEP_DOWN) {
-                robot::saved_task = *task;
-            }
-
             if (cmd == 'v')      *task = robot::TaskRobot_VICTIM_RIGHT;
             else if (cmd == 'b') *task = robot::TaskRobot_VICTIM_LEFT;
             else if (cmd == 'n') *task = robot::TaskRobot_VICTIM_RIGHT_X2;
             else if (cmd == 'm') *task = robot::TaskRobot_VICTIM_LEFT_X2;
-
-            robot::victim_local_state = 0;
         }
     }
 }
