@@ -26,23 +26,18 @@ int ColorController::update() {
 
         rgb_to_hsv(r, g, b, c, h, s, v);
 
-        if (s < 0.1 && v < 0.05) {
+        if (s < 0.1 && !isBlack())
             h = 0;
 
-            Serial.print(isBlack()); Serial.print(" ");
-            Serial.print(isBlue()); Serial.print(" ");
-            Serial.println(isGrey());
+        Serial.print(isBlue()); Serial.print(" ");
+        Serial.print(isBlack()); Serial.print(" ");
+        Serial.print(isGrey()); Serial.print(" | ");
+        
+        Serial.print(h); Serial.print(" ");
+        Serial.print(s); Serial.print(" ");
+        Serial.print(v); Serial.print(" ");
+        Serial.println(c);
 
-/*
-        if (s < 0.1 && v < 0.05) {
-            Serial.print("H: -");
-        } else {
-            Serial.print("H: "); Serial.print(h);
-        }
-
-        Serial.print(" S: "); Serial.print(s * 100);
-        Serial.print(" V: "); Serial.print(v * 100);
-        Serial.print(" C: "); Serial.println(c);*/
 
         last_update_ms = millis();
         PT_WAIT_UNTIL(&pt_task, millis() - last_update_ms >= 120);
@@ -73,25 +68,18 @@ void ColorController::calibrateColor() {
     tcs.getRawData(&r, &g, &b, &c);
     rgb_to_hsv(r, g, b, c, h, s, v);
 
-    if (s < 0.1) {
-        h = 0;
-        Serial.print("H: -");
-    }
-    else {
-        Serial.print("H: "); Serial.print(h);
-    }
-
+    Serial.print("H: "); Serial.print(h);
     Serial.print(" S: "); Serial.print(s * 100);
     Serial.print(" V: "); Serial.print(v * 100);
     Serial.print(" C: "); Serial.println(c);
 }
 
 bool ColorController::isBlack() {
-    return (c < robot::OFFSETS_COLOR[4] * 0.75) && (h == 0);
+    return (c < robot::OFFSETS_COLOR[4] * 1.2);
 }
 
 bool ColorController::isGrey() {
-    
+    return (c >= robot::OFFSETS_COLOR[5] * 0.96);
 }
 
 bool ColorController::isBlue() {

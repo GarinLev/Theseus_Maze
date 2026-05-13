@@ -16,15 +16,18 @@ namespace robot {
     LightController lightController;
     ColorController colorController;
 
+    static uint16_t step_local_state = 0;
+    static uint16_t victim_local_state = 0;
+
     const int16_t OFFSETS_MPU[6] PROGMEM = {
         -2184, -3266, 2904, -1830, -66, -17
     };
 
     const float OFFSETS_COLOR[8] PROGMEM = {
-        1.21f, 0.69f, 1.39f, // Баланс белого
-        (190.5f / 100.0f), // Синиий цвет
-        756.0f, 16.70f,
-        385.0f, 50.46f
+        1.22f, 0.68f, 1.41f, // Баланс белого
+        (184.51 / 100.0f), // Синиий цвет
+        432.0f, // Чeрный цвет
+        1024
     };
 
 #ifdef COM_ENABLE
@@ -114,13 +117,15 @@ namespace robot {
         static bool last_btn = HIGH;
         bool current_btn = digitalRead(42);
         if (current_btn == LOW && last_btn == HIGH) {
-
+        
             if (task != TaskRobot_END) {
                 comController.node.request[0] = 'p';
+                step_local_state = 0;
+                victim_local_state = 0;
                 task = TaskRobot_END;
             }
             else {
-                comController.node.request[0] = 's';
+                comController.node.request[0] = 'c';
                 task = TaskRobot_WAIT;
             }
             node_com_run(comController.node);
@@ -153,12 +158,11 @@ namespace robot {
 
 
 
-       
     static TaskRobot task_step;
     void update_step() {
-        static uint16_t step_local_state = 0;
+
         static uint16_t step_timer = 0;
-        
+
         if (step_local_state == 0) {
             Serial.println("s0");
             task_step = task;
@@ -211,7 +215,6 @@ namespace robot {
     void update_victim() {
         bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
         bool isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
-        static uint16_t victim_local_state = 0;
 
 
         if (victim_local_state == 0) {
