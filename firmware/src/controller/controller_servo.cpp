@@ -27,18 +27,19 @@ int ServoController::update() {
     PT_BEGIN(&pt_task);
     for (;;) {
         timer = millis();
-        PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - timer) >= 50);
+        PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - timer) >= 20);
 
         if (is_active) {
             uint32_t elapsed = millis() - start_time;
 
-            float pos = SoftSetGet(&soft, elapsed);
-            servo.write((int)pos);
-
-            if (elapsed >= 1500) {
-                is_active = false;
-                position = soft.y1;
+            if (elapsed >= 2000) {
                 servo.write((int)soft.y1);
+                position = soft.y1;
+                is_active = false;
+            }
+            else {
+                float pos = SoftSetGet(&soft, elapsed);
+                servo.write((int)pos);
             }
         }
     }

@@ -25,7 +25,7 @@ int ColorController::update() {
         b = tcs.read16(TCS34725_BDATAL);
 
         rgb_to_hsv(r, g, b, c, h, s, v);
-/*
+
         if (s < 0.1 || v < 0.1) {
             h = 0;
             Serial.print("H: -");
@@ -35,7 +35,7 @@ int ColorController::update() {
 
         Serial.print(" S: "); Serial.print(s * 100);
         Serial.print(" V: "); Serial.print(v * 100);
-        Serial.print(" C: "); Serial.println(c);*/
+        Serial.print(" C: "); Serial.println(c);
 
         last_update_ms = millis();
         PT_WAIT_UNTIL(&pt_task, millis() - last_update_ms >= 120);
@@ -80,10 +80,14 @@ void ColorController::calibrateColor() {
 }
 
 bool ColorController::isGrey() {
-    
+
 }
 
 bool ColorController::isBlue() {
+
+}
+
+bool ColorController::isBlack() {
 
 }
 

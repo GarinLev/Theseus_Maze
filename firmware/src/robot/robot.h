@@ -26,8 +26,7 @@
 struct ComController;
 
 namespace robot {
-    extern struct pt task_step;
-    extern struct pt task_victim;
+
 
     enum TaskRobot {
         TaskRobot_END,
@@ -49,17 +48,14 @@ namespace robot {
         StateRobot_VICTIM
     };
 
-    enum SubTask {
-        SUB_START,
-        SUB_ROTATING,
-        SUB_MOVING,
-        SUB_DONE
-    };
-
     extern TaskRobot task;
     extern StateRobot state;
-    extern TaskRobot last_task;
-    extern SubTask current_sub_step;
+    extern TaskRobot saved_task;
+
+
+    extern uint16_t step_local_state;
+    extern uint16_t victim_local_state;
+    extern uint32_t step_timer;
 
     extern WallManager wallManager;
     extern WallController wallRight, wallLeft;
@@ -70,7 +66,6 @@ namespace robot {
     extern ServoController servoController;
     extern LightController lightController;
     extern ColorController colorController;
-    extern EncButton button;
 
     extern const int16_t OFFSETS_MPU[6] PROGMEM;
     extern const float   OFFSETS_COLOR[8] PROGMEM;
@@ -83,8 +78,8 @@ namespace robot {
     void loop();
     void calibrate();
 
-    int update_step();
-    int update_victim();
+    void update_step();
+    void update_victim();
 
     void handleWait();
     void handleMove();

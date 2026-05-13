@@ -23,7 +23,7 @@ void WheelController::init(float tpr, float rpm, float min_rpm = 35.0f) {
     encoderNode.topic = &encoderTopic;
     speedNode.dt = 25;
     speedNode.Kp = 2.5f;
-    speedNode.Ki = 25.0f;
+    speedNode.Ki = 10.0f;
     node_pi_init(speedNode);
 }
 

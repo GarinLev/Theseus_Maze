@@ -16,6 +16,7 @@ public:
 
     bool isBlue();
     bool isGrey();
+    bool isBlack();
 
 private:
     void rgb_to_hsv(uint16_t r, uint16_t g, uint16_t b, uint16_t c, float& h, float& s, float& v);

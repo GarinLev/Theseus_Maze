@@ -3,13 +3,13 @@
 #include "../controller/controller_com.h"
 
 namespace robot {
-    struct pt task_step;
-    struct pt task_victim;
-
     TaskRobot task = TaskRobot_WAIT;
-    TaskRobot last_task = TaskRobot_WAIT;
     StateRobot state = StateRobot_WAIT;
-    SubTask current_sub_step = SUB_START;
+    TaskRobot saved_task = TaskRobot_WAIT;
+
+    uint16_t step_local_state = 0;
+    uint16_t victim_local_state = 0;
+    uint32_t step_timer = 0;
 
     WallManager wallManager;
     WallController wallRight, wallLeft;
@@ -20,15 +20,14 @@ namespace robot {
     ServoController servoController;
     LightController lightController;
     ColorController colorController;
-    EncButton button(42);
 
     const int16_t OFFSETS_MPU[6] PROGMEM = {
         -2184, -3266, 2904, -1830, -66, -17
     };
 
     const float OFFSETS_COLOR[8] PROGMEM = {
-        1.21f, 0.69f, 1.39f,
-        (190.5f / 100.0f),
+        1.21f, 0.69f, 1.39f, // Баланс белого
+        (190.5f / 100.0f), // Синиий цвет
         756.0f, 16.70f,
         385.0f, 50.46f
     };
@@ -104,9 +103,7 @@ namespace robot {
 #endif
         Serial.println("Done");
     }
-
-
-
+   
     void loop() {
         debug.frame();
         debug.update();
@@ -116,16 +113,21 @@ namespace robot {
         comController.update(&task);
 #endif
 
-        if (button.isClick() && task != TaskRobot_END) {
-            comController.node.request[0] = 'e';
+        static bool last_btn = HIGH;
+        bool current_btn = digitalRead(42);
+        if (current_btn == LOW && last_btn == HIGH) {
+
+            if (task != TaskRobot_END) {
+                comController.node.request[0] = 'p';
+                task = TaskRobot_END;
+            }
+            else {
+                comController.node.request[0] = 's';
+                task = TaskRobot_WAIT;
+            }
             node_com_run(comController.node);
-            task = TaskRobot_END;
         }
-        if (button.isClick() && task == TaskRobot_END) {
-            comController.node.request[0] = 's';
-            node_com_run(comController.node);
-            task = TaskRobot_WAIT;
-        }
+        last_btn = current_btn;
 
         node_dist_run(wallRight.nodeWall);
         node_dist_run(wallLeft.nodeWall);
@@ -150,73 +152,100 @@ namespace robot {
         lightController.update();
         wheelManager.update();
     }
-
-    int update_step() {
-        PT_BEGIN(&task_step);
-        static uint32_t timer;
-
-        if (current_sub_step == SUB_START) {
-            state = StateRobot_ROTATE;
-            if (task == TaskRobot_STEP_DOWN) rotateController.run(175, 100);
-            else if (task == TaskRobot_STEP_RIGHT) rotateController.run(85, 100);
-            else if (task == TaskRobot_STEP_LEFT) rotateController.run(-85, 100);
-            current_sub_step = SUB_ROTATING;
-        }
-
-        if (current_sub_step == SUB_ROTATING) {
-            if (task != TaskRobot_STEP_UP) {
-                PT_WAIT_WHILE(&task_step, rotateController.is_active);
-                timer = millis();
-                PT_WAIT_WHILE(&task_step, millis() - timer < 200);
+    void update_step() {
+        if (step_local_state == 0) {
+            if (task == TaskRobot_STEP_UP) {
+                step_local_state = 3;
             }
-            current_sub_step = SUB_MOVING;
+            else {
+                state = StateRobot_ROTATE;
+                if (task == TaskRobot_STEP_DOWN) rotateController.run(175, 100);
+                else if (task == TaskRobot_STEP_RIGHT) rotateController.run(85, 100);
+                else if (task == TaskRobot_STEP_LEFT) rotateController.run(-85, 100);
+                step_local_state = 1;
+            }
         }
-
-        if (current_sub_step == SUB_MOVING) {
+        else if (step_local_state == 1) {
+            if (rotateController.is_active) return;
+            step_timer = millis();
+            step_local_state = 2;
+        }
+        else if (step_local_state == 2) {
+            if (millis() - step_timer < 200) return;
+            step_local_state = 3;
+        }
+        else if (step_local_state == 3) {
             state = StateRobot_MOVE;
-            wheelManager.moveDistance(310.0f, 85.0f, &rotateController.angel.ypr[1]);
-            PT_WAIT_WHILE(&task_step, wheelManager.is_moving);
-
-            timer = millis();
-            PT_WAIT_WHILE(&task_step, millis() - timer < 200);
-            current_sub_step = SUB_DONE;
+            if (!wheelManager.is_moving) {
+                wheelManager.moveDistance(310.0f, 85.0f, &rotateController.angel.ypr[1]);
+            }
+            step_local_state = 4;
         }
-
-        sentData();
-        task = TaskRobot_WAIT;
-        current_sub_step = SUB_START;
-        PT_END(&task_step);
+        else if (step_local_state == 4) {
+            if (wheelManager.is_moving) return;
+            sentData();
+            task = TaskRobot_WAIT;
+            step_local_state = 0;
+        }
     }
 
-    int update_victim() {
-        PT_BEGIN(&task_victim);
+    void update_victim() {
+        bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
+        bool isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
 
         state = StateRobot_VICTIM;
-        bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
 
-        servoController.set(isLeft ? ServoController_Left : ServoController_Right);
-        PT_WAIT_WHILE(&task_victim, servoController.is_active);
-        servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
-        PT_WAIT_WHILE(&task_victim, servoController.is_active);
-
-        if (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2) {
+        if (victim_local_state == 0) {
+            wheelManager.stop();
             servoController.set(isLeft ? ServoController_Left : ServoController_Right);
-            PT_WAIT_WHILE(&task_victim, servoController.is_active);
+            victim_local_state = 1;
+        }
+        else if (victim_local_state == 1) {
+            if (servoController.is_active) return;
+            victim_local_state = 2;
+        }
+        else if (victim_local_state == 2) {
             servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
-            PT_WAIT_WHILE(&task_victim, servoController.is_active);
+            victim_local_state = 3;
         }
+        else if (victim_local_state == 3) {
+            if (servoController.is_active) return;
+            victim_local_state = isX2 ? 4 : 8;
+        }
+        else if (victim_local_state == 4) {
+            servoController.set(isLeft ? ServoController_Left : ServoController_Right);
+            victim_local_state = 5;
+        }
+        else if (victim_local_state == 5) {
+            if (servoController.is_active) return;
+            victim_local_state = 6;
+        }
+        else if (victim_local_state == 6) {
+            servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
+            victim_local_state = 7;
+        }
+        else if (victim_local_state == 7) {
+            if (servoController.is_active) return;
+            victim_local_state = 8;
+        }
+        else if (victim_local_state == 8) {
+            if (saved_task != TaskRobot_WAIT) {
+                task = saved_task;
+                saved_task = TaskRobot_WAIT;
 
-        if (robot::last_task != TaskRobot_WAIT) {
-            task = robot::last_task;
-            robot::last_task = TaskRobot_WAIT;
-            PT_INIT(&task_step);
+                if (step_local_state < 3) {
+                    step_local_state = 0;
+                }
+            }
+            else {
+                task = TaskRobot_WAIT;
+            }
+            victim_local_state = 0;
         }
-        else {
-            task = TaskRobot_WAIT;
-            current_sub_step = SUB_START;
-        }
-        PT_END(&task_victim);
     }
+
+
+    
 
     static void waitForSensors(uint32_t timeout_ms) {
         uint32_t start = millis();
@@ -281,7 +310,7 @@ namespace robot {
         Serial.println(F("Calibrate end. Please reboot."));
         for (;;);
     }
-
+     
     void handleWait() { wheelManager.stop(); }
     void handleRotate() { rotateController.update(); }
     void handleVictim() { servoController.update(); lightController.update(); }

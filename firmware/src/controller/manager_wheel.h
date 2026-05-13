@@ -69,7 +69,7 @@ struct WheelManager {
         fl->stop(); fr->stop(); bl->stop(); br->stop();
         state = IDLE;
         is_moving = false;
-        wall_disable = false; // Важно сбросить здесь
+        wall_disable = false;
     }
 
     void update() {
@@ -87,18 +87,7 @@ struct WheelManager {
             }
 
             if (state == MOVE_SOFT) {
-                if (gio::read(pinHitA) == LOW && gio::read(pinHitB) != HIGH) {
-                    fr->speed_offset = -40;
-                    fl->speed_offset = -40;
-                    br->speed_offset = 40;
-                    bl->speed_offset = 40;
-                }
-                if (gio::read(pinHitB) == LOW && gio::read(pinHitA) != HIGH) {
-                    fr->speed_offset = 40;
-                    fl->speed_offset = 40;
-                    br->speed_offset = -40;
-                    bl->speed_offset = -40;
-                }
+
 
                 PT_WAIT_UNTIL(&pt_task, !fl->is_moving || (pitch_ptr && abs(*pitch_ptr) > 15.0f));
                 if (pitch_ptr && abs(*pitch_ptr) > 15.0f) {
