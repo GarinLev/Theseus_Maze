@@ -13,8 +13,8 @@ namespace robot {
     DebugController debug;
     RotateController rotateController;
     ServoController servoController;
-    LightController lightController;
     ColorController colorController;
+    microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
 
     static uint16_t step_local_state = 0;
     static uint16_t victim_local_state = 0;
@@ -76,6 +76,10 @@ namespace robot {
         rotateController.wheelB1 = &wheelB1; rotateController.wheelB2 = &wheelB2;
         rotateController.init();
 
+        strip.init();
+        strip.clear();
+        strip.show();
+
         servoController.pin = 44;
         servoController.init();
 
@@ -114,26 +118,6 @@ namespace robot {
         }
 #endif
 
-        static bool last_btn = HIGH;
-        bool current_btn = digitalRead(42);
-        if (current_btn == LOW && last_btn == HIGH)    {
-        
-            if (task != TaskRobot_END) {
-                comController.node.request[0] = 'p';
-                step_local_state = 0;
-                victim_local_state = 0;
-                task = TaskRobot_END;
-                state = StateRobot_WAIT;
-            }
-            else {
-                comController.node.request[0] = 'c';
-                task = TaskRobot_WAIT;
-                state = StateRobot_WAIT;
-            }
-            node_com_run(comController.node);
-        }
-        last_btn = current_btn;
-
         node_dist_run(wallRight.nodeWall);
         node_dist_run(wallLeft.nodeWall);
         node_dist_run(wallRight.nodeExtra);
@@ -154,8 +138,8 @@ namespace robot {
         else if (state == StateRobot_ROTATE) handleRotate();
         else if (state == StateRobot_VICTIM) handleVictim();
 
-        lightController.update();
         wheelManager.update();
+        wheelManager.setAllSpeed(100);
     }
 
 

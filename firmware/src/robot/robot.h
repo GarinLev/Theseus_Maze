@@ -18,10 +18,10 @@
 #include "../controller/controller_servo.h"
 #include "../controller/controller_debug.h"
 #include "../controller/controller_color.h"
-#include "../controller/controller_light.h"
 #include "../../lib/EncButton/EncButton.h"
+#include "../../lib/microLED/microLED.h"
 
-#define COM_ENABLE 1
+// #define COM_ENABLE 1
 
 struct ComController;
 
@@ -58,7 +58,7 @@ namespace robot {
     extern DebugController debug;
     extern RotateController rotateController;
     extern ServoController servoController;
-    extern LightController lightController;
+    extern microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
     extern ColorController colorController;
 
     extern const int16_t OFFSETS_MPU[6] PROGMEM;
