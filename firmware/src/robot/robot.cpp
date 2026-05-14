@@ -1,6 +1,7 @@
 #include "robot.h"
 #include <Wire.h>
 #include "../controller/controller_com.h"
+#include "../../lib/microLED/microLED.h"
 
 namespace robot {
     TaskRobot task = TaskRobot_WAIT;
@@ -13,21 +14,21 @@ namespace robot {
     DebugController debug;
     RotateController rotateController;
     ServoController servoController;
-    LightController lightController;
     ColorController colorController;
+    microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
 
     static uint16_t step_local_state = 0;
     static uint16_t victim_local_state = 0;
 
     const int16_t OFFSETS_MPU[6] PROGMEM = {
-        -2184, -3266, 2904, -1830, -66, -17
+        -2198, -3250, 2874, -1826, -67, -17
     };
 
     const float OFFSETS_COLOR[8] PROGMEM = {
-        1.22f, 0.68f, 1.41f, // Баланс белого
-        (184.51 / 100.0f), // Синиий цвет
-        432.0f, // Чeрный цвет
-        1024
+        1.15f, 0.72f, 1.36f, // Баланс белого
+        (179.08 / 100.0f), // Синиий цвет
+        396.0, // Чeрный цвет
+        1247.0 // Серый цвет
     };
 
 #ifdef COM_ENABLE
@@ -37,12 +38,10 @@ namespace robot {
     static void sentData();
     static void waitForSensors(uint32_t timeout_ms);
     void calibrate();
-
     void init() {
         Serial.begin(115200);
         Serial2.begin(9600);
         Wire.begin();
-        Wire.setClock(400000);
 
         wheelA1.init(500, 140); wheelA1.setPins(4, 5, false, 2, 22, robot::encoder::isr_A1);
         wheelA2.init(500, 140); wheelA2.setPins(8, 9, false, 18, 24, robot::encoder::isr_A2);
@@ -71,13 +70,17 @@ namespace robot {
         wallManager.wheelA1 = &wheelA1; wallManager.wheelA2 = &wheelA2;
         wallManager.wheelB1 = &wheelB1; wallManager.wheelB2 = &wheelB2;
         wallManager.init();
-
+        
         rotateController.wheelA1 = &wheelA1; rotateController.wheelA2 = &wheelA2;
         rotateController.wheelB1 = &wheelB1; rotateController.wheelB2 = &wheelB2;
         rotateController.init();
 
         servoController.pin = 44;
         servoController.init();
+
+        strip.setBrightness(255);
+        strip.clear();
+        strip.show();
 
         pinMode(42, INPUT_PULLUP);
         if (digitalRead(42) == LOW) {
@@ -154,7 +157,6 @@ namespace robot {
         else if (state == StateRobot_ROTATE) handleRotate();
         else if (state == StateRobot_VICTIM) handleVictim();
 
-        lightController.update();
         wheelManager.update();
     }
 
@@ -166,14 +168,14 @@ namespace robot {
         static uint16_t step_timer = 0;
 
         if (step_local_state == 0) {
-            Serial.println("s0");
+            Serial.print("s0");
             task_step = task;
             if (task == TaskRobot_STEP_UP) {
                 step_local_state = 3;
             }
             else {
                 state = StateRobot_ROTATE;
-                if (task == TaskRobot_STEP_DOWN) rotateController.run(175, 100);
+                if (task == TaskRobot_STEP_DOWN) rotateController.run(85, 100);
                 else if (task == TaskRobot_STEP_RIGHT) rotateController.run(85, 100);
                 else if (task == TaskRobot_STEP_LEFT) rotateController.run(-85, 100);
                 step_local_state = 1;
@@ -184,7 +186,7 @@ namespace robot {
                 state = StateRobot_ROTATE;
                 return;
             }
-            Serial.println("s1");
+            Serial.print("s1");
             step_timer = millis();
             step_local_state = 2;
         }
@@ -192,13 +194,27 @@ namespace robot {
             if (millis() - step_timer < 200) return;
             Serial.println("s2");
             step_local_state = 3;
+            if (task == TaskRobot_STEP_DOWN)
+            {
+                rotateController.run(85, 100);
+                step_local_state = 100;
+            }
+        }
+        else if (step_local_state == 100) {
+            if (rotateController.is_active) {
+                state = StateRobot_ROTATE;
+                return;
+            }
+            Serial.print("s100");
         }
         else if (step_local_state == 3) {
-            Serial.println("s3");
+            Serial.print("s3");
             state = StateRobot_MOVE;
             if (!wheelManager.is_moving) {
-                wheelManager.moveDistance(310.0f, 85.0f, &rotateController.angel.ypr[1]);
+                wheelManager.moveDistance(310.0f * abs(cos(abs(rotateController.angel.ypr[1]))), 85.0f, nullptr);
             }
+
+
             step_local_state = 4;
         }
         else if (step_local_state == 4) {
@@ -220,47 +236,58 @@ namespace robot {
 
 
         if (victim_local_state == 0) {
-            Serial.println("v0");
+            Serial.print("v0");
             state = StateRobot_VICTIM;
             servoController.set(isLeft ? ServoController_Left : ServoController_Right);
             victim_local_state = 1;
         }
         else if (victim_local_state == 1) {
             if (servoController.is_active) return;
-            Serial.println("v1");
+            Serial.print("v1");
             victim_local_state = 2;
         }
         else if (victim_local_state == 2) {
             servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
-            Serial.println("v2");
+            Serial.print("v2");
             victim_local_state = 3;
         }
         else if (victim_local_state == 3) {
             if (servoController.is_active) return;
-            Serial.println("v3");
+            Serial.print("v3");
             victim_local_state = isX2 ? 4 : 8;
         }
         else if (victim_local_state == 4) {
             servoController.set(isLeft ? ServoController_Left : ServoController_Right);
-            Serial.println("v4");
+            Serial.print("v4");
             victim_local_state = 5;
         }
         else if (victim_local_state == 5) {
             if (servoController.is_active) return;
-            Serial.println("v5");
+            Serial.print("v5");
             victim_local_state = 6;
         }
         else if (victim_local_state == 6) {
-            Serial.println("v6");
+            Serial.print("v6");
             servoController.set(isLeft ? ServoController_CloseLeft : ServoController_CloseRight);
             victim_local_state = 7;
         }
         else if (victim_local_state == 7) {
             if (servoController.is_active) return;
-            Serial.println("v7");
+            Serial.print("v7");
             victim_local_state = 8;
         }
         else if (victim_local_state == 8) {
+            for (uint16_t i = 0; i < 5; i++)
+            {
+                strip.fill(mGreen);
+                strip.show();
+                delay(500);
+
+                strip.fill(mBlack);
+                strip.show();
+                delay(500);
+            }
+
             Serial.println("v8");
             task = task_step;
             state = StateRobot_WAIT;
