@@ -116,17 +116,19 @@ namespace robot {
 
         static bool last_btn = HIGH;
         bool current_btn = digitalRead(42);
-        if (current_btn == LOW && last_btn == HIGH) {
+        if (current_btn == LOW && last_btn == HIGH)    {
         
             if (task != TaskRobot_END) {
                 comController.node.request[0] = 'p';
                 step_local_state = 0;
                 victim_local_state = 0;
                 task = TaskRobot_END;
+                state = StateRobot_WAIT;
             }
             else {
                 comController.node.request[0] = 'c';
                 task = TaskRobot_WAIT;
+                state = StateRobot_WAIT;
             }
             node_com_run(comController.node);
         }
