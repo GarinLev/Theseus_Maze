@@ -15,7 +15,7 @@ namespace robot {
     ServoController servoController;
     ColorController colorController;
     microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
-
+    uint16_t aaaa = 1;
     static uint16_t step_local_state = 0;
     static uint16_t victim_local_state = 0;
 
@@ -54,9 +54,10 @@ namespace robot {
 
         wheelManager.fr = &wheelA1; wheelManager.fl = &wheelA2;
         wheelManager.br = &wheelB1; wheelManager.bl = &wheelB2;
-        wheelManager.init();
-        wheelManager.setDistSource(&wallRight.nodeExtra);
 
+        wheelManager.setDistSource(&wallRight.nodeExtra);
+        wheelManager.init();
+        
         wallRight.setPins(&Wire, 0x30, 0x31, 0x32, 37, 36, 32);
         wallLeft.setPins(&Wire, 0x33, 0x34, 0x35, 33, 34, 35);
         wallRight.reset(); wallLeft.reset();
@@ -217,27 +218,33 @@ namespace robot {
     }
 
     void update_victim() {
+
         bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
         bool isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
 
+        state = StateRobot_VICTIM;
 
         if (victim_local_state == 0) {
-
             strip.setBrightness(255);
             for (uint8_t i = 0; i < 5; i++)
+
             {
                 strip.fill(mGreen);
                 strip.show();
                 delay(500);
                 strip.clear();
                 strip.show();
-                delay(500);
+                delay(500); 
             }
-
-            Serial.println("v0");
-            state = StateRobot_VICTIM;
-            servoController.set(isLeft ? ServoController_Left : ServoController_Right);
-            victim_local_state = 1;
+            if (task == TaskRobot_VICTIM_LIGHT)
+            {
+                victim_local_state = 8;
+            }
+            else {
+                Serial.println("v0");
+                servoController.set(isLeft ? ServoController_Left : ServoController_Right);
+                victim_local_state = 1;
+            }
         }
         else if (victim_local_state == 1) {
             if (servoController.is_active) return;
@@ -306,7 +313,8 @@ namespace robot {
         uint16_t distRight = wallRight.nodeWall.dist_valid ? wallRight.nodeWall.dist : 0;
 
         uint16_t walls[4] = { distUp, distLeft, distDown, distRight };
-        comController.sentData(walls, false, 1);
+        comController.sentData(walls, false, aaaa);
+        aaaa = 1;
 #endif
     }
 
@@ -347,7 +355,7 @@ namespace robot {
         for (;;);
     }
      
-    void handleWait() { wheelManager.stop(); }
+    void handleWait() { wheelManager.stop(); }  
     void handleRotate() { rotateController.update(); }
     void handleVictim() { servoController.update(); }
     void handleMove() {

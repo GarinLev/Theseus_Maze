@@ -22,7 +22,7 @@ struct WallManager {
         PT_INIT(&pt_task);
 
         centerNode.topic = &centerTopic;
-        centerNode.Kp = 0.1f;
+        centerNode.Kp = 0.35f;
         centerNode.Ki = 0.0f;
         centerNode.dt = 25;
         centerNode.setpoint = 0;

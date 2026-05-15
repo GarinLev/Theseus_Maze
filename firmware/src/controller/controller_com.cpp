@@ -21,11 +21,12 @@ void ComController::update(robot::TaskRobot* task) {
             else if (cmd == 'r') *task = robot::TaskRobot_STEP_RIGHT;
             else if (cmd == 'd') *task = robot::TaskRobot_STEP_DOWN;
         }
-        else if (cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm') {
+        else if (cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm' || cmd == 'z') {
             if (cmd == 'v')      *task = robot::TaskRobot_VICTIM_RIGHT;
             else if (cmd == 'b') *task = robot::TaskRobot_VICTIM_LEFT;
             else if (cmd == 'n') *task = robot::TaskRobot_VICTIM_RIGHT_X2;
             else if (cmd == 'm') *task = robot::TaskRobot_VICTIM_LEFT_X2;
+            else if (cmd == 'z') *task = robot::TaskRobot_VICTIM_LIGHT;
         }
     }
 }

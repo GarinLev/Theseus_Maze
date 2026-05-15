@@ -31,14 +31,15 @@ int ColorController::update() {
         if (s < 0.15f && !isBlack()) {
             h = 0;
         }
+        
 
         Serial.print(isBlue()); Serial.print(" ");
         Serial.print(isBlack()); Serial.print(" ");
         Serial.print(isGrey()); Serial.print(" | ");
         Serial.print(h); Serial.print(" ");
         Serial.print(s); Serial.print(" ");
-        Serial.println(v);
-
+        Serial.println(c);
+        
         last_update_ms = millis();
         PT_WAIT_UNTIL(&pt_task, millis() - last_update_ms >= 120);
     }
@@ -84,7 +85,7 @@ void ColorController::rgb_to_hsv(uint16_t r_raw, uint16_t g_raw, uint16_t b_raw,
 }
 
 bool ColorController::isBlack() {
-    return (c < robot::OFFSETS_COLOR[CFG_BLACK_C] * 1.2f) && (v < 0.15f);
+    return (c < 460);
 }
 
 bool ColorController::isGrey() {

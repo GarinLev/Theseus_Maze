@@ -38,8 +38,11 @@ namespace robot {
         TaskRobot_VICTIM_LEFT,
         TaskRobot_VICTIM_RIGHT,
         TaskRobot_VICTIM_LEFT_X2,
+        TaskRobot_VICTIM_LIGHT,
         TaskRobot_VICTIM_RIGHT_X2,
     };
+    extern uint16_t aaaa;
+
 
     enum StateRobot {
         StateRobot_WAIT,
@@ -70,7 +73,7 @@ namespace robot {
 
     void init();
     void loop();
-    void calibrate();
+    void calibrate();   
 
     void update_step();
     void update_victim();
