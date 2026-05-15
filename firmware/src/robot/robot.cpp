@@ -38,6 +38,9 @@ namespace robot {
     static void waitForSensors(uint32_t timeout_ms);
     void calibrate();
 
+
+
+
     void init() {
         Serial.begin(115200);
         Serial2.begin(9600);
@@ -53,7 +56,6 @@ namespace robot {
         wheelManager.br = &wheelB1; wheelManager.bl = &wheelB2;
         wheelManager.init();
         wheelManager.setDistSource(&wallRight.nodeExtra);
-        wheelManager.setPitchSource(&rotateController.angel.ypr[1]);
 
         wallRight.setPins(&Wire, 0x30, 0x31, 0x32, 37, 36, 32);
         wallLeft.setPins(&Wire, 0x33, 0x34, 0x35, 33, 34, 35);
@@ -90,7 +92,7 @@ namespace robot {
 
 
         Serial.print("Waiting...   ");
-#ifdef COM_ENABLE
+#ifdef COM_ENABLE 
         comController.init();
         for (;;) {
             comController.node.request[0] = 0;
@@ -139,7 +141,6 @@ namespace robot {
         else if (state == StateRobot_VICTIM) handleVictim();
 
         wheelManager.update();
-        wheelManager.setAllSpeed(100);
     }
 
 
@@ -181,7 +182,10 @@ namespace robot {
             Serial.println("s3");
             state = StateRobot_MOVE;
             if (!wheelManager.is_moving) {
-                wheelManager.moveDistance(310.0f, 85.0f, &rotateController.angel.ypr[1]);
+                float pitch_deg = rotateController.angel.ypr[1];
+                float distance = 320.0f / cosf(pitch_deg * M_PI / 180.0f);
+                if (distance > 600.0f) distance = 600.0f;
+                wheelManager.moveDistance(distance, 100.0f, &rotateController.angel.ypr[1]);
             }
             step_local_state = 4;
         }
@@ -276,9 +280,7 @@ namespace robot {
         uint16_t distRight = wallRight.nodeWall.dist_valid ? wallRight.nodeWall.dist : 0;
 
         uint16_t walls[4] = { distUp, distLeft, distDown, distRight };
-        uint8_t step_count = wheelManager.hasDouble ? 2 : 1;
-        wheelManager.hasDouble = false;
-        comController.sentData(walls, false, step_count);
+        comController.sentData(walls, false, 1);
 #endif
     }
 

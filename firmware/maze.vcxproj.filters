@@ -167,9 +167,6 @@
     <ClCompile Include="lib\EncButton\core\self.cpp">
       <Filter>Library Files\EncButton</Filter>
     </ClCompile>
-    <ClCompile Include="src\controller\controller_light.cpp">
-      <Filter>Source Files\controller\light</Filter>
-    </ClCompile>
     <ClCompile Include="lib\microLED\color_utility.cpp">
       <Filter>Library Files\microLED</Filter>
     </ClCompile>
@@ -358,9 +355,6 @@
     </ClInclude>
     <ClInclude Include="lib\EncButton\core\VirtEncoder.h">
       <Filter>Library Files\EncButton</Filter>
-    </ClInclude>
-    <ClInclude Include="src\controller\controller_light.h">
-      <Filter>Source Files\controller\light</Filter>
     </ClInclude>
     <ClInclude Include="lib\microLED\color_utility.h">
       <Filter>Library Files\microLED</Filter>

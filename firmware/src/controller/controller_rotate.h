@@ -11,7 +11,8 @@ struct RotateController {
     SoftMove profile;
 
     WheelController* wheelA1, * wheelA2, * wheelB1, * wheelB2;
-    
+    float previous_yaw = 0;
+    float accumulated_yaw = 0;
 
 
     float start_yaw = 0;

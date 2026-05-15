@@ -21,7 +21,7 @@
 #include "../../lib/EncButton/EncButton.h"
 #include "../../lib/microLED/microLED.h"
 
-// #define COM_ENABLE 1
+#define COM_ENABLE 1
 
 struct ComController;
 

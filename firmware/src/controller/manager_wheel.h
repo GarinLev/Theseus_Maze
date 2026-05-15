@@ -15,7 +15,7 @@ struct WheelManager {
     uint8_t pinHitB = 41;
 
     struct pt pt_task;
-    enum States { IDLE, MOVE_SOFT, SLOPE_UP, SLOPE_DOWN, HIT };
+    enum States { IDLE, MOVE_SOFT, HIT };
     States state = IDLE;
 
     float _target_v;
@@ -87,30 +87,11 @@ struct WheelManager {
             }
 
             if (state == MOVE_SOFT) {
-
-
-                PT_WAIT_UNTIL(&pt_task, !fl->is_moving || (pitch_ptr && abs(*pitch_ptr) > 15.0f));
-                if (pitch_ptr && abs(*pitch_ptr) > 15.0f) {
-                    state = (*pitch_ptr > 15.0f) ? SLOPE_UP : SLOPE_DOWN;
-                    continue;
-                }
+                PT_WAIT_UNTIL(&pt_task, !fl->is_moving);
                 state = HIT;
                 continue;
             }
 
-            if (state == SLOPE_UP || state == SLOPE_DOWN) {
-                hasDouble = true;
-                setAllSpeed(state == SLOPE_UP ? 120 : 60);
-
-                PT_WAIT_UNTIL(&pt_task, (state == SLOPE_UP ? *pitch_ptr < 5.0f : *pitch_ptr > -5.0f) || state == IDLE);
-
-                if (state != IDLE) {
-                    commandAll(_target_v, (uint32_t)WC_MM_TO_TICKS(40), (int32_t)WC_MM_TO_TICKS(150));
-                    PT_WAIT_UNTIL(&pt_task, !fl->is_moving || state == IDLE);
-                }
-                state = HIT;
-                continue;
-            }
             if (state == HIT) {
                 wall_disable = true;
                 if (wall_sens && wall_sens->dist_valid && wall_sens->dist <= 200) {

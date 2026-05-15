@@ -21,33 +21,36 @@ int RotateController::update() {
 
     PT_BEGIN(&pt_task);
     for (;;) {
-        // Ждем интервала времени
         PT_WAIT_UNTIL(&pt_task, (uint32_t)(millis() - last_time) >= UPDATE_INTERVAL);
         last_time = millis();
 
         if (!is_active) continue;
 
         float current_yaw = angel.ypr[0];
-        // Вычисляем, на сколько мы реально повернулись от старта
-        float relative_yaw = normalize_angle(current_yaw - start_yaw);
-        // Ошибка: сколько осталось до цели
-        float error = normalize_angle(target_total_angle - relative_yaw);
 
-        // Условие завершения движения
+        // 1. Вычисляем изменение угла за шаг. 
+        // normalize_angle здесь КРИТИЧЕСКИ важен: он корректно обработает переход через 180 -> -180
+        float delta = normalize_angle(current_yaw - previous_yaw);
+        accumulated_yaw += delta;
+        previous_yaw = current_yaw;
+
+        // 2. Ошибка — сколько еще нужно докрутить до цели
+        float error = target_total_angle - accumulated_yaw;
+
+        // Условие завершения
         if (fabsf(error) < PRECISION) {
             stopWheels();
             is_active = false;
             continue;
         }
 
-        // Расчет пройденного пути для профиля скорости
-        float traveled = fabsf(target_total_angle) - fabsf(error);
-        float profile_speed = SoftMoveGet(&profile, max(0.0f, traveled));
+        // 3. Для SoftMoveGet передаем абсолютное значение пройденного пути
+        float traveled = fabsf(accumulated_yaw);
+        float profile_speed = SoftMoveGet(&profile, traveled);
 
-        // Ограничиваем минимальную скорость, чтобы не застрять из-за трения
         if (profile_speed < min_start_rpm) profile_speed = min_start_rpm;
 
-        // Определяем направление вращения
+        // 4. Направление: если ошибка положительная — крутим в одну сторону, отрицательная — в другую
         float direction = (error > 0) ? 1.0f : -1.0f;
         applySpeed(profile_speed * direction);
     }
@@ -78,19 +81,23 @@ void RotateController::run(float total_angle, float target_v) {
         return;
     }
 
-    // Критически важно: сбрасываем FIFO, чтобы не было старых данных
     angel.mpu.resetFIFO();
-    delay(10); 
+    delay(10);
 
-    node_angel_run(angel); // Читаем актуальный угол
+    node_angel_run(angel);
     start_yaw = angel.ypr[0];
+
+    // Инициализация накопителя
+    previous_yaw = start_yaw;
+    accumulated_yaw = 0;
+
     target_total_angle = total_angle;
 
     float abs_angle = fabsf(total_angle);
     profile.x_start = 0;
     profile.L_total = abs_angle;
-    profile.d_acc = abs_angle * 0.3f; // 30% пути на разгон
-    profile.d_acc = abs_angle * 0.3f; // 30% пути на торможение
+    // d_acc в твоем SoftMove отвечает и за разгон, и за торможение
+    profile.d_acc = abs_angle * 0.3f;
     profile.y0 = min_start_rpm;
     profile.y1 = target_v;
 

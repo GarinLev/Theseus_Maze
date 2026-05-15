@@ -2,7 +2,7 @@
 #include "../robot/robot.h"
 
 #define MAX_DIST 230
-#define MAX_DIST_UP 150
+#define MAX_DIST_UP 200
 
 void ComController::init() {
     node.port = &Serial2;
