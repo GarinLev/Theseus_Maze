@@ -33,12 +33,12 @@ int ColorController::update() {
         }
         
 
-        Serial.print(isBlue()); Serial.print(" ");
-        Serial.print(isBlack()); Serial.print(" ");
-        Serial.print(isGrey()); Serial.print(" | ");
-        Serial.print(h); Serial.print(" ");
-        Serial.print(s); Serial.print(" ");
-        Serial.println(c);
+        // Serial.print(isBlue()); Serial.print(" ");
+        // Serial.print(isBlack()); Serial.print(" ");
+        // Serial.print(isGrey()); Serial.print(" | ");
+        // Serial.print(h); Serial.print(" ");
+        // Serial.print(s); Serial.print(" ");
+        // Serial.println(c);
         
         last_update_ms = millis();
         PT_WAIT_UNTIL(&pt_task, millis() - last_update_ms >= 120);

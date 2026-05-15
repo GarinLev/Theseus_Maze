@@ -74,9 +74,6 @@
     <Filter Include="Source Files\manager">
       <UniqueIdentifier>{4c760d04-aeb3-432c-a7f4-1cfe873f7c58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\controller\light">
-      <UniqueIdentifier>{b115d6b5-6b9a-410d-908d-e3b222a23596}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Library Files\microLED">
       <UniqueIdentifier>{236d4523-b6e9-40be-b760-e5f24cafb282}</UniqueIdentifier>
     </Filter>

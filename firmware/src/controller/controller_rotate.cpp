@@ -2,7 +2,7 @@
 #include "controller_wheel.h"
 #include <Arduino.h>
 
-#define PRECISION 1.5f      // Допуск точности в градусах
+#define PRECISION 4.0f      // Допуск точности в градусах
 #define UPDATE_INTERVAL 20  // Интервал обновления (мс)
 
 void RotateController::init() {
@@ -75,29 +75,30 @@ void RotateController::stopWheels() {
 }
 
 void RotateController::run(float total_angle, float target_v) {
-    if (total_angle == 0) {
+    if (fabsf(total_angle) < 2.5f) { // Игнорируем слишком маленькие углы
         is_active = false;
         stopWheels();
         return;
     }
 
-    angel.mpu.resetFIFO();
-    delay(10);
-
+    // Убираем resetFIFO(), чтобы не терять систему координат
     node_angel_run(angel);
-    start_yaw = angel.ypr[0];
 
-    // Инициализация накопителя
+    start_yaw = angel.ypr[0];
     previous_yaw = start_yaw;
-    accumulated_yaw = 0;
+    accumulated_yaw = 0; // Сбрасываем только накопитель для конкретного маневра
 
     target_total_angle = total_angle;
 
     float abs_angle = fabsf(total_angle);
     profile.x_start = 0;
     profile.L_total = abs_angle;
-    // d_acc в твоем SoftMove отвечает и за разгон, и за торможение
-    profile.d_acc = abs_angle * 0.3f;
+
+    // Ограничиваем дистанцию разгона/торможения, чтобы робот не дергался на малых углах
+    float acc_dist = abs_angle * 0.4f;
+    if (acc_dist > 45.0f) acc_dist = 45.0f; // Максимум 45 градусов на разгон
+
+    profile.d_acc = acc_dist;
     profile.y0 = min_start_rpm;
     profile.y1 = target_v;
 

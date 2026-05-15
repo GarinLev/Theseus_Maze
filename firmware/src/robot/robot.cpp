@@ -15,7 +15,7 @@ namespace robot {
     ServoController servoController;
     ColorController colorController;
     microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> strip;
-    uint16_t aaaa = 1;
+    uint16_t count_steps = 1;
     static uint16_t step_local_state = 0;
     static uint16_t victim_local_state = 0;
 
@@ -28,7 +28,7 @@ namespace robot {
         182.20, // Синиий цвет
         432.0f, // Чeрный цвет
         1024
-    };
+    };  
 
 #ifdef COM_ENABLE
     ComController comController;
@@ -127,14 +127,19 @@ namespace robot {
         node_dist_run(wallRight.nodeExtra);
         node_dist_run(wallLeft.nodeExtra);
 
-        if (task >= TaskRobot_VICTIM_LEFT && task <= TaskRobot_VICTIM_RIGHT_X2) {
-            update_victim();
-        }
-        else if (task >= TaskRobot_STEP_UP && task <= TaskRobot_STEP_DOWN) {
-            update_step();
+        if (wheelManager.isHandlingHit()) {
+            if (state != StateRobot_ROTATE) state = StateRobot_MOVE;
         }
         else {
-            state = StateRobot_WAIT;
+            if (task >= TaskRobot_VICTIM_LEFT && task <= TaskRobot_VICTIM_RIGHT_X2) {
+                update_victim();
+            }
+            else if (task >= TaskRobot_STEP_UP && task <= TaskRobot_STEP_DOWN) {
+                update_step();
+            }
+            else {
+                state = StateRobot_WAIT;
+            }
         }
 
         if (state == StateRobot_WAIT) handleWait();
@@ -188,7 +193,8 @@ namespace robot {
                 float pitch_deg = rotateController.angel.ypr[1];
                 float distance = 320.0f / cosf(pitch_deg * M_PI / 180.0f);
                 if (distance > 600.0f) distance = 600.0f;
-                wheelManager.moveDistance(distance, 100.0f, &rotateController.angel.ypr[1]);
+                wheelManager.startNewTask(distance, 100, &rotateController.angel.ypr[1]);
+                wheelManager.state = WheelManager::MOVE_SOFT;
             }
             if (colorController.isBlue())
             {
@@ -222,16 +228,15 @@ namespace robot {
         bool isLeft = (task == TaskRobot_VICTIM_LEFT || task == TaskRobot_VICTIM_LEFT_X2);
         bool isX2 = (task == TaskRobot_VICTIM_LEFT_X2 || task == TaskRobot_VICTIM_RIGHT_X2);
 
-        state = StateRobot_VICTIM;
-
-        if (victim_local_state == 0) {
+        
+        if (victim_local_state == 0) {  
+            state = StateRobot_VICTIM;
+            wheelManager.stop(); 
             strip.setBrightness(255);
-            for (uint8_t i = 0; i < 5; i++)
-
-            {
+            for (uint8_t i = 0; i < 5; i++) {
                 strip.fill(mGreen);
                 strip.show();
-                delay(500);
+                delay(500); 
                 strip.clear();
                 strip.show();
                 delay(500); 
@@ -287,10 +292,7 @@ namespace robot {
             state = StateRobot_WAIT;
             victim_local_state = 0;
         }
-    }
-
-
-    
+    }    
 
     static void waitForSensors(uint32_t timeout_ms) {
         uint32_t start = millis();
@@ -313,8 +315,8 @@ namespace robot {
         uint16_t distRight = wallRight.nodeWall.dist_valid ? wallRight.nodeWall.dist : 0;
 
         uint16_t walls[4] = { distUp, distLeft, distDown, distRight };
-        comController.sentData(walls, false, aaaa);
-        aaaa = 1;
+        comController.sentData(walls, false, count_steps);
+        count_steps = 1;
 #endif
     }
 
@@ -354,6 +356,11 @@ namespace robot {
         Serial.println(F("Calibrate end. Please reboot."));
         for (;;);
     }
+
+    void setGlobalState(StateRobot s) {
+        state = s;
+    }
+
      
     void handleWait() { wheelManager.stop(); }  
     void handleRotate() { rotateController.update(); }
