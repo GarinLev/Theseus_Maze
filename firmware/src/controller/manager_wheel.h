@@ -1,6 +1,11 @@
 #pragma once
 #include "controller_wheel.h"
 #include "../../lib/GyverIO/GyverIO.h"
+#include "../controller/controller_color.h"
+
+namespace robot {
+    extern ColorController colorController;
+}
 
 struct WheelManager {
     WheelController* fl;
@@ -15,7 +20,7 @@ struct WheelManager {
     uint8_t pinHitB = 41;
 
     struct pt pt_task;
-    enum States { IDLE, MOVE_SOFT, HIT };
+    enum States { IDLE, MOVE_SOFT, HIT, BLACK };
     States state = IDLE;
 
     float _target_v;
@@ -88,10 +93,21 @@ struct WheelManager {
 
             if (state == MOVE_SOFT) {
                 PT_WAIT_UNTIL(&pt_task, !fl->is_moving);
+                
+
                 state = HIT;
                 continue;
             }
+            if (state == BLACK)
+            {
+                wall_disable = true;
 
+                moveDistance(-10, 100, nullptr);
+                PT_WAIT_UNTIL(&pt_task, !fl->is_moving);
+                stop();
+                state = IDLE;
+                wall_disable = false;
+            }
             if (state == HIT) {
                 wall_disable = true;
                 if (wall_sens && wall_sens->dist_valid && wall_sens->dist <= 200) {

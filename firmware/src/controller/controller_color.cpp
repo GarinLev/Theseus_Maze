@@ -32,15 +32,12 @@ int ColorController::update() {
             h = 0;
         }
 
-        // Отладка
-        /*
         Serial.print(isBlue()); Serial.print(" ");
         Serial.print(isBlack()); Serial.print(" ");
         Serial.print(isGrey()); Serial.print(" | ");
-        Serial.print(h); Serial.print("\t");
-        Serial.print(s); Serial.print("\t");
+        Serial.print(h); Serial.print(" ");
+        Serial.print(s); Serial.print(" ");
         Serial.println(v);
-        */
 
         last_update_ms = millis();
         PT_WAIT_UNTIL(&pt_task, millis() - last_update_ms >= 120);
@@ -101,7 +98,7 @@ bool ColorController::isBlue() {
     float diff = fabsf(h - target);
     if (diff > 180.0f) diff = 360.0f - diff;
 
-    return (diff < 25.0f) && (s > 0.25f);
+    return (diff < 25.0f) && (s > 0.1f);
 }
 
 void ColorController::calibrateWhite() {

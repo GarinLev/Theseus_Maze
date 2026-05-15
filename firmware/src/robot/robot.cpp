@@ -24,8 +24,8 @@ namespace robot {
     };
 
     const float OFFSETS_COLOR[8] PROGMEM = {
-        1.22f, 0.68f, 1.41f, // Баланс белого
-        (184.51 / 100.0f), // Синиий цвет
+        1.08f, 0.76f, 1.32f, // Баланс белого
+        182.20, // Синиий цвет
         432.0f, // Чeрный цвет
         1024
     };
@@ -119,6 +119,7 @@ namespace robot {
             comController.update(&task);
         }
 #endif
+        colorController.update();
 
         node_dist_run(wallRight.nodeWall);
         node_dist_run(wallLeft.nodeWall);
@@ -169,6 +170,7 @@ namespace robot {
                 state = StateRobot_ROTATE;
                 return;
             }
+
             Serial.println("s1");
             step_timer = millis();
             step_local_state = 2;
@@ -187,9 +189,21 @@ namespace robot {
                 if (distance > 600.0f) distance = 600.0f;
                 wheelManager.moveDistance(distance, 100.0f, &rotateController.angel.ypr[1]);
             }
-            step_local_state = 4;
+            if (colorController.isBlue())
+            {
+                step_local_state = 4;
+
+            }
+            else {
+                step_local_state = 5;
+
+            }
         }
         else if (step_local_state == 4) {
+            delay(5000);
+            step_local_state = 5;
+        }
+        else if (step_local_state == 5) {
             if (wheelManager.is_moving) {
                 state = StateRobot_MOVE;
                 return;
@@ -208,6 +222,18 @@ namespace robot {
 
 
         if (victim_local_state == 0) {
+
+            strip.setBrightness(255);
+            for (uint8_t i = 0; i < 5; i++)
+            {
+                strip.fill(mGreen);
+                strip.show();
+                delay(500);
+                strip.clear();
+                strip.show();
+                delay(500);
+            }
+
             Serial.println("v0");
             state = StateRobot_VICTIM;
             servoController.set(isLeft ? ServoController_Left : ServoController_Right);

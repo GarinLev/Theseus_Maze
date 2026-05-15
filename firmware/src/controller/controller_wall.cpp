@@ -2,7 +2,7 @@
 
 void WallController::init() {
     wallNode.topic = &wallTopic;
-    wallNode.Kp = 0.6f;
+    wallNode.Kp = 0.3f;
     wallNode.Ki = 0.01f;
     wallNode.dt = 25;
     wallNode.setpoint = 0;
