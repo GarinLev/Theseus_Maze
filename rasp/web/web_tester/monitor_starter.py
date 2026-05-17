@@ -21,10 +21,24 @@ class MonitorState:
 
 mon_state = MonitorState()
 
-# Настройка сети UDP
+# Настройка сети UDP (ВХОДЯЩИЕ пакеты ОТ робота)
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('127.0.0.1', 5002))
 sock.setblocking(False)
+
+# Настройка сети UDP (ИСХОДЯЩИЕ команды К роботу)
+sock_out = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+def send_robot_cmd(cmd):
+    """Отправляет команду ручного управления роботу"""
+    try:
+        # Отправляем на порт 5003
+        sock_out.sendto(f"cmd:{cmd}".encode('utf-8'), ('127.0.0.1', 5003))
+        mon_state.input_logs.append(f"[GUI -> Robot]: Action '{cmd.upper()}'")
+        if len(mon_state.input_logs) > 40:
+            mon_state.input_logs.pop(0)
+    except Exception:
+        pass
 
 def check_network():
     try:
@@ -43,11 +57,11 @@ def check_network():
             coords = parts[1].split(',')
             mon_state.robot_x = int(coords[0]) * 2
             mon_state.robot_y = int(coords[1]) * 2
-            # ПРИНИМАЕМ УГОЛ ИЗ ПАКЕТА (переводим в int)
             mon_state.corn = int(parts[2])
             
-            if mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 0:
-                mon_state.lab[mon_state.robot_y][mon_state.robot_x] = 1
+            #проверка на посещение клетки
+            if mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 0: mon_state.lab[mon_state.robot_y][mon_state.robot_x] = 1
+            elif mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 1: stat_bfs = 1
                 
         elif cmd == 'wall':
             coords = parts[1].split(',')
@@ -68,7 +82,6 @@ def check_network():
             vic_label = parts[2]
             mon_state.found_victims.append({'pos': f"{vx//2},{vy//2}", 'label': vic_label})
             
-            # Автоматическая метка перед носом по углу corn
             if (mon_state.corn == 0 or mon_state.corn == 360) and vy - 1 >= 0:    mon_state.lab[vy - 1][vx] = 4
             elif mon_state.corn == 180 and vy + 1 < LAB_SIZE:                     mon_state.lab[vy + 1][vx] = 4
             elif mon_state.corn == 270 and vx - 1 >= 0:                           mon_state.lab[vy][vx - 1] = 4
@@ -76,7 +89,6 @@ def check_network():
             print(f"[Map] Метка {vic_label} выставлена перед роботом.")
 
         elif cmd == 'vl':
-            # ЧЁТКАЯ ОТНОСИТЕЛЬНАЯ ЛОГИКА СЛЕВА ОТ СТРЕЛОЧКИ ПО УГЛУ CORN
             if mon_state.corn == 0 or mon_state.corn == 360:
                 if vx - 1 >= 0: mon_state.lab[vy][vx - 1] = 4
             elif mon_state.corn == 180:
@@ -85,10 +97,8 @@ def check_network():
                 if vy + 1 < LAB_SIZE: mon_state.lab[vy + 1][vx] = 4
             elif mon_state.corn == 90:
                 if vy - 1 >= 0: mon_state.lab[vy - 1][vx] = 4
-            print(f"[Map] Тонкая зелёная стена СЛЕВА (угол {mon_state.corn}°).")
 
         elif cmd == 'vr':
-            # ЧЁТКАЯ ОТНОСИТЕЛЬНАЯ ЛОГИКА СПРАВА ОТ СТРЕЛОЧКИ ПО УГЛУ CORN
             if mon_state.corn == 0 or mon_state.corn == 360:
                 if vx + 1 < LAB_SIZE: mon_state.lab[vy][vx + 1] = 4
             elif mon_state.corn == 180:
@@ -97,7 +107,6 @@ def check_network():
                 if vy - 1 >= 0: mon_state.lab[vy - 1][vx] = 4
             elif mon_state.corn == 90:
                 if vy + 1 < LAB_SIZE: mon_state.lab[vy + 1][vx] = 4
-            print(f"[Map] Тонкая зелёная стена СПРАВА (угол {mon_state.corn}°).")
 
     except BlockingIOError:
         pass
@@ -106,52 +115,35 @@ def check_network():
 # ОСНОВНОЙ ЦИКЛ ГРАФИКИ
 # =====================================================================
 def gui_frame():
-    # # Заведите статическую переменную для хранения времени (добавьте это в начало gui_frame)
-    # if not hasattr(gui_frame, "last_print_time"):
-    #     gui_frame.last_print_time = 0.0
-
-    # # Проверяем, прошла ли 1 секунда с момента последнего принта
-    # current_time = imgui.get_time()
-    # if current_time - gui_frame.last_print_time > 1.0:
-    #     gui_frame.last_print_time = current_time
-        
-    #     print("\n=== ТЕКУЩИЙ МАССИВ ЛАБИРИНТА ===")
-    #     for row in mon_state.lab:
-    #         # Красивый вывод строки через пробелы
-    #         print(" ".join(str(cell) for cell in row))
-    #     print("=================================")
     check_network()
     
     display_size = imgui.get_io().display_size
     scr_w = display_size.x
     scr_h = display_size.y
     
-    #ЛЕВАЯ ЧАСТЬ ЭКРАНА
+    # ЛЕВАЯ ЧАСТЬ ЭКРАНА
     imgui.set_next_window_pos(imgui.ImVec2(10, 10))
     imgui.set_next_window_size(imgui.ImVec2(scr_w * 0.5 - 15, scr_h - 20))
-    imgui.begin("Maze Live", None, imgui.WindowFlags_.no_resize | imgui.WindowFlags_.no_move | imgui.WindowFlags_.no_collapse)
+    imgui.begin("Maze Monitor", None, imgui.WindowFlags_.no_resize | imgui.WindowFlags_.no_move | imgui.WindowFlags_.no_collapse)
     
     draw_list = imgui.get_window_draw_list()
     screen_pos = imgui.get_cursor_screen_pos()
     
+    # Оставляем место внизу для кнопок (уменьшили высоту карты на 160 пикселей)
     map_available_w = (scr_w * 0.5 - 40)
-    map_available_h = (scr_h - 60)
+    map_available_h = (scr_h - 160)
     cell_pixels = min(map_available_w, map_available_h) / LAB_SIZE
     
-    # ЦВЕТА
     color_unexplored = imgui.get_color_u32(imgui.ImVec4(0.08, 0.08, 0.1, 1.0)) 
     color_explored   = imgui.get_color_u32(imgui.ImVec4(0.22, 0.22, 0.28, 1.0)) 
-    color_wall       = imgui.get_color_u32(imgui.ImVec4(1.0, 0.4, 0.0, 1.0))    # Оранжевый
-    color_victim_wall= imgui.get_color_u32(imgui.ImVec4(0.0, 1.0, 0.3, 1.0))    # Зелёный
+    color_wall       = imgui.get_color_u32(imgui.ImVec4(1.0, 0.4, 0.0, 1.0))    
+    color_victim_wall= imgui.get_color_u32(imgui.ImVec4(0.0, 1.0, 0.3, 1.0))    
     color_start      = imgui.get_color_u32(imgui.ImVec4(0.4, 0.15, 0.6, 1.0))   
     color_robot      = imgui.get_color_u32(imgui.ImVec4(0.0, 0.45, 0.9, 1.0))   
     
-    # --- ДИНАМИЧЕСКИЙ РАСЧЕТ НЕРАВНОМЕРНОЙ СЕТКИ ---
-    # Пропорция: стены в 4-5 раз тоньше основных клеток пола
-    cell_thin = cell_pixels * 0.3   # Толщина нечетных элементов (стен)
-    cell_thick = cell_pixels * 1.7  # Ширина четных элементов (комнат)
+    cell_thin = cell_pixels * 0.3  
+    cell_thick = cell_pixels * 1.7 
 
-    # Заполняем массивы опорных экранных координат для сетки
     xs = [screen_pos.x]
     ys = [screen_pos.y]
     for i in range(LAB_SIZE):
@@ -159,10 +151,8 @@ def gui_frame():
         xs.append(xs[-1] + size)
         ys.append(ys[-1] + size)
 
-    # Заливаем базовый фон по крайним вычисленным точкам
     draw_list.add_rect_filled(imgui.ImVec2(xs[0], ys[0]), imgui.ImVec2(xs[LAB_SIZE], ys[LAB_SIZE]), color_unexplored)
 
-    # Отрисовка элементов лабиринта по новой сетке координат
     for y in range(LAB_SIZE):
         for x in range(LAB_SIZE):
             x1, x2 = xs[x], xs[x + 1]
@@ -170,35 +160,54 @@ def gui_frame():
             
             val = mon_state.lab[y][x]
             
-            # 1. Рисуем пол клеток (четные координаты)
             if x % 2 == 0 and y % 2 == 0:
                 bg_color = color_start if val == 3 else (color_explored if val == 1 else color_unexplored)
                 draw_list.add_rect_filled(imgui.ImVec2(x1, y1), imgui.ImVec2(x2, y2), bg_color)
-                # Бледная сетка-ориентир для больших клеток
                 draw_list.add_rect(imgui.ImVec2(x1, y1), imgui.ImVec2(x2, y2), imgui.get_color_u32(imgui.ImVec4(0.14, 0.14, 0.16, 0.5)), 0.0, 1.0)
 
-            # 2. Отрисовка тонких стен (заливаем суженную нечетную ячейку)
             elif val == 2 or val == 4:
                 current_color = color_victim_wall if val == 4 else color_wall
                 draw_list.add_rect_filled(imgui.ImVec2(x1, y1), imgui.ImVec2(x2, y2), current_color)
                                 
-    # Рисуем робота с привязкой к динамической сетке
     rx1, rx2 = xs[mon_state.robot_x], xs[mon_state.robot_x + 1]
     ry1, ry2 = ys[mon_state.robot_y], ys[mon_state.robot_y + 1]
     robot_w = rx2 - rx1
     
     draw_list.add_rect_filled(imgui.ImVec2(rx1, ry1), imgui.ImVec2(rx2, ry2), color_robot, 2.0)
 
-    # ПРИВЯЗЫВАЕМ СТРЕЛОЧКУ К УГЛАМ CORN И ЦЕНТРИРУЕМ В КЛЕТКЕ
     arrows = {0: "^", 360: "^", 90: ">", 180: "v", 270: "<"}
     white_color = imgui.get_color_u32(imgui.ImVec4(1.0, 1.0, 1.0, 1.0))
     current_arrow = arrows.get(mon_state.corn, "^")
     draw_list.add_text(imgui.ImVec2(rx1 + (robot_w * 0.35), ry1 + (robot_w * 0.2)), white_color, current_arrow)
 
+    # -----------------------------------------------------------------
+    # ПАНЕЛЬ РУЧНОГО УПРАВЛЕНИЯ (ПОД КАРТОЙ)
+    # -----------------------------------------------------------------
+    # ys[-1] - это координата нижнего края нашей нарисованной карты
+    ctrl_y = ys[-1] + 15
+    imgui.set_cursor_pos(imgui.ImVec2(20, ctrl_y))
+    imgui.text_colored(imgui.ImVec4(1.0, 0.8, 0.2, 1.0), "Manual Teleop (WASD): Type 'move' in Robot Console")
+
+    btn_size = imgui.ImVec2(40, 40)
+    
+    # Кнопка ВПЕРЕД (W)
+    imgui.set_cursor_pos(imgui.ImVec2(70, ctrl_y + 25))
+    if imgui.button(" W ", btn_size) or imgui.is_key_pressed(imgui.Key.w): send_robot_cmd('w')
+
+    # Кнопки ВЛЕВО (A), НАЗАД (S), ВПРАВО (D)
+    imgui.set_cursor_pos(imgui.ImVec2(25, ctrl_y + 70))
+    if imgui.button(" A ", btn_size) or imgui.is_key_pressed(imgui.Key.a): send_robot_cmd('a')
+    
+    imgui.same_line()
+    if imgui.button(" S ", btn_size) or imgui.is_key_pressed(imgui.Key.s): send_robot_cmd('s')
+    
+    imgui.same_line()
+    if imgui.button(" D ", btn_size) or imgui.is_key_pressed(imgui.Key.d): send_robot_cmd('d')
+
     imgui.end()
 
     # -----------------------------------------------------------------
-    # 2. ПРАВАЯ ВЕРХНЯЯ ЧАСТЬ: ЛОГ НАЙДЕННЫХ БУКВ
+    # ПРАВАЯ ЧАСТЬ: ЛОГИ
     # -----------------------------------------------------------------
     right_x = scr_w * 0.5 + 5
     right_w = scr_w * 0.5 - 15
@@ -206,7 +215,7 @@ def gui_frame():
     
     imgui.set_next_window_pos(imgui.ImVec2(right_x, 10))
     imgui.set_next_window_size(imgui.ImVec2(right_w, cam_h))
-    imgui.begin("Victims", None, imgui.WindowFlags_.no_resize | imgui.WindowFlags_.no_move | imgui.WindowFlags_.no_collapse)
+    imgui.begin("AI Victims Log", None, imgui.WindowFlags_.no_resize | imgui.WindowFlags_.no_move | imgui.WindowFlags_.no_collapse)
     
     if not mon_state.found_victims:
         imgui.text_disabled("No victims detected yet. Waiting for robot AI data...")
@@ -218,9 +227,6 @@ def gui_frame():
             
     imgui.end()
 
-    # -----------------------------------------------------------------
-    # 3. ПРАВАЯ НИЖНЯЯ ЧАСТЬ: ЛОГ UDP ПАКЕТОВ
-    # -----------------------------------------------------------------
     log_y = cam_h + 20
     log_h = scr_h - log_y - 10
     
@@ -234,6 +240,8 @@ def gui_frame():
             imgui.text_colored(imgui.ImVec4(1.0, 0.6, 0.2, 1.0), log)
         elif "victim" in log or "vl" in log or "vr" in log:
             imgui.text_colored(imgui.ImVec4(0.2, 1.0, 0.2, 1.0), log)
+        elif "GUI" in log:
+            imgui.text_colored(imgui.ImVec4(0.9, 0.4, 0.8, 1.0), log)
         else:
             imgui.text_colored(imgui.ImVec4(0.3, 0.7, 1.0, 1.0), log)
     imgui.end_child()
@@ -241,9 +249,8 @@ def gui_frame():
     imgui.end()
 
 def main():
-    # Проверьте, чтобы перед этой строкой НЕ было пробелов или табов:
     params = hello_imgui.RunnerParams()
-    params.app_window_params.window_title = "Rescue Maze Monitor"
+    params.app_window_params.window_title = "Rescue Maze Monitor 33x33 Thin Walls"
     
     try:
         params.app_window_params.window_geometry.full_screen_mode = hello_imgui.FullScreenMode.full_screen_desktop

@@ -1,5 +1,12 @@
 import socket
+from monitor_starter import stat_bfs
+import subprocess
+import time
+import sys
+import os
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+bfs_path = os.path.join(current_dir, "bfs.py")
 TARGET_IP = "127.0.0.1"
 TARGET_PORT = 5002
 sender_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -62,14 +69,69 @@ def main():
         
         if cmd == 'end': 
             break
+        
+        elif cmd == 'move':
+            print("\n>>> Write movement please")
             
+            # Открываем сокет, чтобы слушать команды от монитора
+            move_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            move_sock.bind(('127.0.0.1', 5003))
+            move_sock.settimeout(0.5) # Тайм-аут, чтобы программа могла поймать Ctrl+C
+            
+            try:
+                while True:
+                    try:
+                        data, _ = move_sock.recvfrom(1024)
+                        rcv = data.decode('utf-8')
+                        
+                        if rcv.startswith("cmd:"):
+                            action = rcv.split(":")[1]
+                            
+                            if action == 'w':
+                                if corn == 0 or corn == 360: ry -= 1
+                                elif corn == 180: ry += 1
+                                elif corn == 270: rx -= 1
+                                elif corn == 90: rx += 1
+                            elif action == 's':
+                                if corn == 0 or corn == 360: ry += 1
+                                elif corn == 180: ry -= 1
+                                elif corn == 270: rx += 1
+                                elif corn == 90: rx -= 1
+                                corn = (corn - 180) % 360
+                            elif action == 'a':
+                                print("Left")
+                                corn = (corn - 90) % 360
+                                if corn == 0 or corn == 360:  ry -= 1
+                                elif corn == 180:             ry += 1
+                                elif corn == 270:             rx -= 1
+                                elif corn == 90:              rx += 1
+                                send_msg(f"pos:{rx},{ry}:{corn}")
+                            elif action == 'd':
+                                print("Right")
+                                corn = (corn + 90) % 360
+                                if corn == 0 or corn == 360:  ry -= 1
+                                elif corn == 180:             ry += 1
+                                elif corn == 270:             rx -= 1
+                                elif corn == 90:              rx += 1
+                                send_msg(f"pos:{rx},{ry}:{corn}")
+                            print(f"[ПУЛЬТ]: Команда {action.upper()} | Координаты: [{rx}, {ry}], Угол: {corn}°")
+                            send_msg(f"pos:{rx},{ry}:{corn}") # Отправляем новую позицию на экран
+                            
+                    except socket.timeout:
+                        pass # Ничего не пришло за 0.5 сек, просто ждем дальше
+                        
+            except KeyboardInterrupt:
+                print("\n<<< ВЫХОД ИЗ РЕЖИМА ПУЛЬТА. Возврат к ручному вводу стен.")
+                move_sock.close()
+                continue
+
         elif cmd == 'vl' or cmd == 'vr':
             send_msg(f"{cmd}:")
             print(f"Команда {cmd.upper()} отправлена в монитор.")
             continue
 
         elif cmd == 'v':
-            label = input("Метка с камеры (F/nedoF/OM): ").strip().upper() or "F"
+            label = input("(F/nedoF/OM)").strip().upper() or "F"
             filename = test_photos[photo_idx % len(test_photos)]
             photo_idx += 1
             send_msg(f"victim:{rx},{ry}:{label}:{filename}")
@@ -79,15 +141,24 @@ def main():
         if len(cmd) != 4 or not cmd.isdigit():
             print("What!?")
             continue
-
+        
+        n_walls = 0
+        if cmd[0] == "1": n_walls += 1
+        if cmd[1] == "1": n_walls += 1
+        if cmd[2] == "1": n_walls += 1
+        if cmd[3] == "1": n_walls += 1
         sf = cmd[0] == '1'
         sr = cmd[1] == '1'
         sb = cmd[2] == '1'
         sl = cmd[3] == '1'
 
+
         calculated_walls = get_global_walls(corn, sf, sr, sb, sl)
         send_msg(f"wall:{rx},{ry}:{calculated_walls}")
         print(f"[UDP Arduino -> Rasp] Walls: {calculated_walls if calculated_walls else 'Свободно'}")
+
+        if n_walls == 3 or stat_bfs == 1:
+            subprocess.run([bfs_path])
 
         if not sr:
             print("Right")
@@ -97,7 +168,7 @@ def main():
             elif corn == 270:             rx -= 1
             elif corn == 90:              rx += 1
             send_msg(f"pos:{rx},{ry}:{corn}")
-
+        
         elif not sf:
             print("Straight")
             if corn == 0 or corn == 360:  ry -= 1
