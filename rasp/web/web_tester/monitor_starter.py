@@ -2,8 +2,11 @@ import socket
 import os
 import imgui_bundle
 from imgui_bundle import imgui, immapp, hello_imgui
+import json
+import time
 
-LAB_SIZE = 33  
+LAB_SIZE = 33
+corn = 0
 
 class MonitorState:
     def __init__(self):
@@ -41,6 +44,9 @@ def send_robot_cmd(cmd):
         pass
 
 def check_network():
+    stat_bfs = 0 
+    new_data_received = False
+
     try:
         data, addr = sock.recvfrom(1024)
         text = data.decode('utf-8')
@@ -54,16 +60,19 @@ def check_network():
         vx, vy = mon_state.robot_x, mon_state.robot_y
 
         if cmd == 'pos':
+            new_data_received = True # Флаг: были изменения
             coords = parts[1].split(',')
             mon_state.robot_x = int(coords[0]) * 2
             mon_state.robot_y = int(coords[1]) * 2
             mon_state.corn = int(parts[2])
             
-            #проверка на посещение клетки
-            if mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 0: mon_state.lab[mon_state.robot_y][mon_state.robot_x] = 1
-            elif mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 1: stat_bfs = 1
+            if mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 0: 
+                mon_state.lab[mon_state.robot_y][mon_state.robot_x] = 1
+            elif mon_state.lab[mon_state.robot_y][mon_state.robot_x] == 1: 
+                stat_bfs = 1
                 
         elif cmd == 'wall':
+            new_data_received = True # Флаг: были изменения
             coords = parts[1].split(',')
             cx, cy = int(coords[0]) * 2, int(coords[1]) * 2
             wall_list = parts[2].split(',')
@@ -79,6 +88,7 @@ def check_network():
                     if mon_state.lab[cy][cx + 1] != 4: mon_state.lab[cy][cx + 1] = 2
 
         elif cmd == 'victim':
+            new_data_received = True # Флаг: были изменения
             vic_label = parts[2]
             mon_state.found_victims.append({'pos': f"{vx//2},{vy//2}", 'label': vic_label})
             
@@ -89,6 +99,7 @@ def check_network():
             print(f"[Map] Метка {vic_label} выставлена перед роботом.")
 
         elif cmd == 'vl':
+            new_data_received = True # Флаг: были изменения
             if mon_state.corn == 0 or mon_state.corn == 360:
                 if vx - 1 >= 0: mon_state.lab[vy][vx - 1] = 4
             elif mon_state.corn == 180:
@@ -99,6 +110,7 @@ def check_network():
                 if vy - 1 >= 0: mon_state.lab[vy - 1][vx] = 4
 
         elif cmd == 'vr':
+            new_data_received = True # Флаг: были изменения
             if mon_state.corn == 0 or mon_state.corn == 360:
                 if vx + 1 < LAB_SIZE: mon_state.lab[vy][vx + 1] = 4
             elif mon_state.corn == 180:
@@ -110,6 +122,31 @@ def check_network():
 
     except BlockingIOError:
         pass
+    except OSError as e:
+        if e.errno == 10035 or e.winerror == 10035:
+            pass
+        else:
+            print(f"[GUI Сеть] Ошибка сокета: {e}")
+    except Exception as e:
+        print(f"[GUI Ошибка] Критический сбой сети: {e}")
+
+    # Запись происходит только если мы получили значимые данные
+    if new_data_received:
+        try:
+            data_to_save = {
+                "matrix": mon_state.lab,
+                "stat_bfs": stat_bfs,
+                "robot_x": mon_state.robot_x,  
+                "robot_y": mon_state.robot_y,  
+                "corn": int(mon_state.corn),   
+            }
+            # Используем запись с закрытием
+            with open("maze_shared.json", "w") as f:
+                json.dump(data_to_save, f)
+            print(f"[DEBUG] Файл maze_shared.json успешно обновлен.") 
+        except Exception as e:
+            print(f"[GUI Error] Не удалось записать файл: {e}")
+
 
 # =====================================================================
 # ОСНОВНОЙ ЦИКЛ ГРАФИКИ
@@ -261,4 +298,5 @@ def main():
     immapp.run(params)
 
 if __name__ == "__main__":
+    time.sleep(1.5) 
     main()

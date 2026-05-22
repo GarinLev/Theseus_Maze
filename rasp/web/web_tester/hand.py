@@ -1,9 +1,34 @@
 import socket
-from monitor_starter import stat_bfs
+# from monitor_starter import stat_bfs
 import subprocess
 import time
 import sys
 import os
+import json
+
+
+# Создаем глобальную переменную внутри hand.py, чтобы она изначально существовала
+stat_bfs = 0 
+
+def load_data_from_monitor():
+    global stat_bfs  # Разрешаем функции изменять глобальную переменную stat_bfs
+    filename = "maze_shared.json"
+    
+    if os.path.exists(filename):
+        try:
+            with open(filename, "r") as f:
+                data = json.load(f)
+                
+                # Проверяем, что в файле лежит словарь, а не просто чистый массив
+                if isinstance(data, dict):
+                    stat_bfs = data.get("stat_bfs", 0)  # Забираем значение переменной
+                    return data.get("matrix")           # Возвращаем саму матрицу
+                else:
+                    return data  # Если там лежал только массив (старая версия файла)
+        except Exception as e:
+            print(f"Ошибка чтения файла моста: {e}")
+            
+    return [[0 for _ in range(33)] for _ in range(33)]
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 bfs_path = os.path.join(current_dir, "bfs.py")
@@ -158,42 +183,34 @@ def main():
         print(f"[UDP Arduino -> Rasp] Walls: {calculated_walls if calculated_walls else 'Свободно'}")
 
         if n_walls == 3 or stat_bfs == 1:
-            subprocess.run([bfs_path])
-
-        if not sr:
-            print("Right")
-            corn = (corn + 90) % 360
-            if corn == 0 or corn == 360:  ry -= 1
-            elif corn == 180:             ry += 1
-            elif corn == 270:             rx -= 1
-            elif corn == 90:              rx += 1
-            send_msg(f"pos:{rx},{ry}:{corn}")
+            subprocess.run(["python", bfs_path, str(corn)])
         
-        elif not sf:
-            print("Straight")
-            if corn == 0 or corn == 360:  ry -= 1
-            elif corn == 180:             ry += 1
-            elif corn == 270:             rx -= 1
-            elif corn == 90:              rx += 1
-            send_msg(f"pos:{rx},{ry}:{corn}")
+        else:
+            if not sr:
+                print("Right")
+                corn = (corn + 90) % 360
+                if corn == 0 or corn == 360:  ry -= 1
+                elif corn == 180:             ry += 1
+                elif corn == 270:             rx -= 1
+                elif corn == 90:              rx += 1
+                send_msg(f"pos:{rx},{ry}:{corn}")
+            
+            elif not sf:
+                print("Straight")
+                if corn == 0 or corn == 360:  ry -= 1
+                elif corn == 180:             ry += 1
+                elif corn == 270:             rx -= 1
+                elif corn == 90:              rx += 1
+                send_msg(f"pos:{rx},{ry}:{corn}")
 
-        elif not sl:
-            print("Left")
-            corn = (corn - 90) % 360
-            if corn == 0 or corn == 360:  ry -= 1
-            elif corn == 180:             ry += 1
-            elif corn == 270:             rx -= 1
-            elif corn == 90:              rx += 1
-            send_msg(f"pos:{rx},{ry}:{corn}")
-
-        elif not sb:
-            print("Back")
-            corn = (corn + 180) % 360  
-            if corn == 0 or corn == 360:  ry -= 1
-            elif corn == 180:             ry += 1
-            elif corn == 270:             rx -= 1
-            elif corn == 90:              rx += 1
-            send_msg(f"pos:{rx},{ry}:{corn}")
+            elif not sl:
+                print("Left")
+                corn = (corn - 90) % 360
+                if corn == 0 or corn == 360:  ry -= 1
+                elif corn == 180:             ry += 1
+                elif corn == 270:             rx -= 1
+                elif corn == 90:              rx += 1
+                send_msg(f"pos:{rx},{ry}:{corn}")
 
         if not (0 <= rx < 16 and 0 <= ry < 16):
             print("🛑 Авария: вылетел за карту! Сброс на базу [8,8]")

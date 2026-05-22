@@ -10,6 +10,7 @@ def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     monitor_path = os.path.join(current_dir, "monitor_starter.py")
     robot_path = os.path.join(current_dir, "hand.py")
+    
 
     # Имя команды python в зависимости от операционной системы
     python_cmd = sys.executable 
