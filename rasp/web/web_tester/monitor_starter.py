@@ -196,7 +196,6 @@ class NetworkController:
             pass
 
     def check_network_and_update(self):
-        stat_bfs = 0 
         new_data_received = False
 
         try:
@@ -217,11 +216,6 @@ class NetworkController:
                 self.state.robot_x = int(coords[0]) * 2
                 self.state.robot_y = int(coords[1]) * 2
                 self.state.corn = int(parts[2])
-                
-                if self.state.lab[self.state.robot_y][self.state.robot_x] == 0: 
-                    self.state.lab[self.state.robot_y][self.state.robot_x] = 1
-                elif self.state.lab[self.state.robot_y][self.state.robot_x] == 1: 
-                    stat_bfs = 1
                     
             elif cmd == 'wall':
                 new_data_received = True
@@ -282,7 +276,6 @@ class NetworkController:
             try:
                 data_to_save = {
                     "matrix": self.state.lab,
-                    "stat_bfs": stat_bfs,
                     "robot_x": self.state.robot_x,  
                     "robot_y": self.state.robot_y,  
                     "corn": int(self.state.corn),   
@@ -292,6 +285,9 @@ class NetworkController:
                 print(f"[DEBUG] Файл maze_shared.json успешно обновлен.") 
             except Exception as e:
                 print(f"[GUI Error] Не удалось записать файл: {e}")
+
+            if self.state.lab[self.state.robot_y][self.state.robot_x] == 0: 
+                    self.state.lab[self.state.robot_y][self.state.robot_x] = 1
 
     def main_loop_tick(self):
         """Метод, объединяющий логику и вызов рендера (вызывается на каждый кадр ImGui)"""

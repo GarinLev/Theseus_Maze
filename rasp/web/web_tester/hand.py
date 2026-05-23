@@ -9,17 +9,14 @@ import json
 stat_bfs = 0 
 
 def load_data_from_monitor():
-    global stat_bfs  # Разрешаем функции изменять глобальную переменную stat_bfs
+    global stat_bfs
     filename = "maze_shared.json"
     
     if os.path.exists(filename):
         try:
             with open(filename, "r") as f:
                 data = json.load(f)
-                
-                # Проверяем, что в файле лежит словарь, а не просто чистый массив
                 if isinstance(data, dict):
-                    stat_bfs = data.get("stat_bfs", 0)  # Забираем значение переменной
                     return data.get("matrix")           # Возвращаем саму матрицу
                 else:
                     return data  # Если там лежал только массив (старая версия файла)
@@ -179,6 +176,14 @@ def main():
         calculated_walls = get_global_walls(corn, sf, sr, sb, sl)
         send_msg(f"wall:{rx},{ry}:{calculated_walls}")
         print(f"[UDP Arduino -> Rasp] Walls: {calculated_walls if calculated_walls else 'Свободно'}")
+
+        lab = load_data_from_monitor()
+
+        stat_bfs = 0
+        if 0 <= ry * 2 < 33 and 0 <= rx * 2 < 33:
+            if lab[ry * 2][rx * 2] in [1, 3]:
+                stat_bfs = 1
+                print("yeyeyeBFS")
 
         if n_walls == 3 or stat_bfs == 1:
             subprocess.run(["python", bfs_path, str(corn)])
