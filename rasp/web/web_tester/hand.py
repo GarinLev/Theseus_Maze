@@ -6,8 +6,6 @@ import sys
 import os
 import json
 
-
-# Создаем глобальную переменную внутри hand.py, чтобы она изначально существовала
 stat_bfs = 0 
 
 def load_data_from_monitor():
@@ -184,6 +182,21 @@ def main():
 
         if n_walls == 3 or stat_bfs == 1:
             subprocess.run(["python", bfs_path, str(corn)])
+            
+            # --- ДОБАВЛЕННЫЙ КОД СИНХРОНИЗАЦИИ ---
+            # После работы BFS читаем актуальные координаты с карты, 
+            # чтобы пульт управления "переместился" вслед за роботом.
+            try:
+                with open("maze_shared.json", "r") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict):
+                        # Монитор хранит матричные координаты (x2), поэтому делим их на 2
+                        rx = data.get("robot_x", rx * 2) // 2
+                        ry = data.get("robot_y", ry * 2) // 2
+                        corn = data.get("corn", corn)
+            except Exception as e:
+                print(f"Ошибка обновления координат после BFS: {e}")
+            # ------------------------------------
         
         else:
             if not sr:

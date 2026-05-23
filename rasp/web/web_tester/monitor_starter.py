@@ -196,7 +196,6 @@ class NetworkController:
             pass
 
     def check_network_and_update(self):
-        """Чтение сокета и логика обработки стен/координат"""
         stat_bfs = 0 
         new_data_received = False
 
