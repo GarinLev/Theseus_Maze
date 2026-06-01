@@ -5,7 +5,7 @@
 Robot robot;
 
 static auto task_move = TaskMove(
-        SpeedProfile(30, 70, Quad_MM(300), Quad_MM(150), Quad_MM(50)),
+        SpeedProfile(30, 60, Quad_MM(300), Quad_MM(240), Quad_MM(30)),
         PID( 0.25, 0, 0.05, -200, 200 ),
         PID( 1.1, 0, 0.1, -30, 30 ),
         &robot
@@ -42,7 +42,7 @@ void setup() {
     robot.w_br.init();
     robot.w_bl.init();
     robot.imu.init();
-    delay(10);
+    delay(2000);
 
     robot.dist_right.write_address();
     delay(20);
@@ -51,7 +51,13 @@ void setup() {
 
     robot.timer_slow.start();
     robot.timer_fast.start();
+
     robot.tasks.push(task_move);
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push(task_move);
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push(task_move);
+
     LOG_INFO("Robot Setup Successful");
 }
 

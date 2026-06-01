@@ -23,202 +23,18 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56f98baa-ddce-4c60-a7a0-499ad375de0c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/task/TaskRotate.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+    <list default="true" id="56f98baa-ddce-4c60-a7a0-499ad375de0c" name="Changes" comment="Базово с проблемами едет между клетками вперед">
+      <change afterPath="$PROJECT_DIR$/src/task/TaskDelay.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/build/megaatmega2560/.sconsign314.dblite" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/build/project.checksum" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/.github/workflows/aunit_tests.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/CHANGELOG.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/AutoBenchmark.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/Benchmark.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/Benchmark.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/esp32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/esp8266.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/generate_readme.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/generate_table.awk" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/micro.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/nano.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/samd.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/stm32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/AutoBenchmark/teensy32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/CompoundSortingDemo/CompoundSortingDemo.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/CompoundSortingDemo/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/HelloSorting/HelloSorting.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/HelloSorting/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/MemoryBenchmark.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/collect.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/esp32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/esp8266.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/generate_readme.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/generate_table.awk" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/micro.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/nano.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/samd.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/samd.txt.old" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/stm32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/teensy32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/MemoryBenchmark/validate_using_epoxy_duino.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/Benchmark.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/Benchmark.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/WorstCaseBenchmark.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/esp32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/esp8266.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/generate_readme.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/generate_table.awk" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/micro.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/nano.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/samd.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/stm32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/examples/WorstCaseBenchmark/teensy32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/AceSorting.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/bubbleSort.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/combSort.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/insertionSort.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/quickSort.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/selectionSort.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/shellSort.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/AceSorting/src/ace_sorting/swap.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/.github/workflows/build.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/ArxContainer.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/ArxContainer/has_include.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/ArxContainer/has_libstdcplusplus.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/ArxContainer/initializer_list.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/ArxContainer/replace_minmax_macros.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/examples/array/array.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/examples/base_ringbuffer/base_ringbuffer.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/examples/deque/deque.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/examples/initializer_list/initializer_list.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/examples/map/map.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/examples/vector/vector.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/library.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxContainer/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/.github/workflows/build.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/functional.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/has_include.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/has_libstdcplusplus.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/initializer_list.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/replace_minmax_macros.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/tuple.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/ArxTypeTraits/type_traits.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/examples/functional/functional.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/examples/sfinae/sfinae.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/examples/tuple/tuple.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/library.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/ArxTypeTraits/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/.github/workflows/build.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLog.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLog/FileLogger.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLog/Manager.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLog/Types.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLogDisable.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLogEnable.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/DebugLogRestoreState.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/basic/basic.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/control_scope/MyClass.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/control_scope/control_scope.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/cpp/main.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/log_level/log_level.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/log_to_file/log_to_file.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/log_to_file_manual_save/log_to_file_manual_save.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/examples/options/options.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/library.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/DebugLog/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/FUNDING.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/ISSUE_TEMPLATE/BUG_REPORT_EC.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/ISSUE_TEMPLATE/Feedback-request.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/ISSUE_TEMPLATE/config.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/stale.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/workflows/LibraryBuild.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.github/workflows/arduino-lint.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/IMU_Zero/IMU_Zero.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MCU_Powercycle_DMP6/MCU_Powercycle_DMP6.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_DMP6/MPU6050_DMP6.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_DMP6/Processing/MPUTeapot/MPUTeapot.pde" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_DMP6_ESPWiFi/MPU6050_DMP6_ESPWiFi.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_DMP6_ESPWiFi/Processing/MPUOSCTeapot/MPUOSCTeapot.pde" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_DMP6_Ethernet/MPU6050_DMP6_Ethernet.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_DMP6_ImuData_for_ROS/MPU6050_DMP6_ImuData_for_ROS.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/examples/MPU6050_raw/MPU6050_raw.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/keywords.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/I2Cdev.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/I2Cdev.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050_6Axis_MotionApps20.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050_6Axis_MotionApps20.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050_6Axis_MotionApps612.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050_6Axis_MotionApps612.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050_9Axis_MotionApps41.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/MPU6050_9Axis_MotionApps41.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/MPU6050/src/helper_3dmath.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/Ticker.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/Ticker.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/examples/FunctionalARM/FunctionalARM.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/examples/Ticker/Ticker.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/keywords.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/library.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/Ticker/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/.github/ISSUE_TEMPLATE/bug-report-or-feature-request.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/.github/ISSUE_TEMPLATE/config.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/.github/workflows/ci.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/.gitlab-ci.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/.piopm" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/VL53L0X.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/VL53L0X.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/examples/Continuous/Continuous.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/examples/Single/Single.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/keywords.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/VL53L0X/library.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pio/libdeps/megaatmega2560/integrity.dat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/math/SpeedProifle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/SpeedProifle.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/module/Dist.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/module/Dist.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Wheel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Wheel.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/Stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Stack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/Task.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/IMU.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Quad.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -332,12 +148,25 @@
       <workItem from="1780258071511" duration="10000" />
       <workItem from="1780261932964" duration="279000" />
       <workItem from="1780262547139" duration="16000" />
-      <workItem from="1780315812986" duration="3100000" />
+      <workItem from="1780315812986" duration="9272000" />
     </task>
+    <task id="LOCAL-00001" summary="Базово с проблемами едет между клетками вперед">
+      <option name="closed" value="true" />
+      <created>1780319463577</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1780319463577</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Базово с проблемами едет между клетками вперед" />
+    <option name="LAST_COMMIT_MESSAGE" value="Базово с проблемами едет между клетками вперед" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

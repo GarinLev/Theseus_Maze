@@ -1,16 +1,21 @@
 #include <math.h>
-
 #include "SpeedProfile.h"
 
+// Переносим константу сюда, чтобы компилятор её видел
 constexpr float Eu_K = 0.6f;
 
 namespace {
 float Eu(float t) {
-    return 1 + (Eu_K + 1) * pow(t - 1, 3) + Eu_K * pow(t - 1, 2);
+    float t_minus_1 = t - 1.0f;
+    float cube = t_minus_1 * t_minus_1 * t_minus_1;
+    float square = t_minus_1 * t_minus_1;
+
+    return 1.0f + (Eu_K + 1.0f) * cube + Eu_K * square;
 }
 
 float Ed(float t) {
-    return pow(t, 5);
+    float t2 = t * t;
+    return t2 * t2 * t; // t^5
 }
 }
 
@@ -24,6 +29,8 @@ float SpeedProfile::compute(float ln) const {
         if (lu <= 0.0f) return su * sign;
 
         float t = abs_ln / lu;
+        if (t > 1.0f) t = 1.0f; // Защита, чтобы t не вылетало за [0, 1]
+
         speed = ss + (su - ss) * Eu(t);
     }
     else if (abs_ln >= lu && abs_ln < ld) {
@@ -34,7 +41,8 @@ float SpeedProfile::compute(float ln) const {
         if (total_deceleration_len <= 0.0f) return ss * sign;
 
         float t = (abs_ln - ld) / total_deceleration_len;
-        if (t > 1.0f) t = 1.0f;
+        if (t > 1.0f) t = 1.0f; // Защита от перелета
+
         speed = su + (ss - su) * Ed(t);
     }
 

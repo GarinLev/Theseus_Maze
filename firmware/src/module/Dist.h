@@ -25,6 +25,7 @@ private:
     uint8_t arr_idx = 0;
     uint16_t arr_buff[VL_DIST_ARRAY_LEN] = {};
     float last_median = 0;
+    uint32_t last_update_time = 0;
 };
 
 

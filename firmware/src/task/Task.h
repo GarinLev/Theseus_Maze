@@ -3,6 +3,7 @@
 
 #include "math/PID.h"
 #include "math/SpeedProfile.h"
+#include <stdint.h>
 
 class Robot;
 
@@ -29,6 +30,8 @@ private:
     PID pid_dist, pid_yaw;
     float start_encoder = 0.0f;
     float yaw_now = 0.0f;
+    float last_encoder = 0.0f;
+    float progress_encoder = 0.0f;
     Robot* robot;
 };
 
@@ -44,6 +47,16 @@ private:
     float unwrapped = 0.0f;
     float direction = 1.0f;
     Robot* robot;
+};
+
+class TaskDelay final : public Task {
+public:
+    explicit TaskDelay(uint32_t _delay_ms) : delay_ms(_delay_ms) {}
+    void execute() override;
+
+private:
+    uint32_t delay_ms;
+    uint32_t start_time = 0;
 };
 
 #endif // FIRMWARE_TASK_H

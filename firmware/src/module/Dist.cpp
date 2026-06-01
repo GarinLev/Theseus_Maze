@@ -20,8 +20,19 @@ void Dist::write_address() {
 
     vl.startContinuous(25);
     initialized = true;
-}
 
+    delay(30);
+    uint16_t start_range = vl.readRangeContinuousMillimeters();
+    if (start_range > 8000 || start_range == 0) {
+        start_range = 150;
+    }
+
+    for (uint8_t i = 0; i < VL_DIST_ARRAY_LEN; i++) {
+        arr_buff[i] = start_range;
+    }
+    last_median = start_range;
+    last_update_time = millis();
+}
 void Dist::init() const {
     pinMode(pin, OUTPUT);
     reset();
@@ -49,7 +60,13 @@ float Dist::get() {
 
             size_t mid_idx = VL_DIST_ARRAY_LEN / 2;
             last_median = dist_arr_sort[mid_idx];
+
+            last_update_time = millis();
         }
+    }
+
+    if (millis() - last_update_time > 150) {
+        return 0;
     }
 
     return last_median;

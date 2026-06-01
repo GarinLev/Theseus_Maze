@@ -14,7 +14,6 @@ void Robot::loop_slow() {
 void Robot::loop_fast() {
     imu.get(ypr);
 
-    update_encoder();
     update_pi();
 
     if (!tasks.isEmpty()) {
