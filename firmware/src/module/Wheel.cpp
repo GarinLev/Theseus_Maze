@@ -29,8 +29,8 @@ void Wheel::set(float speed) const {
     }
 
     if (constrained_speed == 0) {
-        digitalWrite(pin_a, LOW);
-        digitalWrite(pin_b, LOW);
+        digitalWrite(pin_a, HIGH);
+        digitalWrite(pin_b, HIGH);
     }
     else if (constrained_speed > 0) {
         digitalWrite(pin_a, LOW);

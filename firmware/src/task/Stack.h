@@ -1,10 +1,7 @@
 #ifndef FIRMWARE_STACK_H
 #define FIRMWARE_STACK_H
 
-#include <stdint.h>
-#include <stddef.h>
-
-template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 64>
+template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 16>
 class StaticStack {
     alignas(void*) uint8_t buffer[N][MAX_ITEM_SIZE] = {};
     uint16_t count = 0;

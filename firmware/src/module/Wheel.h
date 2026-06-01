@@ -13,8 +13,7 @@ public:
           float kp, float ki, float kd, float out_min, float out_max)
         : pin_a(pin_a), pin_b(pin_b), pin_encI(pin_encI), pin_encD(pin_encD)
         , receive(receive), enc_func(enc_func)
-        , _pid(kp, ki, kd, out_min, out_max)
-        , enc_period(0), enc_timer(0), enc_value(0), sign(1) {}
+        , _pid(kp, ki, kd, out_min, out_max) {}
 
     void init();
     void set(float speed) const;

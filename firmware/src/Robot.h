@@ -16,24 +16,21 @@ public:
 
     static void loop_slow();
     void loop_fast();
-    void update_encoder();
     void update_pi();
 
     Ticker timer_slow, timer_fast;
     Wheel w_fr, w_fl, w_br, w_bl;
     IMU imu;
     Quad quad;
-    Dist dist;
-    //Dist d_u, d_d, d_l, d_r, d_al, d_ar;
-    float rpm, steer;
+    Dist dist_left, dist_right;
+    float rpm{}, steer{};
     float W_Kp, W_Ki;
-    float ypr[3];
-    float encoder;
+    float ypr[3]{};
 
-    StaticStack<Task, 10, 96> tasks;
+    StaticStack<Task, 5, 128> tasks;
     static void update_tasks();
 };
 
-extern Robot robot;
+extern Robot robot; // NOLINT(*-dynamic-static-initializers)
 
 #endif //FIRMWARE_ROBOT_H

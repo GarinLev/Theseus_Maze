@@ -4,6 +4,8 @@
 #include "math/PID.h"
 #include "math/SpeedProfile.h"
 
+class Robot;
+
 enum class StateTask {
     RUNNING,
     CLOSE
@@ -19,34 +21,29 @@ public:
 
 class TaskMove final : public Task {
 public:
-    TaskMove(const SpeedProfile &_profile, const PID &_pid, float* _encoder_now,
-            float* _yaw, float* _pwm, float* _steer)
-        : speed_profile(_profile), pid(_pid), encoder_now(_encoder_now),
-            yaw(_yaw), rpm(_pwm), steer(_steer) {};
+    TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_yaw, Robot* _robot)
+        : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw), robot(_robot) {}
     void execute() override;
 private:
     SpeedProfile speed_profile;
-    PID pid;
+    PID pid_dist, pid_yaw;
     float start_encoder = 0.0f;
-    float *encoder_now;
     float yaw_now = 0.0f;
-    float *yaw;
-    float *rpm, *steer;
+    Robot* robot;
 };
 
 class TaskRotate final : public Task {
 public:
-    TaskRotate(const SpeedProfile &_profile, float* _yaw, float* _pwm)
-        : speed_profile(_profile), yaw(_yaw), rpm(_pwm) {}
+    TaskRotate(const SpeedProfile &_profile, Robot* _robot)
+        : speed_profile(_profile), robot(_robot) {}
     void execute() override;
-    void set_direction(float dir) { direction = (dir >= 0.0f) ? 1.0f : -1.0f; }
+    void set_direction(float dir) { direction = dir >= 0.0f ? 1.0f : -1.0f; }
 private:
     SpeedProfile speed_profile;
     float prev_yaw = 0.0f;
     float unwrapped = 0.0f;
     float direction = 1.0f;
-    float *yaw;
-    float *rpm;
+    Robot* robot;
 };
 
 #endif // FIRMWARE_TASK_H
