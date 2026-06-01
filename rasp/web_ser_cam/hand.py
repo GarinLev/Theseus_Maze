@@ -74,6 +74,34 @@ def get_global_walls(corn, wall_front, wall_right, wall_back, wall_left):
         if wall_left:  global_walls.append('up')
     return ",".join(global_walls)
 
+def run_bfs_route(corn, rx, ry):
+    result = subprocess.run(
+        [sys.executable, bfs_path, str(corn)], 
+        capture_output=True, 
+        text=True
+    )
+    bfs_output = result.stdout.strip()
+    if bfs_output:
+        route_commands = bfs_output.split(',')
+        for bfs_action in route_commands:
+            target_angles = {'u': 0, 'r': 90, 'd': 180, 'l': 270}
+            target_corn = target_angles.get(bfs_action, corn)
+            angle_diff = (target_corn - corn) % 360
+            if angle_diff == 0:     arduino_cmd = 'u'
+            elif angle_diff == 90:  arduino_cmd = 'r'
+            elif angle_diff == 270: arduino_cmd = 'l'
+            elif angle_diff == 180: arduino_cmd = 's' 
+            send_to_arduino(arduino_cmd)
+            prev_rx, prev_ry, prev_corn = rx, ry, corn
+            if bfs_action == 'u':    ry -= 1
+            elif bfs_action == 'd':  ry += 1
+            elif bfs_action == 'l':  rx -= 1
+            elif bfs_action == 'r':  rx += 1
+            corn = target_corn
+            send_msg(f"pos:{rx},{ry}:{corn}")
+            time.sleep(1.5)
+    return corn, rx, ry
+
 def main():
     rx, ry = 8, 8
     corn = 0
@@ -147,13 +175,15 @@ def main():
             if stat_pl == '1':
                 chk_rx, chk_ry, chk_corn = rx, ry, corn
                 send_msg(f"tile:{rx},{ry}:silver")
+
             elif stat_pl == '2':
                 send_msg(f"tile:{rx},{ry}:black")
                 send_msg(f"wall:{rx},{ry}:up,down,left,right")
                 rx, ry, corn = prev_rx, prev_ry, prev_corn
                 send_msg(f"pos:{rx},{ry}:{corn}")
                 
-                subprocess.run([sys.executable, bfs_path, str(corn)])
+                corn, rx, ry = run_bfs_route(corn, rx, ry)
+                
                 if os.path.exists("maze_shared.json") and os.path.getsize("maze_shared.json") > 0:
                     with open("maze_shared.json", "r") as f:
                         data = json.load(f)
@@ -184,7 +214,8 @@ def main():
                     stat_bfs = 1
 
             if n_walls == 3 or stat_bfs == 1:
-                subprocess.run([sys.executable, bfs_path, str(corn)])
+                corn, rx, ry = run_bfs_route(corn, rx, ry)
+                
                 if os.path.exists("maze_shared.json") and os.path.getsize("maze_shared.json") > 0:
                     with open("maze_shared.json", "r") as f:
                         data = json.load(f)
