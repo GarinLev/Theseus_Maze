@@ -13,10 +13,10 @@ static auto task_move = TaskMove(
 
 Robot::Robot()
     : timer_slow(Ticker([] {
-          loop_slow();
-      }, 250, 0, MILLIS)),
+        robot.loop_slow();
+      }, 125, 0, MILLIS)),
       timer_fast(Ticker([] {
-          robot.loop_fast();
+        robot.loop_fast();
       }, 10, 0, MILLIS)),
       w_fr(4, 5, 2, 22, false, enc_fr,
            2.5f, 2.0f, 0, -255.0f, 255.0f),
@@ -30,7 +30,6 @@ Robot::Robot()
       dist_left(36, 0x36),
       dist_right(34, 0x34),
       dist_up(32, 0x32),
-      color(),
       touch_pin_r(40),
       touch_pin_l(41) {}
 
@@ -39,21 +38,21 @@ void setup() {
     Wire.begin();
     Wire.setClock(400000L);
 
-    robot.dist_left.init();
-    robot.dist_right.init();
-    robot.dist_up.init();
-
     robot.w_fr.init();
     robot.w_fl.init();
     robot.w_br.init();
     robot.w_bl.init();
     robot.imu.init();
 
+    robot.dist_left.init();
+    robot.dist_right.init();
+    robot.dist_up.init();
+
+    robot.color.init();
+
     robot.dist_right.write_address();
     robot.dist_left.write_address();
     robot.dist_up.write_address();
-
-    robot.color.init();
 
     pinMode(robot.touch_pin_l, INPUT_PULLUP);
     pinMode(robot.touch_pin_r, INPUT_PULLUP);

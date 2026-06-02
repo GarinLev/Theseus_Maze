@@ -9,14 +9,15 @@ void Dist::write_address() {
     vl.setBus(wire);
     vl.setTimeout(1000);
 
+    vl.setAddress(address);
+    delay(10);
+
     if (!vl.init()) {
         LOG_ERROR("Initialization failed. Addr: ", address, ", pin: ", pin);
         initialized = false;
         return;
     }
 
-    vl.setAddress(address);
-    delay(10);
 
     vl.startContinuous(25);
     initialized = true;
@@ -27,8 +28,8 @@ void Dist::write_address() {
         start_range = 150;
     }
 
-    for (uint8_t i = 0; i < VL_DIST_ARRAY_LEN; i++) {
-        arr_buff[i] = start_range;
+    for (uint16_t & i : arr_buff) {
+        i = start_range;
     }
     last_median = start_range;
     last_update_time = millis();

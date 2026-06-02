@@ -15,7 +15,7 @@ class Robot {
 public:
     Robot();
 
-    static void loop_slow();
+    void loop_slow();
     void loop_fast();
     static bool touch_is();
 

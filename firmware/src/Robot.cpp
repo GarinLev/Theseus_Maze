@@ -7,7 +7,7 @@ void loop() {
 }
 
 void Robot::loop_slow() {
-
+    color.update();
 }
 
 void Robot::loop_fast() {
@@ -20,7 +20,6 @@ void Robot::loop_fast() {
     w_br.update_sensors();
     w_bl.update_sensors();
     touch_state = digitalRead(touch_pin_r) == LOW && digitalRead(touch_pin_l) == LOW;
-    color.update();
 
     float target_speed_pi = fabsf(rpm);
     w_fr.update_pi(target_speed_pi);
@@ -31,6 +30,8 @@ void Robot::loop_fast() {
     if (!tasks.isEmpty()) {
         tasks.top().execute();
     }
+
+    LOG_INFO(color.get_current_color());
 
     quad.rpm(rpm, steer);
     update_tasks();
