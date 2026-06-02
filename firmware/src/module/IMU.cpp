@@ -33,10 +33,12 @@ bool IMU::init() {
         return false;
     }
 
+    delay(700);
+
     return false;
 }
 
-bool IMU::get(float *ypr) {
+void IMU::update() {
     if (mpu.dmpGetCurrentFIFOPacket(fifo_buffer)) {
         Quaternion q;
         VectorFloat gravity;
@@ -47,11 +49,8 @@ bool IMU::get(float *ypr) {
         float data_ypr[3];
         mpu.dmpGetYawPitchRoll(data_ypr, &q, &gravity);
 
-        ypr[0] = data_ypr[0] * 180.0f / M_PI; // Yaw
-        ypr[1] = data_ypr[1] * 180.0f / M_PI; // Pitch
-        ypr[2] = data_ypr[2] * 180.0f / M_PI; // Roll
-
-        return true;
+        ypr[0] = data_ypr[0] * 180.0f / M_PI;
+        ypr[1] = data_ypr[1] * 180.0f / M_PI;
+        ypr[2] = data_ypr[2] * 180.0f / M_PI;
     }
-    return false;
 }

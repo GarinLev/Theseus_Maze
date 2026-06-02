@@ -32,6 +32,8 @@ void Dist::write_address() {
     }
     last_median = start_range;
     last_update_time = millis();
+
+    delay(20);
 }
 void Dist::init() const {
     pinMode(pin, OUTPUT);
@@ -40,8 +42,8 @@ void Dist::init() const {
 
 constexpr uint16_t MAX_VALID_RANGE = 8000;
 
-float Dist::get() {
-    if (!initialized) return 0;
+void Dist::update() {
+    if (!initialized) return;
 
     if ((vl.readReg(VL53L0X::RESULT_INTERRUPT_STATUS) & 0x07) != 0) {
 
@@ -64,6 +66,10 @@ float Dist::get() {
             last_update_time = millis();
         }
     }
+}
+
+float Dist::get() const {
+    if (!initialized) return 0;
 
     if (millis() - last_update_time > 150) {
         return 0;

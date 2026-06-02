@@ -14,7 +14,8 @@ public:
     void write_address();
     void reset() const { digitalWrite(pin, LOW); delay(20); }
     void unreset() const { digitalWrite(pin, HIGH); delay(20); };
-    float get();
+    void update();
+    float get() const;
 
 private:
     VL53L0X vl;

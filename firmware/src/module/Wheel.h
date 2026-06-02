@@ -17,11 +17,16 @@ public:
 
     void init();
     void set(float speed) const;
+    void update_sensors();
     float real() const;
     void update(float pwm);
+    void set_pid_gains(float kp, float ki);
+    void update_pi(float target);
 
     int32_t get_encoder() const { return enc_value; }
     void reset_encoder() { enc_value = 0; }
+    float get_kp() const { return _pid.get_kp(); }
+    float get_ki() const { return _pid.get_ki(); }
 
     void handle_encoder_interrupt();
 
@@ -38,6 +43,8 @@ private:
     volatile uint32_t enc_timer = 0;
     volatile int32_t enc_value = 0;
     volatile int8_t sign = 1;
+
+    float last_rpm = 0;
 };
 
 void enc_fr();

@@ -42,17 +42,26 @@ void Wheel::set(float speed) const {
     }
 }
 
-float Wheel::real() const {
+void Wheel::update_sensors() {
     uint32_t local_period = enc_period;
     uint32_t local_timer = enc_timer;
     int8_t local_sign = sign;
 
-    if (micros() - local_timer > 10000) return 0.0f;
-    if (local_period < 500) return 0.0f;
+    if (micros() - local_timer > 10000) {
+        last_rpm = 0.0f;
+        return;
+    }
+    if (local_period < 500) {
+        last_rpm = 0.0f;
+        return;
+    }
 
     float abs_rpm = (1000000.0f / (float)local_period) / ENC_TICK_REV * 60.0f;
+    last_rpm = abs_rpm * local_sign;
+}
 
-    return abs_rpm * local_sign;
+float Wheel::real() const {
+    return last_rpm;
 }
 
 void Wheel::update(float pwm) {
@@ -65,6 +74,17 @@ void Wheel::update(float pwm) {
     } else {
         set(-speed_need);
     }
+}
+
+void Wheel::set_pid_gains(float kp, float ki) {
+    _pid.set_gains(kp, ki);
+}
+
+void Wheel::update_pi(float target) {
+    if (target < 20.0f) target = 20.0f;
+    float kp = 0.01f * target + 2.3f;
+    float ki = 0.005f * target + 1.9f;
+    set_pid_gains(kp, ki);
 }
 
 void Wheel::handle_encoder_interrupt() {

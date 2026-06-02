@@ -5,24 +5,22 @@
 #include "Task.h"
 
 
-void TaskMove::execute() {
+void TaskMove::on_init() {
     if (robot == nullptr) return;
+    start_encoder = robot->quad.encoder();
+    last_encoder = start_encoder;
+    progress_encoder = 0.0f;
+    yaw_now = robot->imu.ypr[0];
+    pid_yaw.reset();
+    pid_dist.reset();
+}
 
-    if (!started) {
-        start_encoder = robot->quad.encoder();
-        last_encoder = start_encoder;
-        progress_encoder = 0.0f;
-        yaw_now = robot->ypr[0];
-        started = true;
-        pid_yaw.reset();
-        pid_dist.reset();
-    }
-
-    float relative_yaw = robot->ypr[0] - yaw_now;
+void TaskMove::on_execute() {
+    float relative_yaw = robot->imu.ypr[0] - yaw_now;
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
     else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
 
-    float pitch_val = robot->ypr[1];
+    float pitch_val = robot->imu.ypr[1];
     float absolute_pitch = fabsf(pitch_val);
 
     const float encoder_now = robot->quad.encoder();
@@ -52,18 +50,7 @@ void TaskMove::execute() {
     progress_encoder += delta_encoder * proj_total;
     last_encoder = encoder_now;
 
-    LOG_TRACE("dEnc:", delta_encoder,
-              " Pitch:", pitch_val,
-              " pYaw:", proj_yaw,
-              " pPitch:", proj_pitch,
-              " Slip:", slip_compensation,
-              " Total:", proj_total,
-              " Prog:", progress_encoder,
-              " Target:", speed_profile.get_len());
-
     if (progress_encoder < speed_profile.get_len()) {
-        state = StateTask::RUNNING;
-
         float speed = speed_profile.compute(progress_encoder);
 
         if (pitch_val > 4.0f && speed < 30.0f && speed > 5.0f) {
@@ -91,7 +78,7 @@ void TaskMove::execute() {
         robot->steer = pid_yaw.compute(0, relative_yaw) - dist_correction;
 
     } else {
-        state = StateTask::CLOSE;
+        done();
         robot->rpm = 0;
         robot->steer = 0;
     }

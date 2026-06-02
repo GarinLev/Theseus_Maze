@@ -1,8 +1,7 @@
 #include <math.h>
 #include "SpeedProfile.h"
 
-// Переносим константу сюда, чтобы компилятор её видел
-constexpr float Eu_K = 0.6f;
+constexpr float Eu_K = -1.8f;
 
 namespace {
 float Eu(float t) {
@@ -29,7 +28,7 @@ float SpeedProfile::compute(float ln) const {
         if (lu <= 0.0f) return su * sign;
 
         float t = abs_ln / lu;
-        if (t > 1.0f) t = 1.0f; // Защита, чтобы t не вылетало за [0, 1]
+        if (t > 1.0f) t = 1.0f;
 
         speed = ss + (su - ss) * Eu(t);
     }
@@ -41,7 +40,7 @@ float SpeedProfile::compute(float ln) const {
         if (total_deceleration_len <= 0.0f) return ss * sign;
 
         float t = (abs_ln - ld) / total_deceleration_len;
-        if (t > 1.0f) t = 1.0f; // Защита от перелета
+        if (t > 1.0f) t = 1.0f;
 
         speed = su + (ss - su) * Ed(t);
     }

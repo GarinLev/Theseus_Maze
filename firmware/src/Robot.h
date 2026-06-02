@@ -9,6 +9,7 @@
 #include "module/Wheel.h"
 #include "task/Stack.h"
 #include "task/Task.h"
+#include "module/Color.h"
 
 class Robot {
 public:
@@ -16,18 +17,22 @@ public:
 
     static void loop_slow();
     void loop_fast();
-    void update_pi();
+    static bool touch_is();
 
     Ticker timer_slow, timer_fast;
     Wheel w_fr, w_fl, w_br, w_bl;
     IMU imu;
     Quad quad;
-    Dist dist_left, dist_right;
-    float rpm{}, steer{};
-    float W_Kp, W_Ki;
-    float ypr[3]{};
+    Dist dist_left, dist_right, dist_up;
+    Color color;
 
-    StaticStack<Task, 5, 128> tasks;
+    float rpm{}, steer{};
+
+    bool touch_state = false;
+
+    uint8_t touch_pin_r, touch_pin_l;
+
+    StaticStack<Task, 15, 128> tasks;
     static void update_tasks();
 };
 

@@ -7,7 +7,9 @@
 class IMU {
 public:
     bool init();
-    bool get(float *ypr);
+    void update();
+
+    float ypr[3]{};
 
 private:
     PID pid;

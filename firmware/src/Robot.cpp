@@ -1,5 +1,4 @@
 #include "Robot.h"
-
 #include "Log.h"
 
 void loop() {
@@ -12,9 +11,22 @@ void Robot::loop_slow() {
 }
 
 void Robot::loop_fast() {
-    imu.get(ypr);
+    imu.update();
+    dist_left.update();
+    dist_right.update();
+    dist_up.update();
+    w_fr.update_sensors();
+    w_fl.update_sensors();
+    w_br.update_sensors();
+    w_bl.update_sensors();
+    touch_state = digitalRead(touch_pin_r) == LOW && digitalRead(touch_pin_l) == LOW;
+    color.update();
 
-    update_pi();
+    float target_speed_pi = fabsf(rpm);
+    w_fr.update_pi(target_speed_pi);
+    w_fl.update_pi(target_speed_pi);
+    w_br.update_pi(target_speed_pi);
+    w_bl.update_pi(target_speed_pi);
 
     if (!tasks.isEmpty()) {
         tasks.top().execute();
