@@ -74,9 +74,39 @@ def get_global_walls(corn, wall_front, wall_right, wall_back, wall_left):
         if wall_left:  global_walls.append('up')
     return ",".join(global_walls)
 
+def run_bfs_route(corn, rx, ry):
+    result = subprocess.run(
+        [sys.executable, bfs_path, str(corn)], 
+        capture_output=True, 
+        text=True
+    )
+    bfs_output = result.stdout.strip()
+    if bfs_output:
+        route_commands = bfs_output.split(',')
+        for bfs_action in route_commands:
+            target_angles = {'u': 0, 'r': 90, 'd': 180, 'l': 270}
+            target_corn = target_angles.get(bfs_action, corn)
+            angle_diff = (target_corn - corn) % 360
+            if angle_diff == 0:     arduino_cmd = 'u'
+            elif angle_diff == 90:  arduino_cmd = 'r'
+            elif angle_diff == 270: arduino_cmd = 'l'
+            elif angle_diff == 180: arduino_cmd = 's' 
+            send_to_arduino(arduino_cmd)
+            prev_rx, prev_ry, prev_corn = rx, ry, corn
+            if bfs_action == 'u':    ry -= 1
+            elif bfs_action == 'd':  ry += 1
+            elif bfs_action == 'l':  rx -= 1
+            elif bfs_action == 'r':  rx += 1
+            corn = target_corn
+            send_msg(f"pos:{rx},{ry}:{corn}")
+            time.sleep(1.5)
+    return corn, rx, ry
+
 def main():
     rx, ry = 8, 8
     corn = 0
+    chk_rx, chk_ry, chk_corn = 8, 8, 0
+    prev_rx, prev_ry, prev_corn = 8, 8, 0
     test_photos = ['test_h.jpg', 'test_s.jpg', 'test_red.jpg']
     photo_idx = 0
     
@@ -96,53 +126,73 @@ def main():
                 break
             
             elif rcv.startswith("cmd:"):
-                action = rcv.split(":")[1]
-                send_to_arduino(action)
+                bfs_action = rcv.split(":")[1] 
                 
-                if action == 'w':
-                    if corn == 0 or corn == 360: ry -= 1
-                    elif corn == 180: ry += 1
-                    elif corn == 270: rx -= 1
-                    elif corn == 90: rx += 1
-                elif action == 's':
-                    if corn == 0 or corn == 360: ry += 1
-                    elif corn == 180: ry -= 1
-                    elif corn == 270: rx += 1
-                    elif corn == 90: rx -= 1
-                    corn = (corn - 180) % 360
-                elif action == 'a':
-                    corn = (corn - 90) % 360
-                    if corn == 0 or corn == 360:  ry -= 1
-                    elif corn == 180:             ry += 1
-                    elif corn == 270:             rx -= 1
-                    elif corn == 90:              rx += 1
-                elif action == 'd':
-                    corn = (corn + 90) % 360
-                    if corn == 0 or corn == 360:  ry -= 1
-                    elif corn == 180:             ry += 1
-                    elif corn == 270:             rx -= 1
-                    elif corn == 90:              rx += 1
+                target_angles = {'u': 0, 'r': 90, 'd': 180, 'l': 270}
+                target_corn = target_angles.get(bfs_action, corn)
+
+                angle_diff = (target_corn - corn) % 360
+
+                if angle_diff == 0:
+                    arduino_cmd = 'u'
+                elif angle_diff == 90:
+                    arduino_cmd = 'r'
+                elif angle_diff == 270:
+                    arduino_cmd = 'l'
+                elif angle_diff == 180:
+                    arduino_cmd = 's' 
+
+                send_to_arduino(arduino_cmd)
                 
-                send_msg(f"pos:{rx},{ry}:{corn}") 
+                prev_rx, prev_ry, prev_corn = rx, ry, corn
+                
+                if bfs_action == 'u': ry -= 1
+                elif bfs_action == 'd': ry += 1
+                elif bfs_action == 'l': rx -= 1
+                elif bfs_action == 'r': rx += 1
+                
+                corn = target_corn
+                send_msg(f"pos:{rx},{ry}:{corn}")
 
         cmd = read_from_arduino().strip().lower()
         if not cmd:
             continue
 
-        if cmd == 'vl' or cmd == 'vr':
-            send_msg(f"{cmd}:")
-            continue
-
-        elif cmd.startswith('v'):
-            label = cmd[1:].upper() if len(cmd) > 1 else "F"
-            filename = test_photos[photo_idx % len(test_photos)]
-            photo_idx += 1
-            send_msg(f"victim:{rx},{ry}:{label}:{filename}")
+        if cmd == 'p':
+            while True:
+                rcmd = read_from_arduino().strip().lower()
+                if rcmd == 'o':
+                    rx, ry, corn = chk_rx, chk_ry, chk_corn
+                    send_msg(f"pos:{rx},{ry}:{corn}")
+                    break
+                time.sleep(0.1)
             continue
 
         if len(cmd) >= 4 and cmd[:4].isdigit():
             walls_str = cmd[:4]
-            
+            stat_pl = cmd[4] if len(cmd) >= 5 else '0'
+
+            if stat_pl == '1':
+                chk_rx, chk_ry, chk_corn = rx, ry, corn
+                send_msg(f"tile:{rx},{ry}:silver")
+
+            elif stat_pl == '2':
+                send_msg(f"tile:{rx},{ry}:black")
+                send_msg(f"wall:{rx},{ry}:up,down,left,right")
+                rx, ry, corn = prev_rx, prev_ry, prev_corn
+                send_msg(f"pos:{rx},{ry}:{corn}")
+                
+                corn, rx, ry = run_bfs_route(corn, rx, ry)
+                
+                if os.path.exists("maze_shared.json") and os.path.getsize("maze_shared.json") > 0:
+                    with open("maze_shared.json", "r") as f:
+                        data = json.load(f)
+                        if isinstance(data, dict):
+                            rx = data.get("robot_x", rx * 2) // 2
+                            ry = data.get("robot_y", ry * 2) // 2
+                            corn = data.get("corn", corn)
+                continue
+
             n_walls = 0
             if walls_str[0] == "1": n_walls += 1
             if walls_str[1] == "1": n_walls += 1
@@ -164,7 +214,8 @@ def main():
                     stat_bfs = 1
 
             if n_walls == 3 or stat_bfs == 1:
-                subprocess.run([sys.executable, bfs_path, str(corn)])
+                corn, rx, ry = run_bfs_route(corn, rx, ry)
+                
                 if os.path.exists("maze_shared.json") and os.path.getsize("maze_shared.json") > 0:
                     with open("maze_shared.json", "r") as f:
                         data = json.load(f)
@@ -173,6 +224,7 @@ def main():
                             ry = data.get("robot_y", ry * 2) // 2
                             corn = data.get("corn", corn)
             else:
+                prev_rx, prev_ry, prev_corn = rx, ry, corn
                 if not sr:
                     corn = (corn + 90) % 360
                     if corn == 0 or corn == 360:  ry -= 1
@@ -180,14 +232,14 @@ def main():
                     elif corn == 270:             rx -= 1
                     elif corn == 90:              rx += 1
                     send_msg(f"pos:{rx},{ry}:{corn}")
-                    send_to_arduino('d')
+                    send_to_arduino('r')
                 elif not sf:
                     if corn == 0 or corn == 360:  ry -= 1
                     elif corn == 180:             ry += 1
                     elif corn == 270:             rx -= 1
                     elif corn == 90:              rx += 1
                     send_msg(f"pos:{rx},{ry}:{corn}")
-                    send_to_arduino('w') 
+                    send_to_arduino('u') 
                 elif not sl:
                     corn = (corn - 90) % 360
                     if corn == 0 or corn == 360:  ry -= 1
@@ -195,7 +247,7 @@ def main():
                     elif corn == 270:             rx -= 1
                     elif corn == 90:              rx += 1
                     send_msg(f"pos:{rx},{ry}:{corn}")
-                    send_to_arduino('a')
+                    send_to_arduino('l')
 
             if not (0 <= rx < 16 and 0 <= ry < 16):
                 rx, ry = 8, 8

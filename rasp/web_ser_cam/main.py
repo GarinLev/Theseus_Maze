@@ -2,6 +2,17 @@ import subprocess
 import time
 import sys
 import os
+import serial
+
+ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=0.5)
+
+byte = ser.read(1)
+s = byte.decode('ascii', errors='ignore')
+while s != "s":
+    byte = ser.read(1)
+    s = byte.decode('ascii', errors='ignore')
+ser.write(b"s")
+
 
 def main():
     current_dir = os.path.dirname(os.path.abspath(__file__))
