@@ -32,7 +32,7 @@ public:
 
     uint8_t touch_pin_r, touch_pin_l;
 
-    StaticStack<Task, 15, 128> tasks;
+    StaticStack<Task, 35, 128> tasks;
     static void update_tasks();
 };
 

@@ -89,7 +89,7 @@ float Quad::encoder() const {
     int32_t br_val = br ? br->get_encoder() : 0;
     int32_t bl_val = bl ? bl->get_encoder() : 0;
 
-    return (fr_val + fl_val + br_val + bl_val) / 4;
+    return (float)(fr_val + fl_val + br_val + bl_val) / 4;
 }
 
 void Quad::encoder_reset() const {

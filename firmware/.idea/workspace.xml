@@ -21,17 +21,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Работает отличие цветов">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Color.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Dist.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Quad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Wheel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/TaskTouch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskTouch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,11 +126,24 @@
       <option name="presentableId" value="Default" />
       <updated>1780416246502</updated>
       <workItem from="1780416250772" duration="1180000" />
-      <workItem from="1780417529560" duration="5059000" />
+      <workItem from="1780417529560" duration="7117000" />
     </task>
+    <task id="LOCAL-00001" summary="Работает отличие цветов">
+      <option name="closed" value="true" />
+      <created>1780422802541</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1780422802541</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Работает отличие цветов" />
+    <option name="LAST_COMMIT_MESSAGE" value="Работает отличие цветов" />
   </component>
 </project>

@@ -60,25 +60,40 @@ void setup() {
     robot.timer_slow.start();
     robot.timer_fast.start();
 
-    /*
     robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(65)) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
     robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(65)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    auto rot = TaskRotate( SpeedProfile(30, 60, 85, 40, 40), &robot );
-    rot.set_direction(-1);
-
-    robot.tasks.push( rot );
 
     robot.tasks.push( TaskDelay(1000) );
     robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
     robot.tasks.push(task_move);
-*/
+
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
+    robot.tasks.push(task_move);
+
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
+    robot.tasks.push(task_move);
+
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
+    robot.tasks.push(task_move);
+
+    robot.tasks.push( TaskRotate(SpeedProfile(30, 60, 90, 30, 30), &robot) );
+
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
+    robot.tasks.push(task_move);
+
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
+    robot.tasks.push(task_move);
+
+    robot.tasks.push( TaskDelay(1000) );
+    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
+    robot.tasks.push(task_move);
+
 
     LOG_INFO("Robot Setup Successful");
 }

@@ -36,6 +36,12 @@ protected:
 
 class TaskMove final : public Task {
 public:
+    enum class Step : uint8_t {
+        DRIVE,
+        BACK,
+        STOP
+    };
+
     TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_yaw, Robot* _robot)
         : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw), robot(_robot) {}
     void on_execute() override;
@@ -48,6 +54,8 @@ private:
     float yaw_now = 0.0f;
     float last_encoder = 0.0f;
     float progress_encoder = 0.0f;
+    Step step = Step::DRIVE;
+    float back_start_encoder = 0.0f;
     Robot* robot;
 };
 
