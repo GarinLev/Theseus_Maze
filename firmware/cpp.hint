@@ -1,4 +1,0 @@
-
-#define fabsf
-#define PROGMEM
-#define PROGMEM __attribute__((section(".progmem.data")))
