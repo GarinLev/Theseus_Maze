@@ -5,8 +5,6 @@
 #include "math/SpeedProfile.h"
 #include <stdint.h>
 
-class Robot;
-
 enum class State {
     INIT,
     EXECUTING,
@@ -42,8 +40,8 @@ public:
         STOP
     };
 
-    TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_yaw, Robot* _robot)
-        : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw), robot(_robot) {}
+    TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_yaw)
+        : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw) {}
     void on_execute() override;
 
 private:
@@ -56,13 +54,13 @@ private:
     float progress_encoder = 0.0f;
     Step step = Step::DRIVE;
     float back_start_encoder = 0.0f;
-    Robot* robot;
 };
 
 class TaskRotate final : public Task {
 public:
-    TaskRotate(const SpeedProfile &_profile, Robot* _robot)
-        : speed_profile(_profile), robot(_robot) {}
+    explicit TaskRotate(const SpeedProfile &_profile)
+        : speed_profile(_profile) {}
+
     void on_execute() override;
     void set_direction(float dir) { direction = dir >= 0.0f ? 1.0f : -1.0f; }
 
@@ -72,19 +70,17 @@ private:
     float prev_yaw = 0.0f;
     float unwrapped = 0.0f;
     float direction = 1.0f;
-    Robot* robot;
 };
 
 class TaskTouch final : public Task {
 public:
-    explicit TaskTouch(Robot* _robot, float _back_ticks)
-        : robot(_robot), back_ticks(_back_ticks) {}
+    explicit TaskTouch(float _back_ticks)
+        : back_ticks(_back_ticks) {}
     void on_execute() override;
 
 private:
     void on_init() override;
     enum class Step { INIT, SEARCH, ALIGN, BACK };
-    Robot* robot;
     Step step = Step::INIT;
     uint32_t step_timer = 0;
     float start_encoder = 0.0f;
@@ -100,6 +96,15 @@ private:
     void on_init() override;
     uint32_t delay_ms;
     uint32_t start_time = 0;
+};
+
+class TaskSent final : public Task {
+public:
+    explicit TaskSent() = default;
+    void on_execute() override;
+
+private:
+    void on_init() override;
 };
 
 #endif // FIRMWARE_TASK_H

@@ -1,7 +1,7 @@
 #include "Wheel.h"
 
 #include <Arduino.h>
-#include "robot.h"
+#include "Robot.h"
 
 constexpr int SPEED_MIN = -255;
 constexpr int SPEED_MAX = 255;
@@ -103,7 +103,7 @@ void Wheel::handle_encoder_interrupt() {
     }
 }
 
-void enc_fr() { robot.w_fr.handle_encoder_interrupt(); }
-void enc_fl() { robot.w_fl.handle_encoder_interrupt(); }
-void enc_br() { robot.w_br.handle_encoder_interrupt(); }
-void enc_bl() { robot.w_bl.handle_encoder_interrupt(); }
+void enc_fr() { Robot::instance().w_fr.handle_encoder_interrupt(); }
+void enc_fl() { Robot::instance().w_fl.handle_encoder_interrupt(); }
+void enc_br() { Robot::instance().w_br.handle_encoder_interrupt(); }
+void enc_bl() { Robot::instance().w_bl.handle_encoder_interrupt(); }

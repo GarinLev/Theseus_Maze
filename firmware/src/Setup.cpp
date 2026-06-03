@@ -2,22 +2,18 @@
 
 #include "Log.h"
 
-Robot robot;
+Robot& Robot::instance() {
+    static Robot inst;
+    return inst;
+}
 
-static auto task_move = TaskMove(
-        SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
-        PID( 0.15, 0, 0.04, -200, 200 ),
-        PID( 1.1, 0, 0.1, -30, 30 ),
-        &robot
-    );
+void Robot::tramp_slow() { instance().loop_slow(); }
+void Robot::tramp_fast() { instance().loop_fast(); }
 
 Robot::Robot()
-    : timer_slow(Ticker([] {
-        robot.loop_slow();
-      }, 125, 0, MILLIS)),
-      timer_fast(Ticker([] {
-        robot.loop_fast();
-      }, 10, 0, MILLIS)),
+    : timer_slow(Ticker(tramp_slow, 125, 0, MILLIS)),
+      timer_fast(Ticker(tramp_fast, 10, 0, MILLIS)),
+      link(&Serial2),
       w_fr(4, 5, 2, 22, false, enc_fr,
            2.5f, 2.0f, 0, -255.0f, 255.0f),
       w_fl(8, 9, 18, 24, false, enc_fl,
@@ -30,13 +26,21 @@ Robot::Robot()
       dist_left(36, 0x36),
       dist_right(34, 0x34),
       dist_up(32, 0x32),
+      dist_down(35, 0x35),
+      dist_pop_l(37, 0x37),
+      dist_pop_r(33, 0x33),
       touch_pin_r(40),
       touch_pin_l(41) {}
 
 void setup() {
+    auto& robot = Robot::instance();
+
     Serial.begin(115200);
+    Serial2.begin(9600);
     Wire.begin();
     Wire.setClock(400000L);
+
+    LOG_INFO("Robot Setup Waiting");
 
     robot.w_fr.init();
     robot.w_fl.init();
@@ -47,12 +51,18 @@ void setup() {
     robot.dist_left.init();
     robot.dist_right.init();
     robot.dist_up.init();
+    robot.dist_down.init();
+    robot.dist_pop_r.init();
+    robot.dist_pop_l.init();
 
     robot.color.init();
 
     robot.dist_right.write_address();
     robot.dist_left.write_address();
     robot.dist_up.write_address();
+    robot.dist_down.write_address();
+    robot.dist_pop_r.write_address();
+    robot.dist_pop_l.write_address();
 
     pinMode(robot.touch_pin_l, INPUT_PULLUP);
     pinMode(robot.touch_pin_r, INPUT_PULLUP);
@@ -60,54 +70,27 @@ void setup() {
     robot.timer_slow.start();
     robot.timer_fast.start();
 
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskRotate(SpeedProfile(30, 60, 90, 30, 30), &robot) );
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-    robot.tasks.push( TaskDelay(1000) );
-    robot.tasks.push( TaskTouch(&robot, Quad_MM(50)) );
-    robot.tasks.push(task_move);
-
-
     LOG_INFO("Robot Setup Successful");
+    LOG_INFO("Robot Link Waiting");
+
+    robot.link.wait_start();
+
+    LOG_INFO("Robot Link Successful");
+
+    robot.tasks.push( TaskSent() );
 }
 
 void Robot::update_tasks() {
-    if (robot.tasks.isEmpty()) return;
+    auto& r = instance();
+    if (r.tasks.isEmpty()) return;
 
-    const Task& task = robot.tasks.top();
+    const Task& task = r.tasks.top();
     if (task.state == State::DONE) {
         LOG_INFO("Task closed");
-        robot.tasks.pop();
+        r.tasks.pop();
     }
 }
 
 bool Robot::touch_is() {
-    return robot.touch_state;
+    return instance().touch_state;
 }

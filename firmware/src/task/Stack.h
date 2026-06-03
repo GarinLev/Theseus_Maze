@@ -1,24 +1,19 @@
 #ifndef FIRMWARE_STACK_H
 #define FIRMWARE_STACK_H
 
-#include <stdint.h>
-#include <stddef.h>
-#include <new> // Нужно для placement new
+#include <new>
 
 template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 32>
 class StaticStack {
-    // Выравнивание по типу T гарантирует корректность указателей
     alignas(T) uint8_t buffer[N][MAX_ITEM_SIZE] = {};
     uint16_t count = 0;
 
 public:
     StaticStack() = default;
 
-    // Запрещаем копирование контейнера во избежание проблем с памятью
     StaticStack(const StaticStack&) = delete;
     StaticStack& operator=(const StaticStack&) = delete;
 
-    // Деструктор обязательно должен очистить оставшиеся элементы
     ~StaticStack() {
         while (!isEmpty()) {
             pop();
@@ -31,7 +26,6 @@ public:
 
         if (isFull()) return false;
 
-        // Использование Placement NEW корректно копирует vtable и данные
         new (buffer[count]) Derived(value);
 
         count++;
@@ -41,7 +35,6 @@ public:
     bool pop() {
         if (isEmpty()) return false;
 
-        // Явно вызываем деструктор полиморфного интерфейса T
         top().~T();
 
         --count;

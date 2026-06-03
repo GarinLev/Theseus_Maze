@@ -2,11 +2,13 @@
 #include "Log.h"
 
 void loop() {
+    auto& robot = Robot::instance();
     robot.timer_slow.update();
     robot.timer_fast.update();
 }
 
 void Robot::loop_slow() {
+    link.update();
     color.update();
 }
 
@@ -15,6 +17,7 @@ void Robot::loop_fast() {
     dist_left.update();
     dist_right.update();
     dist_up.update();
+    dist_down.update();
     w_fr.update_sensors();
     w_fl.update_sensors();
     w_br.update_sensors();
@@ -30,8 +33,6 @@ void Robot::loop_fast() {
     if (!tasks.isEmpty()) {
         tasks.top().execute();
     }
-
-    LOG_INFO(color.get_current_color());
 
     quad.rpm(rpm, steer);
     update_tasks();

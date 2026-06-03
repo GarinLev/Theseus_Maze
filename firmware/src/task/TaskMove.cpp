@@ -6,38 +6,40 @@
 
 
 void TaskMove::on_init() {
-    if (robot == nullptr) return;
-    start_encoder = robot->quad.encoder();
+    auto& robot = Robot::instance();
+    start_encoder = robot.quad.encoder();
     last_encoder = start_encoder;
     progress_encoder = 0.0f;
-    yaw_now = robot->imu.ypr[0];
+    yaw_now = robot.imu.ypr[0];
     pid_yaw.reset();
     pid_dist.reset();
     step = Step::DRIVE;
 }
 
 void TaskMove::on_execute() {
+    auto& robot = Robot::instance();
+
     switch (step) {
         case Step::DRIVE: {
-            if (robot->color.get_current_color() == COLOR_BLACK) {
+            if (robot.color.get_current_color() == COLOR_BLACK) {
                 LOG_INFO("Black color detected! Switching to Step::BACK.");
 
-                robot->rpm = 0;
-                robot->steer = 0;
+                robot.rpm = 0;
+                robot.steer = 0;
 
-                back_start_encoder = robot->quad.encoder();
+                back_start_encoder = robot.quad.encoder();
                 step = Step::BACK;
                 break;
             }
 
-            float relative_yaw = robot->imu.ypr[0] - yaw_now;
+            float relative_yaw = robot.imu.ypr[0] - yaw_now;
             if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
             else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
 
-            float pitch_val = robot->imu.ypr[1];
+            float pitch_val = robot.imu.ypr[1];
             float absolute_pitch = fabsf(pitch_val);
 
-            const float encoder_now = robot->quad.encoder();
+            const float encoder_now = robot.quad.encoder();
             float delta_encoder = encoder_now - last_encoder;
 
             float proj_yaw = cosf(relative_yaw * DEG_TO_RAD);
@@ -67,10 +69,10 @@ void TaskMove::on_execute() {
                     speed = 30.0f;
                 }
 
-                robot->rpm = speed;
+                robot.rpm = speed;
 
-                float value_right = robot->dist_right.get();
-                float value_left = robot->dist_left.get();
+                float value_right = robot.dist_right.get();
+                float value_left = robot.dist_left.get();
 
                 bool correct = value_left > 10 && value_left <= 200 &&
                                value_right > 10 && value_right <= 200;
@@ -83,26 +85,26 @@ void TaskMove::on_execute() {
                     pid_dist.reset();
                 }
 
-                robot->steer = pid_yaw.compute(0, relative_yaw) - dist_correction;
+                robot.steer = pid_yaw.compute(0, relative_yaw) - dist_correction;
             } else {
-                robot->rpm = 0;
-                robot->steer = 0;
+                robot.rpm = 0;
+                robot.steer = 0;
                 done();
             }
             break;
         }
 
         case Step::BACK: {
-            robot->rpm = -30;
-            robot->steer = 0;
+            robot.rpm = -30;
+            robot.steer = 0;
 
-            float progress_back = fabsf(robot->quad.encoder() - back_start_encoder);
+            float progress_back = fabsf(robot.quad.encoder() - back_start_encoder);
             float target_back_ticks = Quad_MM(150.0f);
 
             if (progress_back >= target_back_ticks) {
                 LOG_INFO("Backed up 15 cm successfully. Stopping.");
-                robot->rpm = 0;
-                robot->steer = 0;
+                robot.rpm = 0;
+                robot.steer = 0;
 
                 step = Step::STOP;
             }
@@ -110,8 +112,8 @@ void TaskMove::on_execute() {
         }
 
         case Step::STOP: {
-            robot->rpm = 0;
-            robot->steer = 0;
+            robot.rpm = 0;
+            robot.steer = 0;
             done();
             break;
         }

@@ -13,6 +13,16 @@ void Color::update() {
 
     hsv();
 
+    /*Serial.print("H: "); Serial.print(h);
+    Serial.print(" S: "); Serial.print(s);
+    Serial.print(" V: "); Serial.print(v);
+    Serial.print(" R: "); Serial.print(r);
+    Serial.print(" G: "); Serial.print(g);
+    Serial.print(" B: "); Serial.print(b);
+    Serial.print(" C: "); Serial.print(c);
+    Serial.print(" S: "); Serial.println(r + g + b);*/
+
+
     constexpr HSVColor targets[] = { TARGET_WHITE, TARGET_BLUE, TARGET_BLACK, TARGET_SILVER };
     constexpr size_t colors_count = sizeof(targets) / sizeof(targets[0]);
 
@@ -20,11 +30,20 @@ void Color::update() {
 }
 
 ColorType Color::get_current_color(float threshold) const {
+    const char* color_names[] = { "WHITE", "BLUE", "BLACK", "SILVER" };
+
     for (uint8_t i = 0; i < 4; ++i) {
         if (last_probabilities[i] >= threshold) {
+            Serial.print(" -> DETECTED: ");
+            Serial.print(color_names[i]);
+            Serial.print(" (");
+            Serial.print(last_probabilities[i]);
+            Serial.println("%)");
+
             return static_cast<ColorType>(i);
         }
     }
+
     return COLOR_UNKNOWN;
 }
 
@@ -32,7 +51,7 @@ void Color::compute(const HSVColor targets[], float outputs[], size_t count) con
     if (count == 0) return;
 
     float sum = 0.0f;
-    float confidence_factor = 45.0f;
+    float confidence_factor = 35.0f;
 
     for (size_t i = 0; i < count; ++i) {
         float dist = match(targets[i]);
@@ -54,19 +73,21 @@ void Color::compute(const HSVColor targets[], float outputs[], size_t count) con
 
 float Color::match(HSVColor target) const {
     float dh = fabsf(this->h - target.h);
-    if (dh > 180.0f) {
-        dh = 360.0f - dh;
-    }
+    if (dh > 180.0f) dh = 360.0f - dh;
     float norm_dh = dh / 180.0f;
 
     float ds = fabsf(this->s - target.s);
-    float dv = fabsf(this->v - target.v) * 60.0f;
+    float dv = fabsf(this->v - target.v);
 
-    constexpr float w_h = 0.40f;
-    constexpr float w_s = 0.40f;
-    constexpr float w_v = 0.20f;
+    float dc = fabsf((float)this->c - (float)target.c) / 1600.0f;
+    if (dc > 1.0f) dc = 1.0f;
 
-    float distance = (w_h * norm_dh) + (w_s * ds) + (w_v * dv);
+    constexpr float w_h = 0.25f;
+    constexpr float w_s = 0.35f;
+    constexpr float w_v = 0.15f;
+    constexpr float w_c = 0.25f;
+
+    float distance = (w_h * norm_dh) + (w_s * ds) + (w_v * dv) + (w_c * dc);
 
     if (distance > 1.0f) distance = 1.0f;
     return distance;
@@ -98,6 +119,11 @@ void Color::hsv() {
     if (gf_cal > max_val) max_val = gf_cal;
     if (bf_cal > max_val) max_val = bf_cal;
 
+    if (max_val == 0.0f) {
+        h = 0; s = 0; v = 0;
+        return;
+    }
+
     float rf = rf_cal / max_val;
     float gf = gf_cal / max_val;
     float bf = bf_cal / max_val;
@@ -107,7 +133,9 @@ void Color::hsv() {
 
     float delta = mx - mn;
 
-    v = (float)c / 65535.0f;
+    v = max_val / 1600.0f;
+    if (v > 1.0f) v = 1.0f;
+
     s = (mx <= 0.0f) ? 0.0f : (delta / mx);
 
     if (delta < 0.0001f) {

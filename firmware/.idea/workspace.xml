@@ -21,14 +21,22 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Работает отличие цветов">
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/link/Link.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/task/TaskSent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Quad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Color.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/module/Wheel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/Stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Stack.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskRotate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskRotate.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskTouch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskTouch.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +54,10 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/link/Link.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/module/Color.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PlatformioLocalSettings">
     <option name="availableProjects">
@@ -85,34 +97,47 @@
   &quot;associatedIndex&quot;: 5
 }</component>
   <component name="ProjectId" id="3EaUbJ3yrx5iWNgm5idYy2IzKHI" />
+  <component name="ProjectStatusUIService">{
+  &quot;uiKindId&quot;: &quot;Widget&quot;
+}</component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "PlatformIO.PlatformIO.executor": "Run",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;PlatformIO.PlatformIO.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;AtomSelectConfig&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
     </configuration>
     <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
       <method v="2" />
@@ -126,7 +151,10 @@
       <option name="presentableId" value="Default" />
       <updated>1780416246502</updated>
       <workItem from="1780416250772" duration="1180000" />
-      <workItem from="1780417529560" duration="7117000" />
+      <workItem from="1780417529560" duration="8555000" />
+      <workItem from="1780482183434" duration="2488000" />
+      <workItem from="1780487677682" duration="1672000" />
+      <workItem from="1780489386230" duration="11546000" />
     </task>
     <task id="LOCAL-00001" summary="Работает отличие цветов">
       <option name="closed" value="true" />
@@ -136,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780422802541</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Проехал по углу лабиринта">
+      <option name="closed" value="true" />
+      <created>1780424867025</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1780424867025</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -144,6 +180,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Работает отличие цветов" />
-    <option name="LAST_COMMIT_MESSAGE" value="Работает отличие цветов" />
+    <MESSAGE value="Проехал по углу лабиринта" />
+    <option name="LAST_COMMIT_MESSAGE" value="Проехал по углу лабиринта" />
   </component>
 </project>
