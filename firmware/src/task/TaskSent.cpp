@@ -8,31 +8,21 @@ void TaskSent::on_init() {
 void TaskSent::on_execute() {
     auto& robot = Robot::instance();
 
-    bool is_up = robot.dist_up.get() < 20;
-    bool is_right = robot.dist_right.get() < 20;
-    bool is_down = robot.dist_down.get() < 20;
-    bool is_left = robot.dist_left.get() < 20;
-    uint8_t color_number = 0;
-    ColorType color = robot.color.get_current_color();
+    float dist_u = robot.dist_up.get();
+    bool is_up = dist_u < 200 && dist_u != 0;
 
-    switch (color) {
-        case COLOR_WHITE: {
-            color_number = 0;
-            break;
-        }
-        /*case COLOR_SILVER: {
-            color_number = 1;
-            break;
-        }*/
-        case COLOR_BLACK: {
-            color_number = 2;
-            break;
-        }
-        default: break;
-    }
+    float dist_r = robot.dist_right.get();
+    bool is_right = dist_r < 200 && dist_r != 0;
+
+    float dist_d = robot.dist_down.get();
+    bool is_down = dist_d < 200 && dist_d != 0;
+
+    float dist_l = robot.dist_left.get();
+    bool is_left = dist_l < 200 && dist_l != 0;
+
 
     bool dist_array[4] = {is_up, is_right, is_down, is_left};
-    robot.link.send_sensors(dist_array, color_number);
+    robot.link.send_sensors(dist_array, robot.is_last_black ? 2 : 0);
 
     done();
 }

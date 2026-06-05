@@ -21,22 +21,11 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/link/Link.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/task/TaskSent.cpp" afterDir="false" />
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Едет лучше + концевики">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Color.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/link/Link.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/module/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Wheel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/Stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Stack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/TaskRotate.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskRotate.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/TaskTouch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskTouch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskBlue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskBlue.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,8 +45,13 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$USER_HOME$/.platformio/packages/framework-arduino-avr/cores/arduino/HardwareSerial.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/Robot.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/link/Link.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/link/Link.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/module/Color.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/task/Task.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/task/TaskPush.cpp" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="PlatformioLocalSettings">
     <option name="availableProjects">
@@ -142,6 +136,12 @@
     <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
       <method v="2" />
     </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -155,6 +155,8 @@
       <workItem from="1780482183434" duration="2488000" />
       <workItem from="1780487677682" duration="1672000" />
       <workItem from="1780489386230" duration="11546000" />
+      <workItem from="1780573075338" duration="18520000" />
+      <workItem from="1780661592240" duration="8480000" />
     </task>
     <task id="LOCAL-00001" summary="Работает отличие цветов">
       <option name="closed" value="true" />
@@ -172,15 +174,35 @@
       <option name="project" value="LOCAL" />
       <updated>1780424867025</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Едет лучше + концевики">
+      <option name="closed" value="true" />
+      <created>1780667139731</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1780667139731</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Работает отличие цветов" />
     <MESSAGE value="Проехал по углу лабиринта" />
-    <option name="LAST_COMMIT_MESSAGE" value="Проехал по углу лабиринта" />
+    <MESSAGE value="Едет лучше + концевики" />
+    <option name="LAST_COMMIT_MESSAGE" value="Едет лучше + концевики" />
   </component>
 </project>

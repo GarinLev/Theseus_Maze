@@ -13,7 +13,7 @@ void Robot::tramp_fast() { instance().loop_fast(); }
 Robot::Robot()
     : timer_slow(Ticker(tramp_slow, 125, 0, MILLIS)),
       timer_fast(Ticker(tramp_fast, 10, 0, MILLIS)),
-      link(&Serial2),
+      link(&Serial2, &Serial),
       w_fr(4, 5, 2, 22, false, enc_fr,
            2.5f, 2.0f, 0, -255.0f, 255.0f),
       w_fl(8, 9, 18, 24, false, enc_fl,
@@ -29,6 +29,7 @@ Robot::Robot()
       dist_down(35, 0x35),
       dist_pop_l(37, 0x37),
       dist_pop_r(33, 0x33),
+      button(42),
       touch_pin_r(40),
       touch_pin_l(41) {}
 
@@ -38,14 +39,19 @@ void setup() {
     Serial.begin(115200);
     Serial2.begin(9600);
     Wire.begin();
-    Wire.setClock(400000L);
+    // Wire.setClock(400000L);
 
     LOG_INFO("Robot Setup Waiting");
+
+    robot.led.setBrightness(255);
+    robot.led.fill(mBlue);
+    robot.led.show();
 
     robot.w_fr.init();
     robot.w_fl.init();
     robot.w_br.init();
     robot.w_bl.init();
+
     robot.imu.init();
 
     robot.dist_left.init();
@@ -67,30 +73,31 @@ void setup() {
     pinMode(robot.touch_pin_l, INPUT_PULLUP);
     pinMode(robot.touch_pin_r, INPUT_PULLUP);
 
+    robot.servo.attach(44);
+    robot.servo.write(70);
+
     robot.timer_slow.start();
     robot.timer_fast.start();
 
     LOG_INFO("Robot Setup Successful");
     LOG_INFO("Robot Link Waiting");
 
+    robot.led.fill(mAqua);
+    robot.led.setBrightness(64);
+    robot.led.show();
+    while (!robot.button.click()) {
+        robot.button.tick();
+    }
+    robot.led.setBrightness(255);
+    robot.led.fill(mMagenta);
+    robot.led.show();
+    delay(100);
+    robot.led.clear(); robot.led.show();
+
     robot.link.wait_start();
 
     LOG_INFO("Robot Link Successful");
 
     robot.tasks.push( TaskSent() );
-}
-
-void Robot::update_tasks() {
-    auto& r = instance();
-    if (r.tasks.isEmpty()) return;
-
-    const Task& task = r.tasks.top();
-    if (task.state == State::DONE) {
-        LOG_INFO("Task closed");
-        r.tasks.pop();
-    }
-}
-
-bool Robot::touch_is() {
-    return instance().touch_state;
+    robot.tasks.push(TaskDelay(5000));
 }

@@ -2,7 +2,10 @@
 #define FIRMWARE_ROBOT_H
 
 #include <Ticker.h>
+#include <microLED.h>
+#include <uButton.h>
 
+#include "Servo.h"
 #include "link/Link.h"
 #include "module/Dist.h"
 #include "module/IMU.h"
@@ -11,7 +14,6 @@
 #include "task/Stack.h"
 #include "task/Task.h"
 #include "module/Color.h"
-
 class Robot {
 public:
     Robot(const Robot&) = delete;
@@ -21,7 +23,6 @@ public:
 
     void loop_slow();
     void loop_fast();
-    static bool touch_is();
 
     Ticker timer_slow, timer_fast;
     Link link;
@@ -31,15 +32,20 @@ public:
     Dist dist_left, dist_right, dist_up, dist_down;
     Dist dist_pop_l, dist_pop_r;
     Color color;
+    Servo servo;
+    uButton button;
+    microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> led;
 
     float rpm{}, steer{};
-
-    bool touch_state = false;
 
     uint8_t touch_pin_r, touch_pin_l;
 
     StaticStack<Task, 12, 128> tasks;
-    static void update_tasks();
+    void update_tasks() const;
+    boolean is_pause = false;
+    void update_pause();
+
+    bool is_last_black = false;
 
 private:
     static void tramp_slow();

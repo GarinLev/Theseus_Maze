@@ -28,7 +28,7 @@ void TaskTouch::on_execute() {
         case Step::SEARCH:
             robot.rpm = 25;
             robot.steer = 0;
-            if (Robot::touch_is()) {
+            if (digitalRead(robot.touch_pin_r) == LOW && digitalRead(robot.touch_pin_l) == LOW) {
                 step_timer = millis();
                 step = Step::ALIGN;
             }

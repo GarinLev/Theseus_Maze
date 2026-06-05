@@ -15,9 +15,7 @@ public:
     StaticStack& operator=(const StaticStack&) = delete;
 
     ~StaticStack() {
-        while (!isEmpty()) {
-            pop();
-        }
+        clear();
     }
 
     template <typename Derived>
@@ -39,6 +37,10 @@ public:
 
         --count;
         return true;
+    }
+
+    void clear() {
+        while (pop());
     }
 
     T& top() {

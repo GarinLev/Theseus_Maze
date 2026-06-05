@@ -10,10 +10,10 @@ struct HSVColor {
     uint16_t c;
 };
 
-constexpr HSVColor TARGET_WHITE  = {172.30f, 0.13f, 0.285f, 1170};
-constexpr HSVColor TARGET_BLUE   = {162.79f, 0.43f, 0.14f,  519};
-constexpr HSVColor TARGET_BLACK = {133.82f, 0.57f, 0.10f, 373};
-constexpr HSVColor TARGET_SILVER = {139.76f, 0.11f, 0.225f, 964};
+constexpr HSVColor TARGET_WHITE  = {349.30f, 0.25f, 0.289f, 1043};
+constexpr HSVColor TARGET_BLUE   = {242.64f, 0.44f, 0.160f, 383};
+constexpr HSVColor TARGET_BLACK  = {344.27f, 0.50f, 0.028f, 77};
+constexpr HSVColor TARGET_SILVER = {339.89f, 0.22f, 0.340f, 1266};
 
 enum ColorType : uint8_t {
     COLOR_WHITE = 0,
@@ -28,18 +28,18 @@ public:
     void init();
     void update();
     void calibrate_color();
+    void log();
 
     float match(HSVColor target) const;
     void compute(const HSVColor targets[], float outputs[], size_t count) const;
-
     ColorType get_current_color(float threshold = 80.0f) const;
 
 private:
     Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_120MS, TCS34725_GAIN_4X);
 
-    const float Rf = 1.09f;
-    const float Gf = 0.78f;
-    const float Bf = 1.24f;
+    const float Rf = 1.04f;
+    const float Gf = 0.82f;
+    const float Bf = 1.22f;
 
     void hsv();
 
