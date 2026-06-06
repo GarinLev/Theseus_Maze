@@ -16,6 +16,36 @@
 #include "module/Color.h"
 #include "delta/Delta.h"
 
+constexpr size_t compile_max(size_t a, size_t b) {
+    return a > b ? a : b;
+}
+
+constexpr size_t static_max(size_t a) {
+    return a;
+}
+
+template <typename... Args>
+constexpr size_t static_max(size_t a, Args... args) {
+    return compile_max(a, static_max(args...));
+}
+
+constexpr size_t MAX_MOVE_SIZE = static_max(
+    sizeof(TaskMove),
+    sizeof(TaskRotate),
+    sizeof(TaskTouch),
+    sizeof(TaskDelay),
+    sizeof(TaskSent),
+    sizeof(TaskBlue),
+    sizeof(TaskBlack),
+    sizeof(TaskHit)
+);
+
+constexpr size_t MAX_VICTIM_SIZE = static_max(
+    sizeof(TaskPush),
+    sizeof(TaskLed)
+);
+
+
 class Robot {
 public:
     Robot(const Robot&) = delete;
@@ -43,7 +73,9 @@ public:
 
     uint8_t touch_pin_r, touch_pin_l;
 
-    StaticStack<Task, 12, 128> tasks;
+    StaticStack<Task, 11, MAX_MOVE_SIZE> tasks_move;
+    StaticStack<Task, 7, MAX_VICTIM_SIZE> tasks_victim;
+
     void update_tasks() const;
     boolean is_pause = false;
     void update_pause();

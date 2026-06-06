@@ -5,7 +5,11 @@
 
 template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 32>
 class StaticStack {
-    alignas(T) uint8_t buffer[N][MAX_ITEM_SIZE] = {};
+    struct alignas(T) Cell {
+        uint8_t bytes[MAX_ITEM_SIZE];
+    };
+
+    Cell buffer[N] = {};
     uint16_t count = 0;
 
 public:
@@ -20,11 +24,11 @@ public:
 
     template <typename Derived>
     bool push(const Derived& value) {
-        static_assert(sizeof(Derived) <= MAX_ITEM_SIZE, "Object size exceeds MAX_ITEM_SIZE");
+        static_assert(sizeof(Derived) <= MAX_ITEM_SIZE, "Object size exceeds MAX");
 
         if (isFull()) return false;
 
-        new (buffer[count]) Derived(value);
+        new (buffer[count].bytes) Derived(value);
 
         count++;
         return true;
@@ -44,11 +48,11 @@ public:
     }
 
     T& top() {
-        return *reinterpret_cast<T*>(buffer[count - 1]);
+        return *reinterpret_cast<T*>(buffer[count - 1].bytes);
     }
 
     const T& top() const {
-        return *reinterpret_cast<const T*>(buffer[count - 1]);
+        return *reinterpret_cast<const T*>(buffer[count - 1].bytes);
     }
 
     bool isEmpty() const { return count == 0; }

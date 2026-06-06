@@ -41,60 +41,60 @@ void Link::process_command(char cmd) {
     }
 
     if (cmd == 'u' || cmd == 'd' || cmd == 'l' || cmd == 'r') {
-        robot.tasks.push( TaskSent() );
-        robot.tasks.push(TaskDelay(1000));
-        robot.tasks.push(TaskTouch(Quad_MM(50)));
-        robot.tasks.push(TaskMove(
+        robot.tasks_move.push( TaskSent() );
+        robot.tasks_move.push(TaskDelay(1000));
+        robot.tasks_move.push(TaskTouch(Quad_MM(50)));
+        robot.tasks_move.push(TaskMove(
             SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
             PID(0.15, 0, 0.04, -200, 200),
             PID(1.1, 0, 0.1, -30, 30)
         ));
-        robot.tasks.push(TaskBlue());
+        robot.tasks_move.push(TaskBlue());
     }
 
     switch (cmd) {
         case 'u': break;
         case 'd': {
-            robot.tasks.push(TaskDelay(500));
-            robot.tasks.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
-            robot.tasks.push(TaskDelay(500));
-            robot.tasks.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
+            robot.tasks_move.push(TaskDelay(500));
+            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
+            robot.tasks_move.push(TaskDelay(500));
+            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
             break;
         }
         case 'r': {      // Право
-            robot.tasks.push(TaskDelay(500));
-            robot.tasks.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
+            robot.tasks_move.push(TaskDelay(500));
+            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
             break;
         }
         case 'l': {      // Лево
-            robot.tasks.push(TaskDelay(500));
+            robot.tasks_move.push(TaskDelay(500));
             auto rot = TaskRotate(SpeedProfile(30, 60, 85, 30, 30));
             rot.set_direction(-1);
-            robot.tasks.push(rot);
+            robot.tasks_move.push(rot);
             break;
         }
         case 'v': {
-            robot.tasks.push(TaskPush(TaskPush::Mode::RIGHT));
-            robot.tasks.push(TaskLed());
+            robot.tasks_victim.push(TaskPush(TaskPush::Mode::RIGHT));
+            robot.tasks_victim.push(TaskLed());
             break;
         }
         case 'b': {
-            robot.tasks.push(TaskPush(TaskPush::Mode::LEFT));
-            robot.tasks.push(TaskLed());
+            robot.tasks_victim.push(TaskPush(TaskPush::Mode::LEFT));
+            robot.tasks_victim.push(TaskLed());
             break;
         }
         case 'n': {
-            robot.tasks.push(TaskPush(TaskPush::Mode::RIGHT_X2));
-            robot.tasks.push(TaskLed());
+            robot.tasks_victim.push(TaskPush(TaskPush::Mode::RIGHT_X2));
+            robot.tasks_victim.push(TaskLed());
             break;
         }
         case 'm': {
-            robot.tasks.push(TaskPush(TaskPush::Mode::LEFT_X2));
-            robot.tasks.push(TaskLed());
+            robot.tasks_victim.push(TaskPush(TaskPush::Mode::LEFT_X2));
+            robot.tasks_victim.push(TaskLed());
             break;
         }
         case 'c': {
-            robot.tasks.push(TaskLed());
+            robot.tasks_victim.push(TaskLed());
             break;
         }
         case 'z': {

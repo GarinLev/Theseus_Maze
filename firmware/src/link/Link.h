@@ -6,7 +6,6 @@
 class Link
 {
 public:
-    // Конструктор принимает основной порт управления и порт отладки
     explicit Link(HardwareSerial *_serial_base, HardwareSerial *_serial_debug)
         : serial_base(_serial_base), serial_debug(_serial_debug) {}
 

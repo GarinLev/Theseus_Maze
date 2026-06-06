@@ -37,8 +37,12 @@ void Robot::loop_fast() {
     rpm = 0;
     steer = 0;
 
-    if (!tasks.isEmpty()) {
-        tasks.top().execute(dt);
+    if (!tasks_move.isEmpty() || !tasks_victim.isEmpty()) {
+        if (tasks_victim.isEmpty()) {
+            tasks_move.top().execute(dt);
+        } else {
+            tasks_victim.top().execute(dt);
+        }
     } else {
         servo.write(70);
     }
@@ -66,19 +70,31 @@ void Robot::reset() {
 
 void Robot::update_tasks() const {
     auto& r = instance();
-    if (r.tasks.isEmpty()) return;
 
-    const Task& task = r.tasks.top();
-    if (task.state == State::DONE && !is_pause) {
-        LOG_INFO("Task ", task.name(), " closed");
-        r.tasks.pop();
+    if (!r.tasks_move.isEmpty()) {
+        const Task& task_move = r.tasks_move.top();
+        if (task_move.state == State::DONE && !is_pause) {
+            LOG_INFO("Task ", task_move.name(), " closed");
+            r.tasks_move.pop();
+        }
+    }
+
+    if (!r.tasks_victim.isEmpty()) {
+        const Task& task_victim = r.tasks_victim.top();
+        if (task_victim.state == State::DONE && !is_pause) {
+            LOG_INFO("Task ", task_victim.name(), " closed");
+            r.tasks_victim.pop();
+        }
     }
 }
 
 void Robot::update_pause() {
     if (button.click()) {
         is_pause = !is_pause;
-        tasks.clear();
+
+        tasks_move.clear();
+        tasks_victim.clear();
+
         LOG_INFO(is_pause ? "Pause start" : "Pause end");
         link.pause(is_pause);
     }

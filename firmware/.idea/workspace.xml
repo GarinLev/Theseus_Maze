@@ -6,6 +6,7 @@
   <component name="BackendCodeEditorMiscSettings">
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="5" type="long" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/LiveTemplatesHousekeeping/HotspotSessionHintIsShown/@EntryValue" value="true" type="bool" />
   </component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
@@ -21,9 +22,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Едет лучше + концевики">
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Разбираюсь с гироскопом">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/link/Link.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/link/Link.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/module/IMU.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/Stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Stack.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780670938724</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Разбираюсь с гироскопом">
+      <option name="closed" value="true" />
+      <created>1780760269298</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1780760269299</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -220,6 +236,7 @@
     <MESSAGE value="Работает отличие цветов" />
     <MESSAGE value="Проехал по углу лабиринта" />
     <MESSAGE value="Едет лучше + концевики" />
-    <option name="LAST_COMMIT_MESSAGE" value="Едет лучше + концевики" />
+    <MESSAGE value="Разбираюсь с гироскопом" />
+    <option name="LAST_COMMIT_MESSAGE" value="Разбираюсь с гироскопом" />
   </component>
 </project>

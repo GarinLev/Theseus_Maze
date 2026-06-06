@@ -39,6 +39,7 @@ void setup() {
     Serial.begin(115200);
     Serial2.begin(9600);
     Wire.begin();
+    Wire.setWireTimeout(20000, true);
     // Wire.setClock(400000L);
 
     LOG_INFO("Robot Setup Waiting");
@@ -98,6 +99,6 @@ void setup() {
 
     LOG_INFO("Robot Link Successful");
 
-    robot.tasks.push( TaskSent() );
-    robot.tasks.push(TaskDelay(5000));
+    robot.tasks_move.push( TaskSent() );
+    robot.tasks_move.push(TaskDelay(5000));
 }

@@ -39,52 +39,29 @@ bool IMU::init() {
 }
 
 void IMU::update() {
-    int16_t fifoC;
-    // This section of code is for when we allowed more than 1 packet to be acquired
-    uint32_t BreakTimer = micros();
-    uint16_t length = mpu.dmpGetFIFOPacketSize();
-    bool packetReceived = false;
+    uint16_t fifo_count = mpu.getFIFOCount();
+    uint16_t packet_size = mpu.dmpGetFIFOPacketSize();
 
-    do {
-        Serial.print(".");
-        if ((fifoC = mpu.getFIFOCount()) > length) {
+    if (fifo_count >= 1024) {
+        mpu.resetFIFO();
+        return;
+    }
 
-            if (fifoC > 200) { // if you waited to get the FIFO buffer to > 200 bytes it will take longer to get the last packet in the FIFO Buffer than it will take to  reset the buffer and wait for the next to arrive
-                Serial.println("!");
-                mpu.resetFIFO(); // Fixes any overflow corruption
-                fifoC = 0;
-                while (!((fifoC = mpu.getFIFOCount())) && ((micros() - BreakTimer) <= (mpu.getFIFOTimeout()))); // Get Next New Packet
-            } else { //We have more than 1 packet but less than 200 bytes of data in the FIFO Buffer
-                Serial.println("-");
-                uint8_t Trash[I2CDEVLIB_WIRE_BUFFER_LENGTH];
-                while ((fifoC = mpu.getFIFOCount()) > length) {  // Test each time just in case the MPU is writing to the FIFO Buffer
-                    fifoC = fifoC - length; // Save the last packet
-                    uint16_t  RemoveBytes;
-                    while (fifoC) { // fifo count will reach zero so this is safe
-                        RemoveBytes = (fifoC < I2CDEVLIB_WIRE_BUFFER_LENGTH) ? fifoC : I2CDEVLIB_WIRE_BUFFER_LENGTH; // Buffer Length is different than the packet length this will efficiently clear the buffer
-                        mpu.getFIFOBytes(Trash, (uint8_t)RemoveBytes);
-                        fifoC -= RemoveBytes;
-                    }
-                }
-            }
-        }
-        if (!fifoC) return; // Called too early no data or we timed out after FIFO Reset
-        // We have 1 packet
-        packetReceived = fifoC == length;
-        if (!packetReceived && (micros() - BreakTimer) > (mpu.getFIFOTimeout())) return;
-    } while (!packetReceived);
-    mpu.getFIFOBytes(fifo_buffer, length); //Get 1 packet
+    if (fifo_count < packet_size) {
+        return;
+    }
 
-
-
+    while (fifo_count >= packet_size) {
+        mpu.getFIFOBytes(fifo_buffer, packet_size);
+        fifo_count -= packet_size;
+    }
 
     Quaternion q;
     VectorFloat gravity;
+    float data_ypr[3];
 
     mpu.dmpGetQuaternion(&q, fifo_buffer);
     mpu.dmpGetGravity(&gravity, &q);
-
-    float data_ypr[3];
     mpu.dmpGetYawPitchRoll(data_ypr, &q, &gravity);
 
     ypr[0] = data_ypr[0] * 180.0f / M_PI;

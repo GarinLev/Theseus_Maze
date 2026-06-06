@@ -22,7 +22,7 @@ void TaskMove::on_execute(uint32_t dt) {
     if (robot.color.get_current_color() == COLOR_BLACK) {
         robot.rpm = 0;
         robot.steer = 0;
-        robot.tasks.push(TaskBlack());
+        robot.tasks_move.push(TaskBlack());
         done();
         return;
     }
@@ -39,15 +39,15 @@ void TaskMove::on_execute(uint32_t dt) {
         }
         robot.rpm = 0;
         robot.steer = 0;
-        robot.tasks.push(TaskMove(
+        robot.tasks_move.push(TaskMove(
             SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
             PID(0.15, 0, 0.04, -200, 200),
             PID(1.1, 0, 0.1, -30, 30)
         ));
         if (left_pressed)
-            robot.tasks.push(TaskHit(TaskHit::LEFT));
+            robot.tasks_move.push(TaskHit(TaskHit::LEFT));
         else
-            robot.tasks.push(TaskHit(TaskHit::RIGHT));
+            robot.tasks_move.push(TaskHit(TaskHit::RIGHT));
         done();
         return;
     } else {
