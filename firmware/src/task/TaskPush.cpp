@@ -49,24 +49,24 @@ void TaskPush::on_init() {
     current_servo_pos = ServoController_CloseStart;
 
     start_pos = current_servo_pos;
-    wait_start_ms = millis();
+    wait_start_ms = 0;
 
     auto& robot = Robot::instance();
     robot.rpm = 0; robot.steer = 0;
 }
 
-void TaskPush::on_execute() {
+void TaskPush::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
 
     switch (step) {
         case Step::TO_TARGET: {
-            uint32_t elapsed = millis() - wait_start_ms;
+            uint32_t elapsed = elapsed_ms - wait_start_ms;
 
             if (elapsed >= SERVO_MOVE_MS) {
                 current_servo_pos = target_pos;
                 robot.servo.write(current_servo_pos);
 
-                wait_start_ms = millis();
+                wait_start_ms = elapsed_ms;
                 step = Step::WAIT_TARGET;
             } else {
                 float progress = (float)elapsed / SERVO_MOVE_MS;
@@ -77,23 +77,23 @@ void TaskPush::on_execute() {
         }
 
         case Step::WAIT_TARGET: {
-            if (millis() - wait_start_ms >= SERVO_HOLD_MS) {
+            if (elapsed_ms - wait_start_ms >= SERVO_HOLD_MS) {
                 start_pos = current_servo_pos;
-                wait_start_ms = millis();
+                wait_start_ms = elapsed_ms;
                 step = Step::TO_HOME;
             }
             break;
         }
 
         case Step::TO_HOME: {
-            uint32_t elapsed = millis() - wait_start_ms;
+            uint32_t elapsed = elapsed_ms - wait_start_ms;
 
             if (elapsed >= SERVO_MOVE_MS) {
                 current_servo_pos = home_pos;
                 robot.servo.write(current_servo_pos);
 
                 pushes_left--;
-                wait_start_ms = millis();
+                wait_start_ms = elapsed_ms;
                 step = Step::WAIT_HOME;
             } else {
                 float progress = (float)elapsed / SERVO_MOVE_MS;
@@ -104,10 +104,10 @@ void TaskPush::on_execute() {
         }
 
         case Step::WAIT_HOME: {
-            if (millis() - wait_start_ms >= SERVO_HOLD_MS) {
+            if (elapsed_ms - wait_start_ms >= SERVO_HOLD_MS) {
                 if (pushes_left > 0) {
                     start_pos = current_servo_pos;
-                    wait_start_ms = millis();
+                    wait_start_ms = elapsed_ms;
                     step = Step::TO_TARGET;
                 } else {
                     done();

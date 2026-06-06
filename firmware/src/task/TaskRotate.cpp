@@ -8,7 +8,7 @@ void TaskRotate::on_init() {
     robot.rpm = 0;
 }
 
-void TaskRotate::on_execute() {
+void TaskRotate::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
     float delta = robot.imu.ypr[0] - prev_yaw;
     if (delta > 180.0f) delta -= 360.0f;

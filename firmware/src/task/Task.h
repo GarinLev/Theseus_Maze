@@ -15,15 +15,17 @@ enum class State {
 class Task {
 public:
     virtual ~Task() = default;
-    void execute() {
+    void execute(uint32_t dt) {
         if (state == State::INIT) {
             LOG_INFO("Task ", name(), " started");
             on_init();
             state = State::EXECUTING;
+            elapsed_ms = 0;
         }
 
         if (state == State::EXECUTING) {
-            on_execute();
+            elapsed_ms += dt;
+            on_execute(dt);
         }
     };
     virtual const char* name() const { return "Task"; }
@@ -31,8 +33,10 @@ public:
 
 protected:
     virtual void on_init() {}
-    virtual void on_execute() = 0;
+    virtual void on_execute(uint32_t dt) = 0;
     void done() { state = State::DONE; }
+
+    uint32_t elapsed_ms = 0;
 };
 
 class TaskMove final : public Task {
@@ -40,7 +44,7 @@ public:
     TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_yaw)
         : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw) {}
     const char* name() const override { return "TaskMove"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -60,7 +64,7 @@ public:
         : speed_profile(_profile) {}
 
     const char* name() const override { return "TaskRotate"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
     void set_direction(float dir) { direction = dir >= 0.0f ? 1.0f : -1.0f; }
 
 private:
@@ -76,7 +80,7 @@ public:
     explicit TaskTouch(float _back_ticks)
         : back_ticks(_back_ticks) {}
     const char* name() const override { return "TaskTouch"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -91,7 +95,7 @@ class TaskDelay final : public Task {
 public:
     explicit TaskDelay(uint32_t _delay_ms) : delay_ms(_delay_ms) {}
     const char* name() const override { return "TaskDelay"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -103,7 +107,7 @@ class TaskSent final : public Task {
 public:
     explicit TaskSent() = default;
     const char* name() const override { return "TaskSent"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -121,7 +125,7 @@ public:
           start_pos(70) {};
 
     const char* name() const override { return "TaskPush"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     enum class Step : uint8_t {
@@ -149,7 +153,7 @@ class TaskBlue final : public Task {
 public:
     TaskBlue() = default;
     const char* name() const override { return "TaskBlue"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -166,7 +170,7 @@ public:
 
     TaskBlack() = default;
     const char* name() const override { return "TaskBlack"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -183,7 +187,7 @@ public:
         : mode(_mode) {}
 
     const char* name() const override { return "TaskHit"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
@@ -195,7 +199,7 @@ class TaskLed final : public Task {
 public:
     TaskLed() = default;
     const char* name() const override { return "TaskLed"; }
-    void on_execute() override;
+    void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;

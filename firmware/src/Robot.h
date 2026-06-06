@@ -14,6 +14,8 @@
 #include "task/Stack.h"
 #include "task/Task.h"
 #include "module/Color.h"
+#include "delta/Delta.h"
+
 class Robot {
 public:
     Robot(const Robot&) = delete;
@@ -35,6 +37,7 @@ public:
     Servo servo;
     uButton button;
     microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> led;
+    Delta delta_fast;
 
     float rpm{}, steer{};
 
@@ -45,12 +48,15 @@ public:
     boolean is_pause = false;
     void update_pause();
 
+    void reset();
+
     bool is_last_black = false;
 
 private:
     static void tramp_slow();
     static void tramp_fast();
     Robot();
+    uint32_t last_fast_millis = 0;
 };
 
 #endif //FIRMWARE_ROBOT_H

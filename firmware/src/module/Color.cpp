@@ -3,21 +3,33 @@
 
 const char* COLOR_NAMES[] = { "WHITE", "BLUE", "BLACK", "SILVER" };
 
+float Color::read_normalized() const {
+    uint16_t c_raw = analogRead(pin_led);
+    float range = led_max - led_min;
+    if (range <= 0.0f) return 0.0f;
+    float normalized = ((float)c_raw - led_min) / range;
+    if (normalized < 0.0f) normalized = 0.0f;
+    if (normalized > 1.0f) normalized = 1.0f;
+    return 1.0f - normalized;
+}
+
+
 void Color::init() {
     tcs.begin();
+    pinMode(pin_led, INPUT);
 }
 
 void Color::update() {
-    uint16_t c_raw = tcs.read16(TCS34725_CDATAL);
     uint16_t r_raw = tcs.read16(TCS34725_RDATAL);
     uint16_t g_raw = tcs.read16(TCS34725_GDATAL);
     uint16_t b_raw = tcs.read16(TCS34725_BDATAL);
 
     float alpha = 0.85f;
-    c = (uint16_t)(c * (1.0f - alpha) + c_raw * alpha);
     r = (uint16_t)(r * (1.0f - alpha) + r_raw * alpha);
     g = (uint16_t)(g * (1.0f - alpha) + g_raw * alpha);
     b = (uint16_t)(b * (1.0f - alpha) + b_raw * alpha);
+
+    c = read_normalized();
 
     hsv();
 
@@ -26,8 +38,6 @@ void Color::update() {
 }
 
 void Color::hsv() {
-    if (c == 0) { h = s = v = 0; return; }
-
     float rf_cal = (float)r * Rf;
     float gf_cal = (float)g * Gf;
     float bf_cal = (float)b * Bf;
@@ -36,7 +46,7 @@ void Color::hsv() {
     if (gf_cal > max_val) max_val = gf_cal;
     if (bf_cal > max_val) max_val = bf_cal;
 
-    if (max_val == 0.0f) { h = s = v = 0; return; }
+    if (max_val == 0.0f) { h = s = 0; return; }
 
     float rf = rf_cal / max_val;
     float gf = gf_cal / max_val;
@@ -46,7 +56,6 @@ void Color::hsv() {
     float mn = rf; if (gf < mn) mn = gf; if (bf < mn) mn = bf;
     float delta = mx - mn;
 
-    v = max_val / 1600.0f;
     s = (mx <= 0.0f) ? 0.0f : (delta / mx);
 
     if (delta < 0.0001f) {
@@ -60,35 +69,46 @@ void Color::hsv() {
 }
 
 float Color::match(HSVColor target) const {
-    // 1. Считаем разницу по всем осям
     float dh = fabsf(this->h - target.h);
     if (dh > 180.0f) dh = 360.0f - dh;
-    float norm_dh = dh / 180.0f; // 0..1
+    float norm_dh = dh / 180.0f;
 
     float ds = fabsf(this->s - target.s);
-    float dv = fabsf(this->v - target.v);
+    float dc = fabsf(this->c - target.c);
 
-    // Нормализуем разницу по Clear каналу
-    float dc = fabsf((float)this->c - (float)target.c) / 1600.0f;
-    if (dc > 1.0f) dc = 1.0f;
+    constexpr float S_MAX_TRUST = 0.20f;
+    float trust_factor = this->s / S_MAX_TRUST;
+    if (trust_factor > 1.0f) trust_factor = 1.0f;
+    float w_h = 0.01f + (0.44f * trust_factor);
 
-    float w_h = 0.45f; // Оттенок по-прежнему важен
-    float w_s = 0.15f; // Насыщенность (у них обеих она высокая, вес небольшой)
-    float w_v = 0.20f; // Возващаем вес яркости (черный явно темнее синего)
-    float w_c = 0.20f; // Возвращаем вес Clear-канала (390 против 550 — отличный маркер)
+    if (this->c > 0.90f && target.c > 0.90f) {
+        float high_brightness_zone = (this->c - 0.90f) / 0.10f;
 
-    float distance = (w_h * norm_dh) + (w_s * ds) + (w_v * dv) + (w_c * dc);
+        float c_amp = 1.0f + (high_brightness_zone * 24.0f);
+        dc *= c_amp;
+
+        w_h *= (1.0f - high_brightness_zone * 0.98f);
+    }
+
+    float w_remaining = 1.0f - w_h;
+    float w_s = w_remaining * 0.40f;
+    float w_c = w_remaining * 0.60f;
+
+    float distance = (w_h * norm_dh) + (w_s * ds) + (w_c * dc);
     return min(distance, 1.0f);
 }
 
 void Color::compute(const HSVColor targets[], float outputs[], size_t count) const {
     float sum = 0.0f;
-    float conf = 32.0f;
+    float conf = 15.0f;
+
     for (size_t i = 0; i < count; ++i) {
         outputs[i] = expf(-match(targets[i]) * conf);
         sum += outputs[i];
     }
-    for (size_t i = 0; i < count; ++i) outputs[i] = (outputs[i] / sum) * 100.0f;
+    for (size_t i = 0; i < count; ++i) {
+        outputs[i] = (outputs[i] / sum) * 100.0f;
+    }
 }
 
 ColorType Color::get_current_color(float threshold) const {
@@ -102,8 +122,7 @@ void Color::log() {
     Serial.print("[CODE] constexpr HSVColor NAME = {");
     Serial.print(h, 2); Serial.print("f, ");
     Serial.print(s, 2); Serial.print("f, ");
-    Serial.print(v, 3); Serial.print("f, ");
-    Serial.print(c);    Serial.println("};");
+    Serial.print(c, 2); Serial.println("f};");
     Serial.print("[PROBABILITIES] ");
     for (uint8_t i = 0; i < 4; ++i) {
         Serial.print(COLOR_NAMES[i]); Serial.print(": ");

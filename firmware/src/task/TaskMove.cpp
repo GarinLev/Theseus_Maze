@@ -13,8 +13,11 @@ void TaskMove::on_init() {
     pid_dist.reset();
 }
 
-void TaskMove::on_execute() {
+void TaskMove::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
+
+    bool left_pressed  = (digitalRead(robot.touch_pin_l) == LOW);
+    bool right_pressed = (digitalRead(robot.touch_pin_r) == LOW);
 
     if (robot.color.get_current_color() == COLOR_BLACK) {
         robot.rpm = 0;
@@ -24,15 +27,12 @@ void TaskMove::on_execute() {
         return;
     }
 
-    bool left_pressed  = (digitalRead(robot.touch_pin_l) == LOW);
-    bool right_pressed = (digitalRead(robot.touch_pin_r) == LOW);
-
     if (left_pressed != right_pressed) {
         if (!touch_was_pressed) {
             touch_was_pressed = true;
-            touch_start_time = millis();
+            touch_start_time = elapsed_ms;
         }
-        if (millis() - touch_start_time < 300) {
+        if (elapsed_ms - touch_start_time < 300) {
             robot.rpm = 0;
             robot.steer = 0;
             return;

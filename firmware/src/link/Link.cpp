@@ -35,6 +35,11 @@ void Link::update_debug() const {
 void Link::process_command(char cmd) {
     auto& robot = Robot::instance();
 
+    if (cmd == 'u' || cmd == 'd' || cmd == 'l' || cmd == 'r' || 
+        cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm' || cmd == 'c') {
+        robot.reset();
+    }
+
     if (cmd == 'u' || cmd == 'd' || cmd == 'l' || cmd == 'r') {
         robot.tasks.push( TaskSent() );
         robot.tasks.push(TaskDelay(1000));
@@ -50,19 +55,19 @@ void Link::process_command(char cmd) {
     switch (cmd) {
         case 'u': break;
         case 'd': {
-            robot.tasks.push(TaskDelay(1000));
+            robot.tasks.push(TaskDelay(500));
             robot.tasks.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
-            robot.tasks.push(TaskDelay(1000));
+            robot.tasks.push(TaskDelay(500));
             robot.tasks.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
             break;
         }
         case 'r': {      // Право
-            robot.tasks.push(TaskDelay(1000));
+            robot.tasks.push(TaskDelay(500));
             robot.tasks.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
             break;
         }
         case 'l': {      // Лево
-            robot.tasks.push(TaskDelay(1000));
+            robot.tasks.push(TaskDelay(500));
             auto rot = TaskRotate(SpeedProfile(30, 60, 85, 30, 30));
             rot.set_direction(-1);
             robot.tasks.push(rot);
@@ -94,6 +99,10 @@ void Link::process_command(char cmd) {
         }
         case 'z': {
             robot.color.log();
+            break;
+        }
+        case 'g': {
+            LOG_INFO("UPS: ", robot.delta_fast.get_ups());
             break;
         }
         default:

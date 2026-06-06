@@ -3,11 +3,11 @@
 #include "Task.h"
 
 void TaskTouch::on_init() {
-    step_timer = millis();
+    step_timer = 0;
     step = Step::INIT;
 }
 
-void TaskTouch::on_execute() {
+void TaskTouch::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
     float dist = robot.dist_up.get();
 
@@ -15,7 +15,7 @@ void TaskTouch::on_execute() {
         case Step::INIT:
             robot.rpm = 0;
             robot.steer = 0;
-            if (millis() - step_timer >= 150) {
+            if (elapsed_ms - step_timer >= 150) {
 
                 if (dist > 200.0f || dist == 0.0f) {
                     done();
@@ -29,7 +29,7 @@ void TaskTouch::on_execute() {
             robot.rpm = 25;
             robot.steer = 0;
             if (digitalRead(robot.touch_pin_r) == LOW && digitalRead(robot.touch_pin_l) == LOW) {
-                step_timer = millis();
+                step_timer = elapsed_ms;
                 step = Step::ALIGN;
             }
             break;
@@ -37,7 +37,7 @@ void TaskTouch::on_execute() {
         case Step::ALIGN:
             robot.rpm = 20;
             robot.steer = 0;
-            if (millis() - step_timer >= 300) {
+            if (elapsed_ms - step_timer >= 300) {
                 start_encoder = robot.quad.encoder();
                 step = Step::BACK;
             }

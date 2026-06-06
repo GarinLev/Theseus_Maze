@@ -5,7 +5,7 @@ void TaskSent::on_init() {
 
 }
 
-void TaskSent::on_execute() {
+void TaskSent::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
 
     float dist_u = robot.dist_up.get();
@@ -20,9 +20,15 @@ void TaskSent::on_execute() {
     float dist_l = robot.dist_left.get();
     bool is_left = dist_l < 200 && dist_l != 0;
 
+    uint8_t num_sent = 0;
+    if (robot.color.get_current_color() == COLOR_SILVER) num_sent = 1;
+    if (robot.is_last_black) {
+        robot.is_last_black = false;
+        num_sent = 2;
+    }
 
     bool dist_array[4] = {is_up, is_right, is_down, is_left};
-    robot.link.send_sensors(dist_array, robot.is_last_black ? 2 : 0);
+    robot.link.send_sensors(dist_array, num_sent);
 
     done();
 }

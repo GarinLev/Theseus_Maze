@@ -9,7 +9,7 @@ void TaskHit::on_init() {
 }
 
 
-void TaskHit::on_execute() {
+void TaskHit::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
 
     robot.rpm = -30;

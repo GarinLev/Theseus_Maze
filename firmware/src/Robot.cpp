@@ -14,16 +14,34 @@ void Robot::loop_slow() {
 }
 
 void Robot::loop_fast() {
+    delta_fast.start();
+
+    uint32_t now = millis();
+    uint32_t dt = now - last_fast_millis;
+    last_fast_millis = now;
+
     button.tick();
     imu.update();
     dist_left.update();
     dist_right.update();
     dist_up.update();
     dist_down.update();
+
     w_fr.update_sensors();
     w_fl.update_sensors();
     w_br.update_sensors();
     w_bl.update_sensors();
+
+    update_pause();
+
+    rpm = 0;
+    steer = 0;
+
+    if (!tasks.isEmpty()) {
+        tasks.top().execute(dt);
+    } else {
+        servo.write(70);
+    }
 
     float target_speed_pi = fabsf(rpm);
     w_fr.update_pi(target_speed_pi);
@@ -31,17 +49,19 @@ void Robot::loop_fast() {
     w_br.update_pi(target_speed_pi);
     w_bl.update_pi(target_speed_pi);
 
-    update_pause();
-
-    if (!tasks.isEmpty()) {
-        tasks.top().execute();
-    } else {
-        rpm = 0; steer = 0;
-        servo.write(70);
-    }
-
     quad.rpm(rpm, steer);
     update_tasks();
+
+    delta_fast.stop();
+}
+
+void Robot::reset() {
+    rpm = 0;
+    steer = 0;
+    quad.rpm(0, 0);
+    servo.write(70);
+    led.clear();
+    led.show();
 }
 
 void Robot::update_tasks() const {

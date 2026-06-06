@@ -7,24 +7,22 @@ void TaskLed::on_init() {
     auto& robot = Robot::instance();
     robot.rpm = 0;
     robot.steer = 0;
-    start_time = millis();
-    last_toggle = start_time;
+    last_toggle = 0;
     led_on = false;
 }
 
-void TaskLed::on_execute() {
+void TaskLed::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
-    uint32_t now = millis();
 
-    if (now - start_time > 5000) {
+    if (elapsed_ms > 5000) {
         robot.led.clear();
         robot.led.show();
         done();
         return;
     }
 
-    if (now - last_toggle >= 500) {
-        last_toggle = now;
+    if (elapsed_ms - last_toggle >= 500) {
+        last_toggle = elapsed_ms;
         led_on = !led_on;
 
         if (led_on) {

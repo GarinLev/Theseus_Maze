@@ -13,16 +13,15 @@ void TaskBlue::on_init() {
     }
 
     active = true;
-    blue_wait_start = millis();
 }
 
-void TaskBlue::on_execute() {
+void TaskBlue::on_execute(uint32_t dt) {
     if (!active) {
         done();
         return;
     }
 
-    if (millis() - blue_wait_start > 5000) {
+    if (elapsed_ms > 5000) {
         done();
     }
 }

@@ -10,7 +10,7 @@ void TaskBlack::on_init() {
     back_start_encoder = robot.quad.encoder();
 }
 
-void TaskBlack::on_execute() {
+void TaskBlack::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
 
     switch (step) {
