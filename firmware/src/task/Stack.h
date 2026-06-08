@@ -60,4 +60,4 @@ public:
     uint16_t size() const { return count; }
 };
 
-#endif //FIRMWARE_STACK_H
+#endif

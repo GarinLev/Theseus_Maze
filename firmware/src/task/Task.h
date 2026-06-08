@@ -4,7 +4,6 @@
 #include "Log.h"
 #include "math/PID.h"
 #include "math/SpeedProfile.h"
-#include <stdint.h>
 
 enum class State {
     INIT,
@@ -208,4 +207,14 @@ private:
     bool led_on = false;
 };
 
-#endif // FIRMWARE_TASK_H
+class TaskCenter final : public Task {
+public:
+    explicit TaskCenter(PID _pid) : pid(_pid) {}
+    const char* name() const override { return "TaskCenter"; }
+    void on_execute(uint32_t dt) override;
+private:
+    PID pid;
+    void on_init() override;
+};
+
+#endif

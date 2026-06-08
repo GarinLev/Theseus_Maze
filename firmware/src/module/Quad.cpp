@@ -61,7 +61,6 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
     float avg_norm_speed = sum_norm_speed / active_wheels;
     float raw_sync_target = (avg_norm_speed * 0.3f) + (worst_norm_speed * 0.7f);
 
-    // Защита от смены направления движения: сбрасываем фильтр во избежание удара по редукторам
     if ((raw_sync_target > 0.0f && smoothed_sync_target < 0.0f) ||
         (raw_sync_target < 0.0f && smoothed_sync_target > 0.0f)) {
         smoothed_sync_target = raw_sync_target;

@@ -14,7 +14,7 @@ float Eu(float t) {
 
 float Ed(float t) {
     float t2 = t * t;
-    return t2 * t2 * t; // t^5
+    return t2 * t2 * t;
 }
 }
 

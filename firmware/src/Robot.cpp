@@ -96,6 +96,25 @@ void Robot::update_pause() {
         tasks_victim.clear();
 
         LOG_INFO(is_pause ? "Pause start" : "Pause end");
+
+        led.setBrightness(255);
+        led.fill(mMagenta);
+        led.show();
+        delay(100);
+
+        led.setBrightness(64);
+        if (is_pause) {
+            led.fill    (mSilver);
+            servo.detach();
+        } else {
+            led.clear();
+            servo.attach(44);
+            servo.write(70);
+        }
+        led.show();
+        led.setBrightness(255);
+
+
         link.pause(is_pause);
     }
 }

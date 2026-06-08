@@ -18,4 +18,4 @@ private:
     float ld = 0;
 };
 
-#endif //FIRMWARE_SPEEDPROFILE_H
+#endif

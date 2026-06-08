@@ -17,4 +17,4 @@ private:
     uint8_t fifo_buffer[64] = {};
 };
 
-#endif //FIRMWARE_IMU_H
+#endif

@@ -30,4 +30,4 @@ private:
 };
 
 
-#endif //FIRMWARE_DIST_H
+#endif

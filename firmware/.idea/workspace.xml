@@ -22,15 +22,30 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Разбираюсь с гироскопом">
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Предположительно исправлен гироскоп">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Log.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/delta/Delta.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/delta/Delta.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/delta/Delta.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/delta/Delta.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/link/Link.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/link/Link.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/math/PID.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/PID.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/math/SpeedProfile.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/SpeedProfile.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/math/SpeedProifle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/SpeedProifle.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Color.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Dist.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/module/IMU.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/IMU.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Quad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Quad.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Wheel.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/Stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Stack.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -124,14 +139,23 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
   <component name="RunManager">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
     </configuration>
     <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
       <method v="2" />
@@ -174,6 +198,9 @@
       <workItem from="1780661592240" duration="18390000" />
       <workItem from="1780743466536" duration="1572000" />
       <workItem from="1780750271916" duration="3347000" />
+      <workItem from="1780826293509" duration="11601000" />
+      <workItem from="1780910521094" duration="1123000" />
+      <workItem from="1780912489900" duration="4700000" />
     </task>
     <task id="LOCAL-00001" summary="Работает отличие цветов">
       <option name="closed" value="true" />
@@ -215,7 +242,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780760269299</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Предположительно исправлен гироскоп">
+      <option name="closed" value="true" />
+      <created>1780766460072</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1780766460072</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -237,6 +272,7 @@
     <MESSAGE value="Проехал по углу лабиринта" />
     <MESSAGE value="Едет лучше + концевики" />
     <MESSAGE value="Разбираюсь с гироскопом" />
-    <option name="LAST_COMMIT_MESSAGE" value="Разбираюсь с гироскопом" />
+    <MESSAGE value="Предположительно исправлен гироскоп" />
+    <option name="LAST_COMMIT_MESSAGE" value="Предположительно исправлен гироскоп" />
   </component>
 </project>

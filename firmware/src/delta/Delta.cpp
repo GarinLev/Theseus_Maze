@@ -1,7 +1,3 @@
-//
-// Created by user on 06.06.2026.
-//
-
 #include "Delta.h"
 #include <Arduino.h>
 
@@ -9,9 +5,12 @@ void Delta::start() {
     uint32_t now_us = micros();
     uint32_t now_ms = millis();
 
-    if (_last_start_us != 0) {
-        _dt_us = now_us - _last_start_us;
+    if (_last_start_us == 0) {
+        _last_start_us = now_us;
+        _last_ups_ms = now_ms;
     }
+
+    _dt_us = now_us - _last_start_us;
     _last_start_us = now_us;
     _current_start_us = now_us;
 

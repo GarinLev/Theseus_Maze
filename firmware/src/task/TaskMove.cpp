@@ -75,7 +75,8 @@ void TaskMove::on_execute(uint32_t dt) {
             float slip_factor = 1.0f + (sin_pitch * 0.8f);
             slip_compensation = 1.0f / slip_factor;
         } else {
-            slip_compensation = 1.0f + (sin_pitch * 1.2f);
+            float slip_factor_down = 1.0f - (sin_pitch * 0.7f);
+            slip_compensation = 1.0f / slip_factor_down;
         }
     }
 

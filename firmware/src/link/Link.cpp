@@ -20,6 +20,8 @@ void Link::wait_start() const {
 void Link::update() const {
     if (serial_base->available()) {
         char cmd = static_cast<char>(serial_base->read());
+        Serial.print(cmd);
+        Serial.println("  <- UART");
         process_command(cmd);
     }
 }
@@ -55,46 +57,80 @@ void Link::process_command(char cmd) {
     switch (cmd) {
         case 'u': break;
         case 'd': {
-            robot.tasks_move.push(TaskDelay(500));
+            robot.tasks_move.push(TaskDelay(1500));
             robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
-            robot.tasks_move.push(TaskDelay(500));
-            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
-            break;
-        }
-        case 'r': {      // Право
-            robot.tasks_move.push(TaskDelay(500));
+            robot.tasks_move.push(TaskDelay(1500));
             robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
             break;
         }
-        case 'l': {      // Лево
-            robot.tasks_move.push(TaskDelay(500));
+        case 'r': {
+            robot.tasks_move.push(TaskDelay(1500));
+            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
+            break;
+        }
+        case 'l': {
+            robot.tasks_move.push(TaskDelay(1500));
             auto rot = TaskRotate(SpeedProfile(30, 60, 85, 30, 30));
             rot.set_direction(-1);
             robot.tasks_move.push(rot);
             break;
         }
         case 'v': {
-            robot.tasks_victim.push(TaskPush(TaskPush::Mode::RIGHT));
-            robot.tasks_victim.push(TaskLed());
+            float d = robot.dist_right.get();
+            if (d < 130 && d != 0) {
+                robot.tasks_victim.push(TaskPush(TaskPush::Mode::RIGHT));
+                robot.tasks_victim.push(TaskLed());
+            } else {
+                LOG_INFO("Not.");
+            }
             break;
         }
         case 'b': {
-            robot.tasks_victim.push(TaskPush(TaskPush::Mode::LEFT));
-            robot.tasks_victim.push(TaskLed());
+            float d = robot.dist_left.get();
+            if (d < 200 && d != 0) {
+                robot.tasks_victim.push(TaskPush(TaskPush::Mode::LEFT));
+                robot.tasks_victim.push(TaskLed());
+            } else {
+                LOG_INFO("Not.");
+            }
             break;
         }
         case 'n': {
-            robot.tasks_victim.push(TaskPush(TaskPush::Mode::RIGHT_X2));
-            robot.tasks_victim.push(TaskLed());
+            float d = robot.dist_right.get();
+            if (d < 200 && d != 0) {
+                robot.tasks_victim.push(TaskPush(TaskPush::Mode::RIGHT_X2));
+                robot.tasks_victim.push(TaskLed());
+            } else {
+                LOG_INFO("Not.", d);
+            }
             break;
         }
         case 'm': {
-            robot.tasks_victim.push(TaskPush(TaskPush::Mode::LEFT_X2));
-            robot.tasks_victim.push(TaskLed());
+            float d = robot.dist_left.get();
+            if (d < 200 && d != 0) {
+                robot.tasks_victim.push(TaskPush(TaskPush::Mode::LEFT_X2));
+                robot.tasks_victim.push(TaskLed());
+            } else {
+                LOG_INFO("Not.", d);
+            }
             break;
         }
         case 'c': {
-            robot.tasks_victim.push(TaskLed());
+            float d = robot.dist_right.get();
+            if (d < 200 && d != 0) {
+                robot.tasks_victim.push(TaskLed());
+            } else {
+                LOG_INFO("Not.", d);
+            }
+            break;
+        }
+        case 'x': {
+            float d = robot.dist_left.get();
+            if (d < 200 && d != 0) {
+                robot.tasks_victim.push(TaskLed());
+            } else {
+                LOG_INFO("Not.", d);
+            }
             break;
         }
         case 'z': {

@@ -25,4 +25,4 @@ private:
     float prev_error = 0;
 };
 
-#endif //FIRMWARE_PID_H
+#endif

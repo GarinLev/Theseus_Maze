@@ -83,12 +83,12 @@ public:
     void reset();
 
     bool is_last_black = false;
+    uint32_t last_fast_millis = 0;
 
 private:
     static void tramp_slow();
     static void tramp_fast();
     Robot();
-    uint32_t last_fast_millis = 0;
 };
 
-#endif //FIRMWARE_ROBOT_H
+#endif

@@ -9,10 +9,10 @@ struct HSVColor {
     float c;
 };
 
-constexpr HSVColor TARGET_WHITE  = {41.17f,  0.01f, 0.97f};
-constexpr HSVColor TARGET_BLUE   = {224.90f, 0.37f, 0.94f};
-constexpr HSVColor TARGET_BLACK  = {341.70f, 0.25f, 0.03f};
-constexpr HSVColor TARGET_SILVER = {15.00f,  0.10f, 1.00f};
+constexpr HSVColor TARGET_WHITE  = {24.21f,  0.01, 0.98f};
+constexpr HSVColor TARGET_BLUE   = {225.36f, 0.40f, 0.96f};
+constexpr HSVColor TARGET_BLACK  = {0.0f, 0.25f, 0.05f};
+constexpr HSVColor TARGET_SILVER = {0.00f,  0.09f, 1.00f};
 
 
 enum ColorType : uint8_t {
@@ -38,9 +38,9 @@ public:
 private:
     Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_120MS, TCS34725_GAIN_4X);
 
-    const float Rf = 0.91f;
-    const float Gf = 0.96f;
-    const float Bf = 1.16f;
+    const float Rf = 0.92f;
+    const float Gf = 0.98f;
+    const float Bf = 1.14f;
 
     uint8_t pin_led = A1;
     float led_max = 410.0f;
@@ -54,4 +54,4 @@ private:
     float last_probabilities[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 };
 
-#endif //FIRMWARE_COLOR_H
+#endif

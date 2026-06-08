@@ -65,6 +65,8 @@ void Color::hsv() {
         else if (mx == gf) h = (bf - rf) / delta + 2.0f;
         else h = (rf - gf) / delta + 4.0f;
         h *= 60.0f;
+        if (h < 0.0f) h += 360.0f;
+        else if (h >= 360.0f) h -= 360.0f;
     }
 }
 

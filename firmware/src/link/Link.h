@@ -25,4 +25,4 @@ private:
     static void process_command(char cmd);
 };
 
-#endif //FIRMWARE_LINK_H
+#endif

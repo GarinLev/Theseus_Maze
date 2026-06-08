@@ -23,4 +23,4 @@ private:
     uint32_t _last_ups_ms = 0;
 };
 
-#endif //FIRMWARE_DELTA_H
+#endif

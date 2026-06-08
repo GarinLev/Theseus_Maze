@@ -4,4 +4,4 @@
 #define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
 #include <DebugLog.h>
 
-#endif //FIRMWARE_LOG_H
+#endif

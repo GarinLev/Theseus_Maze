@@ -39,32 +39,18 @@ bool IMU::init() {
 }
 
 void IMU::update() {
-    uint16_t fifo_count = mpu.getFIFOCount();
-    uint16_t packet_size = mpu.dmpGetFIFOPacketSize();
+    if (mpu.dmpGetCurrentFIFOPacket(fifo_buffer)) {
+        Quaternion q;
+        VectorFloat gravity;
 
-    if (fifo_count >= 1024) {
-        mpu.resetFIFO();
-        return;
+        mpu.dmpGetQuaternion(&q, fifo_buffer);
+        mpu.dmpGetGravity(&gravity, &q);
+
+        float data_ypr[3];
+        mpu.dmpGetYawPitchRoll(data_ypr, &q, &gravity);
+
+        ypr[0] = data_ypr[0] * 180.0f / M_PI;
+        ypr[1] = data_ypr[1] * 180.0f / M_PI;
+        ypr[2] = data_ypr[2] * 180.0f / M_PI;
     }
-
-    if (fifo_count < packet_size) {
-        return;
-    }
-
-    while (fifo_count >= packet_size) {
-        mpu.getFIFOBytes(fifo_buffer, packet_size);
-        fifo_count -= packet_size;
-    }
-
-    Quaternion q;
-    VectorFloat gravity;
-    float data_ypr[3];
-
-    mpu.dmpGetQuaternion(&q, fifo_buffer);
-    mpu.dmpGetGravity(&gravity, &q);
-    mpu.dmpGetYawPitchRoll(data_ypr, &q, &gravity);
-
-    ypr[0] = data_ypr[0] * 180.0f / M_PI;
-    ypr[1] = data_ypr[1] * 180.0f / M_PI;
-    ypr[2] = data_ypr[2] * 180.0f / M_PI;
 }
