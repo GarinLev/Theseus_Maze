@@ -66,7 +66,7 @@ public:
     Color color;
     Servo servo;
     uButton button;
-    microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER, SAVE_MILLIS> led;
+    microLED<11, 43, MLED_NO_CLOCK, LED_WS2818, ORDER_GRB, CLI_AVER> led;
     Delta delta_fast;
 
     float rpm{}, steer{};

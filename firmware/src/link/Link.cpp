@@ -37,17 +37,20 @@ void Link::update_debug() const {
 void Link::process_command(char cmd) {
     auto& robot = Robot::instance();
 
-    if (cmd == 'u' || cmd == 'd' || cmd == 'l' || cmd == 'r' || 
+    if (cmd == 'u' || cmd == 'l' || cmd == 'r' ||
         cmd == 'v' || cmd == 'b' || cmd == 'n' || cmd == 'm' || cmd == 'c') {
         robot.reset();
     }
 
-    if (cmd == 'u' || cmd == 'd' || cmd == 'l' || cmd == 'r') {
+    if (cmd == 'u' || cmd == 'l' || cmd == 'r') {
         robot.tasks_move.push( TaskSent() );
-        robot.tasks_move.push(TaskDelay(1000));
+    }
+
+    if (cmd == 'u') {
+        robot.tasks_move.push(TaskDelay(300));
         robot.tasks_move.push(TaskTouch(Quad_MM(50)));
         robot.tasks_move.push(TaskMove(
-            SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
+            SpeedProfile(30, 110, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
             PID(0.15, 0, 0.04, -200, 200),
             PID(1.1, 0, 0.1, -30, 30)
         ));
@@ -56,20 +59,12 @@ void Link::process_command(char cmd) {
 
     switch (cmd) {
         case 'u': break;
-        case 'd': {
-            robot.tasks_move.push(TaskDelay(1500));
-            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
-            robot.tasks_move.push(TaskDelay(1500));
-            robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
-            break;
-        }
+        // Кейс 'd' полностью удалён
         case 'r': {
-            robot.tasks_move.push(TaskDelay(1500));
             robot.tasks_move.push(TaskRotate(SpeedProfile(30, 60, 85, 30, 30)));
             break;
         }
         case 'l': {
-            robot.tasks_move.push(TaskDelay(1500));
             auto rot = TaskRotate(SpeedProfile(30, 60, 85, 30, 30));
             rot.set_direction(-1);
             robot.tasks_move.push(rot);

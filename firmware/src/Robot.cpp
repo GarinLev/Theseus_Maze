@@ -1,4 +1,6 @@
 #include "Robot.h"
+
+#include "GyverWDT.h"
 #include "Log.h"
 
 void loop() {
@@ -14,6 +16,7 @@ void Robot::loop_slow() {
 }
 
 void Robot::loop_fast() {
+    Watchdog.reset();
     delta_fast.start();
 
     uint32_t now = millis();

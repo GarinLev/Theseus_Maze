@@ -20,6 +20,7 @@ void TaskTouch::on_execute(uint32_t dt) {
                 if (dist > 200.0f || dist == 0.0f) {
                     done();
                 } else {
+                    step_timer = elapsed_ms;
                     step = Step::SEARCH;
                 }
             }
@@ -28,6 +29,13 @@ void TaskTouch::on_execute(uint32_t dt) {
         case Step::SEARCH:
             robot.rpm = 25;
             robot.steer = 0;
+
+            if (elapsed_ms - step_timer >= 5000) {
+                robot.rpm = 0;
+                done();
+                break;
+            }
+
             if (digitalRead(robot.touch_pin_r) == LOW && digitalRead(robot.touch_pin_l) == LOW) {
                 step_timer = elapsed_ms;
                 step = Step::ALIGN;

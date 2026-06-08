@@ -1,6 +1,7 @@
 #include "Robot.h"
 
 #include "Log.h"
+#include <GyverWDT.h>
 
 Robot& Robot::instance() {
     static Robot inst;
@@ -100,6 +101,8 @@ void setup() {
 
     LOG_INFO("Robot Link Successful");
 
+    Watchdog.enable(RESET_MODE, WDT_PRESCALER_16);
+
     robot.tasks_move.push( TaskSent() );
-    robot.tasks_move.push(TaskDelay(5000));
+    robot.tasks_move.push(TaskDelay(700));
 }

@@ -22,31 +22,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Предположительно исправлен гироскоп">
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Поправлена выдача">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Log.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Log.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/delta/Delta.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/delta/Delta.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/delta/Delta.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/delta/Delta.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/link/Link.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/link/Link.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/math/PID.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/PID.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/math/SpeedProfile.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/SpeedProfile.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/math/SpeedProifle.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/math/SpeedProifle.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Color.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Dist.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/IMU.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/IMU.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Quad.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Quad.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Quad.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/module/Wheel.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Wheel.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/Stack.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Stack.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskPush.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskPush.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskTouch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskTouch.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,7 +185,7 @@
       <workItem from="1780750271916" duration="3347000" />
       <workItem from="1780826293509" duration="11601000" />
       <workItem from="1780910521094" duration="1123000" />
-      <workItem from="1780912489900" duration="4700000" />
+      <workItem from="1780912489900" duration="11943000" />
     </task>
     <task id="LOCAL-00001" summary="Работает отличие цветов">
       <option name="closed" value="true" />
@@ -250,7 +235,15 @@
       <option name="project" value="LOCAL" />
       <updated>1780766460072</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Поправлена выдача">
+      <option name="closed" value="true" />
+      <created>1780918656268</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780918656268</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -273,6 +266,7 @@
     <MESSAGE value="Едет лучше + концевики" />
     <MESSAGE value="Разбираюсь с гироскопом" />
     <MESSAGE value="Предположительно исправлен гироскоп" />
-    <option name="LAST_COMMIT_MESSAGE" value="Предположительно исправлен гироскоп" />
+    <MESSAGE value="Поправлена выдача" />
+    <option name="LAST_COMMIT_MESSAGE" value="Поправлена выдача" />
   </component>
 </project>

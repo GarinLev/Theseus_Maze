@@ -7,7 +7,7 @@
 #define ServoController_CloseRight 75
 #define ServoController_CloseLeft 65
 
-constexpr uint32_t SERVO_MOVE_MS = 2000;
+constexpr uint32_t SERVO_MOVE_MS = 1000;
 constexpr uint32_t SERVO_HOLD_MS = 500;
 
 void TaskPush::on_init() {
@@ -70,7 +70,10 @@ void TaskPush::on_execute(uint32_t dt) {
                 step = Step::WAIT_TARGET;
             } else {
                 float progress = (float)elapsed / SERVO_MOVE_MS;
-                current_servo_pos = start_pos + (target_pos - start_pos) * progress;
+                // Формула Smoothstep для плавного ускорения и замедления
+                float smooth_progress = progress * progress * (3.0f - 2.0f * progress);
+
+                current_servo_pos = start_pos + (target_pos - start_pos) * smooth_progress;
                 robot.servo.write(current_servo_pos);
             }
             break;
@@ -97,7 +100,10 @@ void TaskPush::on_execute(uint32_t dt) {
                 step = Step::WAIT_HOME;
             } else {
                 float progress = (float)elapsed / SERVO_MOVE_MS;
-                current_servo_pos = start_pos + (home_pos - start_pos) * progress;
+                // Применяем ускорение и для обратного пути
+                float smooth_progress = progress * progress * (3.0f - 2.0f * progress);
+
+                current_servo_pos = start_pos + (home_pos - start_pos) * smooth_progress;
                 robot.servo.write(current_servo_pos);
             }
             break;

@@ -54,7 +54,6 @@ void TaskMove::on_execute(uint32_t dt) {
         touch_was_pressed = false;
     }
 
-
     float relative_yaw = robot.imu.ypr[0] - yaw_now;
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
     else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
@@ -89,8 +88,16 @@ void TaskMove::on_execute(uint32_t dt) {
 
     if (progress_encoder < speed_profile.get_len()) {
         float speed = speed_profile.compute(progress_encoder);
-        if (pitch_val > 4.0f && speed < 30.0f && speed > 5.0f) {
-            speed = 30.0f;
+
+        if (absolute_pitch > 4.0f) {
+            if (pitch_val > 4.0f) {
+                speed = speed * 0.6f;
+            } else {
+                speed = speed * 0.6f;
+            }
+            if (speed < 20.0f) {
+                speed = 20.0f;
+            }
         }
 
         robot.rpm = speed;
