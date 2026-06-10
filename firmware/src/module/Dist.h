@@ -4,7 +4,7 @@
 #include <Wire.h>
 #include <VL53L0X.h>
 
-constexpr uint8_t VL_DIST_ARRAY_LEN = 3;
+constexpr uint8_t VL_DIST_ARRAY_LEN = 5;
 class Dist {
 public:
     explicit Dist(uint8_t pin, uint8_t _address)

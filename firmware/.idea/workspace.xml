@@ -22,16 +22,21 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="Поправлена выдача">
+    <list default="true" id="6dcae988-8166-412a-b091-f59692b299ea" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/platformio.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Robot.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Robot.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/Robot.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Setup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/Setup.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/link/Link.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/link/Link.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/link/Link.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Color.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Color.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Dist.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/Dist.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/Dist.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/IMU.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/module/IMU.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/module/IMU.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/Task.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/Task.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskLed.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskLed.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/task/TaskMove.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskMove.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/TaskPush.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskPush.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task/TaskTouch.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskTouch.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task/TaskSent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/task/TaskSent.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +62,7 @@
     <setting file="file://$PROJECT_DIR$/src/link/Link.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/link/Link.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/module/Color.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/module/IMU.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/task/Task.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/task/TaskBlue.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/task/TaskPush.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -128,10 +134,22 @@
   }
 }</component>
   <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
+    </configuration>
+    <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
+      <method v="2" />
     </configuration>
     <configuration name="PlatformIO" type="platformio" factoryName="PlatformIO Debug" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="firmware" TARGET_NAME="PlatformIO" CONFIG_NAME="PlatformIO">
       <method v="2" />
@@ -186,6 +204,10 @@
       <workItem from="1780826293509" duration="11601000" />
       <workItem from="1780910521094" duration="1123000" />
       <workItem from="1780912489900" duration="11943000" />
+      <workItem from="1780936838243" duration="1818000" />
+      <workItem from="1780940350463" duration="1970000" />
+      <workItem from="1781009847096" duration="559000" />
+      <workItem from="1781073010863" duration="12000" />
     </task>
     <task id="LOCAL-00001" summary="Работает отличие цветов">
       <option name="closed" value="true" />

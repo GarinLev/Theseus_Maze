@@ -40,6 +40,8 @@ bool IMU::init() {
 
 void IMU::update() {
     if (mpu.dmpGetCurrentFIFOPacket(fifo_buffer)) {
+        error_counter = 0;
+
         Quaternion q;
         VectorFloat gravity;
 
@@ -52,5 +54,24 @@ void IMU::update() {
         ypr[0] = data_ypr[0] * 180.0f / M_PI;
         ypr[1] = data_ypr[1] * 180.0f / M_PI;
         ypr[2] = data_ypr[2] * 180.0f / M_PI;
+    } else {
+        error_counter++;
+
+        if (error_counter > 5) {
+            LOG_ERROR("IMU Frozen! Re-initializing I2C and DMP...");
+
+            Wire.end();
+            delay(5);
+            Wire.begin();
+            Wire.setWireTimeout(20000, true);
+
+            if (init()) {
+                LOG_INFO("IMU Hot-Reset Successful!");
+            } else {
+                LOG_ERROR("IMU Hot-Reset Failed!");
+            }
+
+            error_counter = 0;
+        }
     }
 }

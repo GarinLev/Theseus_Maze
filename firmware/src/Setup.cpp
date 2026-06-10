@@ -101,7 +101,7 @@ void setup() {
 
     LOG_INFO("Robot Link Successful");
 
-    Watchdog.enable(RESET_MODE, WDT_PRESCALER_16);
+    Watchdog.enable(RESET_MODE, WDT_PRESCALER_64);
 
     robot.tasks_move.push( TaskSent() );
     robot.tasks_move.push(TaskDelay(700));

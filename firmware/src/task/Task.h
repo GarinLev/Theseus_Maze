@@ -110,6 +110,12 @@ public:
 
 private:
     void on_init() override;
+
+    uint8_t zero_count_up = 0;
+    uint8_t zero_count_right = 0;
+    uint8_t zero_count_down = 0;
+    uint8_t zero_count_left = 0;
+    uint8_t cycle_count = 0;
 };
 
 class TaskPush final : public Task {
@@ -198,6 +204,19 @@ class TaskLed final : public Task {
 public:
     TaskLed() = default;
     const char* name() const override { return "TaskLed"; }
+    void on_execute(uint32_t dt) override;
+
+private:
+    void on_init() override;
+    uint32_t start_time = 0;
+    uint32_t last_toggle = 0;
+    bool led_on = false;
+};
+
+class TaskExit final : public Task {
+public:
+    TaskExit() = default;
+    const char* name() const override { return "TaskExit"; }
     void on_execute(uint32_t dt) override;
 
 private:

@@ -9,10 +9,10 @@ struct HSVColor {
     float c;
 };
 
-constexpr HSVColor TARGET_WHITE  = {24.21f,  0.01, 0.98f};
-constexpr HSVColor TARGET_BLUE   = {225.36f, 0.40f, 0.96f};
-constexpr HSVColor TARGET_BLACK  = {0.0f, 0.25f, 0.05f};
-constexpr HSVColor TARGET_SILVER = {0.00f,  0.09f, 1.00f};
+constexpr HSVColor TARGET_WHITE  = {36.21f,  0.05, 0.97f};
+constexpr HSVColor TARGET_BLUE   = {225.36f, 0.32f, 0.94f};
+constexpr HSVColor TARGET_BLACK  = {0.0f, 0.25f, 0.03f};
+constexpr HSVColor TARGET_SILVER = {0.00f,  0.04f, 1.00f};
 
 
 enum ColorType : uint8_t {

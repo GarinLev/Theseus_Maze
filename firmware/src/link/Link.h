@@ -3,6 +3,9 @@
 
 #include <HardwareSerial.h>
 
+#include "DebugLogEnable.h"
+#include "Log.h"
+
 class Link
 {
 public:
@@ -16,7 +19,15 @@ public:
 
     void send_sensors(const bool distance[4], uint8_t color) const;
     void log_debug(const char* message) const;
-    void pause(bool pause) const { serial_base->print(pause ? 'p' : 'o'); }
+    void pause(bool pause) const {
+        if (pause) {
+            serial_base->write('p');
+            LOG_INFO('p');
+        } else {
+            serial_base->write('o');
+            LOG_INFO('o');
+        }
+    }
 
 private:
     HardwareSerial* serial_base;

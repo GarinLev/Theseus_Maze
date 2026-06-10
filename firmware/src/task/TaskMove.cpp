@@ -39,6 +39,15 @@ void TaskMove::on_execute(uint32_t dt) {
         }
         robot.rpm = 0;
         robot.steer = 0;
+
+        float dist_u = robot.dist_up.get();
+        if (dist_u < 30 && dist_u != 0) {
+            robot.rpm = 0;   // Сбрасываем скорость перед выходом
+            robot.steer = 0;
+            done();          // Завершаем текущую задачу
+            return;          // Выходим из on_execute, не добавляя новые задачи!
+        }
+
         robot.tasks_move.push(TaskMove(
             SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
             PID(0.15, 0, 0.04, -200, 200),
@@ -50,9 +59,8 @@ void TaskMove::on_execute(uint32_t dt) {
             robot.tasks_move.push(TaskHit(TaskHit::RIGHT));
         done();
         return;
-    } else {
-        touch_was_pressed = false;
     }
+    touch_was_pressed = false;
 
     float relative_yaw = robot.imu.ypr[0] - yaw_now;
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;

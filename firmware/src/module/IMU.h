@@ -15,6 +15,7 @@ private:
     PID pid;
     MPU6050 mpu;
     uint8_t fifo_buffer[64] = {};
+    uint16_t error_counter = 0;
 };
 
 #endif

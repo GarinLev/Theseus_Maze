@@ -110,6 +110,8 @@ void Robot::update_pause() {
             led.fill    (mSilver);
             servo.detach();
         } else {
+            tasks_move.push( TaskSent() );
+            tasks_move.push(TaskDelay(1000));
             led.clear();
             servo.attach(44);
             servo.write(70);

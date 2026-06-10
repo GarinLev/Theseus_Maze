@@ -58,11 +58,25 @@ void Dist::update() {
             }
 
             uint16_t dist_arr_sort[VL_DIST_ARRAY_LEN];
-            memcpy(dist_arr_sort, arr_buff, sizeof(dist_arr_sort));
+
+            for (size_t i = 0; i < VL_DIST_ARRAY_LEN; ++i) {
+                if (arr_buff[i] == 0) {
+                    dist_arr_sort[i] = MAX_VALID_RANGE;
+                } else {
+                    dist_arr_sort[i] = arr_buff[i];
+                }
+            }
+
             ace_sorting::insertionSort(dist_arr_sort, VL_DIST_ARRAY_LEN);
 
             size_t mid_idx = VL_DIST_ARRAY_LEN / 2;
-            last_median = dist_arr_sort[mid_idx];
+            uint16_t median_candidate = dist_arr_sort[mid_idx];
+
+            if (median_candidate == MAX_VALID_RANGE) {
+                last_median = 0;
+            } else {
+                last_median = median_candidate;
+            }
 
             last_update_time = millis();
         }
