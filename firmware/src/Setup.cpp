@@ -2,84 +2,95 @@
 
 #include "Log.h"
 
-Robot robot;
-
-static TaskMove get_task_move() {
-    return TaskMove(
-        SpeedProfile(30, 70, Quad_MM(300), Quad_MM(150), Quad_MM(50)),
-        PID( 1.1, 0, 0.1, -30, 30 ),
-        &robot.encoder, &robot.ypr[0], &robot.rpm, &robot.steer
-    );
+Robot& Robot::instance() {
+    static Robot inst;
+    return inst;
 }
 
+void Robot::tramp_slow() { instance().loop_slow(); }
+void Robot::tramp_fast() { instance().loop_fast(); }
+
 Robot::Robot()
-    : timer_slow(Ticker([] { robot.loop_slow(); }, 250, 0, MILLIS)),
-    timer_fast(Ticker([] { robot.loop_fast(); }, 10, 0, MILLIS)),
-    w_fr(4, 5, 2, 22, false, enc_fr,
-        2.5f, 2.0f, 0, -255.0f, 255.0f),
-    w_fl(8, 9, 18, 24, false, enc_fl,
-        2.5f, 2.0f, 0, -255.0f, 255.0f),
-    w_br(6, 7, 3, 23, true, enc_br,
-        2.5f, 2.0f, 0, -255.0f, 255.0f),
-    w_bl(10, 12, 19, 25, true, enc_bl,
-        2.5f, 2.0f, 0, -255.0f, 255.0f),
-    quad(&w_fr, &w_fl, &w_br, &w_bl),
-    dist(32, 0x32),
-    rpm(0.0f),
-    steer(0.0f),
-    W_Kp(2.5f),
-    W_Ki(2.0f),
-    ypr{0.0f, 0.0f, 0.0f},
-    encoder(0)
-{}
+    : timer_slow(Ticker(tramp_slow, 125, 0, MILLIS)),
+      timer_fast(Ticker(tramp_fast, 10, 0, MILLIS)),
+      link(&Serial2),
+      w_fr(4, 5, 2, 22, false, enc_fr,
+           2.5f, 2.0f, 0, -255.0f, 255.0f),
+      w_fl(8, 9, 18, 24, false, enc_fl,
+           2.5f, 2.0f, 0, -255.0f, 255.0f),
+      w_br(6, 7, 3, 23, true, enc_br,
+           2.5f, 2.0f, 0, -255.0f, 255.0f),
+      w_bl(10, 12, 19, 25, true, enc_bl,
+           2.5f, 2.0f, 0, -255.0f, 255.0f),
+      quad(&w_fr, &w_fl, &w_br, &w_bl),
+      dist_left(36, 0x36),
+      dist_right(34, 0x34),
+      dist_up(32, 0x32),
+      dist_down(35, 0x35),
+      dist_pop_l(37, 0x37),
+      dist_pop_r(33, 0x33),
+      touch_pin_r(40),
+      touch_pin_l(41) {}
 
 void setup() {
+    auto& robot = Robot::instance();
+
     Serial.begin(115200);
+    Serial2.begin(9600);
     Wire.begin();
     Wire.setClock(400000L);
+
+    LOG_INFO("Robot Setup Waiting");
 
     robot.w_fr.init();
     robot.w_fl.init();
     robot.w_br.init();
     robot.w_bl.init();
-
     robot.imu.init();
-    robot.dist.init();
-    robot.dist.write_address();
+
+    robot.dist_left.init();
+    robot.dist_right.init();
+    robot.dist_up.init();
+    robot.dist_down.init();
+    robot.dist_pop_r.init();
+    robot.dist_pop_l.init();
+
+    robot.color.init();
+
+    robot.dist_right.write_address();
+    robot.dist_left.write_address();
+    robot.dist_up.write_address();
+    robot.dist_down.write_address();
+    robot.dist_pop_r.write_address();
+    robot.dist_pop_l.write_address();
+
+    pinMode(robot.touch_pin_l, INPUT_PULLUP);
+    pinMode(robot.touch_pin_r, INPUT_PULLUP);
 
     robot.timer_slow.start();
     robot.timer_fast.start();
 
-    /*
-    auto test_task = TaskMove(SpeedProfile(30, 70, Quad_MM(300), Quad_MM(150), Quad_MM(50)),
-        &robot.encoder, &robot.rpm);
-    robot.tasks.push(test_task);
-    LOG_INFO("Test task added");
-    */
-
-
     LOG_INFO("Robot Setup Successful");
-}
+    LOG_INFO("Robot Link Waiting");
 
-void Robot::update_pi() {
-    float target = rpm + steer;
-    if (target < 20) target = 20;
+    robot.link.wait_start();
 
-    W_Kp = 0.09 * target + 0.7;
-    W_Ki = 0.06 * target + 0.8;
-}
+    LOG_INFO("Robot Link Successful");
 
-void Robot::update_encoder() {
-    encoder = quad.encoder();
+    robot.tasks.push( TaskSent() );
 }
 
 void Robot::update_tasks() {
-    if (robot.tasks.isEmpty()) return;
+    auto& r = instance();
+    if (r.tasks.isEmpty()) return;
 
-    Task& task = robot.tasks.top();
-    if (task.state == StateTask::CLOSE) {
+    const Task& task = r.tasks.top();
+    if (task.state == State::DONE) {
         LOG_INFO("Task closed");
-        robot.tasks.pop();
+        r.tasks.pop();
     }
 }
 
+bool Robot::touch_is() {
+    return instance().touch_state;
+}

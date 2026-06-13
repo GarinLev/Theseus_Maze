@@ -1,16 +1,24 @@
 #ifndef FIRMWARE_STACK_H
 #define FIRMWARE_STACK_H
 
-#include <stdint.h>
-#include <stddef.h>
+#include <new>
 
-template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 64>
+template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 32>
 class StaticStack {
-    alignas(void*) uint8_t buffer[N][MAX_ITEM_SIZE] = {};
+    alignas(T) uint8_t buffer[N][MAX_ITEM_SIZE] = {};
     uint16_t count = 0;
 
 public:
     StaticStack() = default;
+
+    StaticStack(const StaticStack&) = delete;
+    StaticStack& operator=(const StaticStack&) = delete;
+
+    ~StaticStack() {
+        while (!isEmpty()) {
+            pop();
+        }
+    }
 
     template <typename Derived>
     bool push(const Derived& value) {
@@ -18,11 +26,7 @@ public:
 
         if (isFull()) return false;
 
-        auto src = reinterpret_cast<const uint8_t*>(&value);
-        uint8_t* dst = buffer[count];
-        for (size_t i = 0; i < sizeof(Derived); ++i) {
-            dst[i] = src[i];
-        }
+        new (buffer[count]) Derived(value);
 
         count++;
         return true;
@@ -30,6 +34,9 @@ public:
 
     bool pop() {
         if (isEmpty()) return false;
+
+        top().~T();
+
         --count;
         return true;
     }

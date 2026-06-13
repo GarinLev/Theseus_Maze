@@ -36,8 +36,10 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
 
     float avg_target = sum_target / active_wheels;
 
+    bool is_reverse = (avg_target < 0.0f);
+
     float sum_norm_speed = 0.0f;
-    float min_norm_speed = 1e6f;
+    float worst_norm_speed = is_reverse ? -1e6f : 1e6f;
     float norm_speeds[4] = {0.0f};
 
     for (int i = 0; i < 4; i++) {
@@ -47,16 +49,25 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
             norm_speeds[i] = speeds[i] - target_offset;
 
             sum_norm_speed += norm_speeds[i];
-            if (norm_speeds[i] < min_norm_speed) {
-                min_norm_speed = norm_speeds[i];
+
+            if (is_reverse) {
+                if (norm_speeds[i] > worst_norm_speed) worst_norm_speed = norm_speeds[i];
+            } else {
+                if (norm_speeds[i] < worst_norm_speed) worst_norm_speed = norm_speeds[i];
             }
         }
     }
 
     float avg_norm_speed = sum_norm_speed / active_wheels;
-    float raw_sync_target = (avg_norm_speed * 0.3f) + (min_norm_speed * 0.7f);
+    float raw_sync_target = (avg_norm_speed * 0.3f) + (worst_norm_speed * 0.7f);
 
-    smoothed_sync_target = (smoothed_sync_target * 0.8f) + (raw_sync_target * 0.2f);
+    // Защита от смены направления движения: сбрасываем фильтр во избежание удара по редукторам
+    if ((raw_sync_target > 0.0f && smoothed_sync_target < 0.0f) ||
+        (raw_sync_target < 0.0f && smoothed_sync_target > 0.0f)) {
+        smoothed_sync_target = raw_sync_target;
+    } else {
+        smoothed_sync_target = (smoothed_sync_target * 0.8f) + (raw_sync_target * 0.2f);
+    }
 
     constexpr float K_sync = 0.6f;
 
@@ -65,7 +76,6 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
     if (br) br->update(br_target + K_sync * (smoothed_sync_target - norm_speeds[2]));
     if (bl) bl->update(bl_target + K_sync * (smoothed_sync_target - norm_speeds[3]));
 }
-
 
 void Quad::rpm(float rpm, float steer) const {
     update(
@@ -79,7 +89,7 @@ float Quad::encoder() const {
     int32_t br_val = br ? br->get_encoder() : 0;
     int32_t bl_val = bl ? bl->get_encoder() : 0;
 
-    return (fr_val + fl_val + br_val + bl_val) / 4;
+    return (float)(fr_val + fl_val + br_val + bl_val) / 4;
 }
 
 void Quad::encoder_reset() const {

@@ -1,7 +1,7 @@
 #include "Wheel.h"
 
 #include <Arduino.h>
-#include "robot.h"
+#include "Robot.h"
 
 constexpr int SPEED_MIN = -255;
 constexpr int SPEED_MAX = 255;
@@ -29,8 +29,8 @@ void Wheel::set(float speed) const {
     }
 
     if (constrained_speed == 0) {
-        digitalWrite(pin_a, LOW);
-        digitalWrite(pin_b, LOW);
+        digitalWrite(pin_a, HIGH);
+        digitalWrite(pin_b, HIGH);
     }
     else if (constrained_speed > 0) {
         digitalWrite(pin_a, LOW);
@@ -42,17 +42,26 @@ void Wheel::set(float speed) const {
     }
 }
 
-float Wheel::real() const {
+void Wheel::update_sensors() {
     uint32_t local_period = enc_period;
     uint32_t local_timer = enc_timer;
     int8_t local_sign = sign;
 
-    if (micros() - local_timer > 10000) return 0.0f;
-    if (local_period < 500) return 0.0f;
+    if (micros() - local_timer > 10000) {
+        last_rpm = 0.0f;
+        return;
+    }
+    if (local_period < 500) {
+        last_rpm = 0.0f;
+        return;
+    }
 
     float abs_rpm = (1000000.0f / (float)local_period) / ENC_TICK_REV * 60.0f;
+    last_rpm = abs_rpm * local_sign;
+}
 
-    return abs_rpm * local_sign;
+float Wheel::real() const {
+    return last_rpm;
 }
 
 void Wheel::update(float pwm) {
@@ -65,6 +74,18 @@ void Wheel::update(float pwm) {
     } else {
         set(-speed_need);
     }
+}
+
+void Wheel::set_pid_gains(float kp, float ki) {
+    _pid.set_gains(kp, ki);
+}
+
+void Wheel::update_pi(float target) {
+    if (target < 20.0f) target = 20.0f;
+    float kp = 0.03 * target + 0.7;
+    float ki = 0.02 * target + 0.8;
+
+    set_pid_gains(kp, ki);
 }
 
 void Wheel::handle_encoder_interrupt() {
@@ -82,7 +103,7 @@ void Wheel::handle_encoder_interrupt() {
     }
 }
 
-void enc_fr() { robot.w_fr.handle_encoder_interrupt(); }
-void enc_fl() { robot.w_fl.handle_encoder_interrupt(); }
-void enc_br() { robot.w_br.handle_encoder_interrupt(); }
-void enc_bl() { robot.w_bl.handle_encoder_interrupt(); }
+void enc_fr() { Robot::instance().w_fr.handle_encoder_interrupt(); }
+void enc_fl() { Robot::instance().w_fl.handle_encoder_interrupt(); }
+void enc_br() { Robot::instance().w_br.handle_encoder_interrupt(); }
+void enc_bl() { Robot::instance().w_bl.handle_encoder_interrupt(); }

@@ -14,12 +14,12 @@ bool IMU::init() {
     uint8_t dev_status = mpu.dmpInitialize();
 
     if (dev_status == 0) {
-        mpu.setXAccelOffset(-2286);
-        mpu.setYAccelOffset(-3251);
+        mpu.setXAccelOffset(-2224);
+        mpu.setYAccelOffset(-3280);
         mpu.setZAccelOffset(1132);
-        mpu.setXGyroOffset(-1864);
+        mpu.setXGyroOffset(-1854);
         mpu.setYGyroOffset(-69);
-        mpu.setZGyroOffset(-18);
+        mpu.setZGyroOffset(-17);
 
         mpu.setDMPEnabled(true);
         mpu.resetFIFO();
@@ -33,24 +33,24 @@ bool IMU::init() {
         return false;
     }
 
+    delay(700);
+
     return false;
 }
 
-bool IMU::get(float *ypr) {
+void IMU::update() {
     if (mpu.dmpGetCurrentFIFOPacket(fifo_buffer)) {
         Quaternion q;
         VectorFloat gravity;
 
         mpu.dmpGetQuaternion(&q, fifo_buffer);
         mpu.dmpGetGravity(&gravity, &q);
-        mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
-        ypr[0] = ypr[0] * 180.0f / M_PI;
-        ypr[1] = ypr[1] * 180.0f / M_PI;
-        ypr[2] = ypr[2] * 180.0f / M_PI;
+        float data_ypr[3];
+        mpu.dmpGetYawPitchRoll(data_ypr, &q, &gravity);
 
-        return true;
+        ypr[0] = data_ypr[0] * 180.0f / M_PI;
+        ypr[1] = data_ypr[1] * 180.0f / M_PI;
+        ypr[2] = data_ypr[2] * 180.0f / M_PI;
     }
-
-    return false;
 }
