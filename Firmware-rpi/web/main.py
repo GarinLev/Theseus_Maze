@@ -1,0 +1,19 @@
+import subprocess
+import time
+import sys
+import os
+
+def main():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    monitor_path = os.path.join(current_dir, "monitor_starter.py")
+    robot_path = os.path.join(current_dir, "hand.py")
+    python_cmd = sys.executable 
+
+    monitor_process = subprocess.Popen([python_cmd, monitor_path])
+    time.sleep(1.5)
+
+    subprocess.run([python_cmd, robot_path])
+    monitor_process.terminate()
+
+if __name__ == "__main__":
+    main()
