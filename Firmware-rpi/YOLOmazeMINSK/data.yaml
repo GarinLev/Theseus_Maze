@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['F', 'OM', 'cogn', 'nedoF']
+
+roboflow:
+  workspace: leva
+  project: yolo-m5seh
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/leva/yolo-m5seh/dataset/1
