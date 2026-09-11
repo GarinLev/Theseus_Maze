@@ -1,63 +1,93 @@
-#ifndef FIRMWARE_STACK_H
-#define FIRMWARE_STACK_H
+#ifndef TASK_STACK_H
+#define TASK_STACK_H
 
 #include <new>
+#include <stdint.h>
+#include <stddef.h>
 
-template <typename T, uint16_t N, size_t MAX_ITEM_SIZE = 32>
-class StaticStack {
-    struct alignas(T) Cell {
-        uint8_t bytes[MAX_ITEM_SIZE];
+#include <etl/largest.h>
+#include <etl/type_traits.h>
+#include <etl/utility.h>
+
+#include "Task.h"
+
+template <size_t MAX_TASKS, typename... TaskTypes>
+class TaskArenaStack {
+    enum : size_t {
+        ITEM_SIZE  = etl::largest<TaskTypes...>::size,
+        ITEM_ALIGN = etl::largest<TaskTypes...>::alignment,
+        ARENA_SIZE = MAX_TASKS * (ITEM_SIZE + ITEM_ALIGN - 1),
     };
 
-    Cell buffer[N] = {};
-    uint16_t count = 0;
+    alignas(ITEM_ALIGN) uint8_t arena[ARENA_SIZE];
+    size_t arena_offset = 0;
+
+    Task* stack[MAX_TASKS];
+    size_t task_count = 0;
 
 public:
-    StaticStack() = default;
+    TaskArenaStack() = default;
 
-    StaticStack(const StaticStack&) = delete;
-    StaticStack& operator=(const StaticStack&) = delete;
+    TaskArenaStack(const TaskArenaStack&) = delete;
+    TaskArenaStack& operator=(const TaskArenaStack&) = delete;
 
-    ~StaticStack() {
+    ~TaskArenaStack() {
         clear();
     }
 
-    template <typename Derived>
-    bool push(const Derived& value) {
-        static_assert(sizeof(Derived) <= MAX_ITEM_SIZE, "Object size exceeds MAX");
+    template <typename T>
+    bool push(T&& task_obj) {
+        if (task_count >= MAX_TASKS) return false;
 
-        if (isFull()) return false;
+        using UnqualifiedT = typename etl::remove_cv<typename etl::remove_reference<T>::type>::type;
+        static_assert(sizeof(UnqualifiedT) <= ITEM_SIZE, "Task type is too large for this stack");
 
-        new (buffer[count].bytes) Derived(value);
+        constexpr size_t align = alignof(UnqualifiedT);
+        size_t current_addr = reinterpret_cast<size_t>(&arena[arena_offset]);
+        size_t aligned_addr = (current_addr + align - 1) & ~(align - 1);
+        size_t padding = aligned_addr - current_addr;
 
-        count++;
+        if (arena_offset + padding + sizeof(UnqualifiedT) > ARENA_SIZE) {
+            return false;
+        }
+
+        arena_offset += padding;
+        Task* created = new (&arena[arena_offset]) UnqualifiedT(etl::forward<T>(task_obj));
+        arena_offset += sizeof(UnqualifiedT);
+
+        stack[task_count++] = created;
         return true;
     }
 
-    bool pop() {
-        if (isEmpty()) return false;
+    void pop() {
+        if (isEmpty()) return;
 
-        top().~T();
+        Task* top_task = stack[task_count - 1];
 
-        --count;
-        return true;
+        top_task->~Task();
+        arena_offset = reinterpret_cast<uint8_t*>(top_task) - arena;
+
+        --task_count;
     }
 
     void clear() {
-        while (pop());
+        while (!isEmpty()) {
+            pop();
+        }
+        arena_offset = 0;
     }
 
-    T& top() {
-        return *reinterpret_cast<T*>(buffer[count - 1].bytes);
+    Task* top() {
+        return isEmpty() ? nullptr : stack[task_count - 1];
     }
 
-    const T& top() const {
-        return *reinterpret_cast<const T*>(buffer[count - 1].bytes);
+    const Task* top() const {
+        return isEmpty() ? nullptr : stack[task_count - 1];
     }
 
-    bool isEmpty() const { return count == 0; }
-    bool isFull() const { return count >= N; }
-    uint16_t size() const { return count; }
+    bool isEmpty() const { return task_count == 0; }
+    bool isFull() const { return task_count >= MAX_TASKS; }
+    size_t size() const { return task_count; }
 };
 
-#endif
+#endif // TASK_STACK_H

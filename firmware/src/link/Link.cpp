@@ -51,7 +51,7 @@ void Link::process_command(char cmd) {
         robot.tasks_move.push(TaskDelay(300));
         robot.tasks_move.push(TaskTouch(Quad_MM(50)));
         robot.tasks_move.push(TaskMove(
-            SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
+            SpeedProfile(60, 140, Quad_MM(300), Quad_MM(20), Quad_MM(20)),
             PID(0.15, 0, 0.04, -200, 200),
             PID(1.1, 0, 0.1, -30, 30)
         ));

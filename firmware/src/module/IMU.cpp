@@ -2,6 +2,8 @@
 #include "Log.h"
 
 bool IMU::init() {
+    return true;
+
     pid.reset();
 
     if (!mpu.testConnection()) {
@@ -39,6 +41,12 @@ bool IMU::init() {
 }
 
 void IMU::update() {
+    ypr[0] = 0 * 180.0f / M_PI;
+    ypr[1] = 0 * 180.0f / M_PI;
+    ypr[2] = 0 * 180.0f / M_PI;
+
+    return;
+
     if (mpu.dmpGetCurrentFIFOPacket(fifo_buffer)) {
         error_counter = 0;
 

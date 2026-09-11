@@ -1,6 +1,7 @@
 #include "Robot.h"
 
 #include "Log.h"
+
 #include <GyverWDT.h>
 
 Robot& Robot::instance() {
@@ -28,13 +29,17 @@ Robot::Robot()
       dist_right(34, 0x34),
       dist_up(32, 0x32),
       dist_down(35, 0x35),
-      dist_pop_l(37, 0x37),
-      dist_pop_r(33, 0x33),
+      dist_ang_left(37, 0x37),
+      dist_ang_right(33, 0x33),
       button(42),
       touch_pin_r(40),
       touch_pin_l(41) {}
 
+
 void setup() {
+
+
+
     auto& robot = Robot::instance();
 
     Serial.begin(115200);
@@ -59,8 +64,8 @@ void setup() {
     robot.dist_right.init();
     robot.dist_up.init();
     robot.dist_down.init();
-    robot.dist_pop_r.init();
-    robot.dist_pop_l.init();
+    robot.dist_ang_right.init();
+    robot.dist_ang_left.init();
 
     robot.color.init();
 
@@ -68,8 +73,8 @@ void setup() {
     robot.dist_left.write_address();
     robot.dist_up.write_address();
     robot.dist_down.write_address();
-    robot.dist_pop_r.write_address();
-    robot.dist_pop_l.write_address();
+    robot.dist_ang_right.write_address();
+    robot.dist_ang_left.write_address();
 
     pinMode(robot.touch_pin_l, INPUT_PULLUP);
     pinMode(robot.touch_pin_r, INPUT_PULLUP);
@@ -83,26 +88,25 @@ void setup() {
     LOG_INFO("Robot Setup Successful");
     LOG_INFO("Robot Link Waiting");
 
-    robot.led.fill(mAqua);
-    robot.led.setBrightness(64);
-    robot.led.show();
-    while (!robot.button.click()) {
-        robot.button.tick();
-    }
-    robot.led.setBrightness(255);
-    robot.led.fill(mMagenta);
-    robot.led.show();
-    delay(100);
-    robot.led.clear(); robot.led.show();
-
-    robot.link.wait_start();
-
-    robot.last_fast_millis = millis();
+//     robot.led.fill(mAqua);
+//     robot.led.setBrightness(64);
+//     robot.led.show();
+//     while (!robot.button.click()) {
+     //    robot.button.tick();
+//     }
+//     robot.led.setBrightness(255);
+//     robot.led.fill(mMagenta);
+//     robot.led.show();
+//     delay(100);
+//     robot.led.clear(); robot.led.show();
+// 
+//     robot.link.wait_start();
+// 
+//     robot.last_fast_millis = millis();
 
     LOG_INFO("Robot Link Successful");
 
-    Watchdog.enable(RESET_MODE, WDT_PRESCALER_64);
 
-    robot.tasks_move.push( TaskSent() );
-    robot.tasks_move.push(TaskDelay(700));
+    //robot.tasks_move.push( TaskSent() );
+    //robot.tasks_move.push(TaskDelay(700));
 }
