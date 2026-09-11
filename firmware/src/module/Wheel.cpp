@@ -82,8 +82,8 @@ void Wheel::set_pid_gains(float kp, float ki) {
 
 void Wheel::update_pi(float target) {
     if (target < 20.0f) target = 20.0f;
-    float kp = 0.03 * target + 0.7;
-    float ki = 0.02 * target + 0.8;
+    float kp = 1.2f + 0.018f * target;
+    float ki = 0.4f + 0.008f * target;
 
     set_pid_gains(kp, ki);
 }

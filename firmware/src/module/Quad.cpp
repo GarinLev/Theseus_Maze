@@ -1,7 +1,30 @@
 #include "Quad.h"
 
+#include <Arduino.h>
+
 void Quad::update(float fr_target, float fl_target, float br_target, float bl_target) const {
     static float smoothed_sync_target = 0.0f;
+
+    float real_fr = fr ? fr->real() : 0.0f;
+    float real_fl = fl ? fl->real() : 0.0f;
+    float real_br = br ? br->real() : 0.0f;
+    float real_bl = bl ? bl->real() : 0.0f;
+
+    Serial.print(fr_target, 1);
+    Serial.print(' ');
+    Serial.print(real_fr, 1);
+    Serial.print(' ');
+    Serial.print(fl_target, 1);
+    Serial.print(' ');
+    Serial.print(real_fl, 1);
+    Serial.print(' ');
+    Serial.print(br_target, 1);
+    Serial.print(' ');
+    Serial.print(real_br, 1);
+    Serial.print(' ');
+    Serial.print(bl_target, 1);
+    Serial.print(' ');
+    Serial.println(real_bl, 1);
 
     if (fr_target == 0.0f && fl_target == 0.0f && br_target == 0.0f && bl_target == 0.0f) {
         if (fr) fr->update(0.0f);
@@ -12,11 +35,6 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
         smoothed_sync_target = 0;
         return;
     }
-
-    float real_fr = fr ? fr->real() : 0.0f;
-    float real_fl = fl ? fl->real() : 0.0f;
-    float real_br = br ? br->real() : 0.0f;
-    float real_bl = bl ? bl->real() : 0.0f;
 
     float speeds[] = {real_fr, real_fl, real_br, real_bl};
     float targets[] = {fr_target, fl_target, br_target, bl_target};
@@ -59,16 +77,16 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
     }
 
     float avg_norm_speed = sum_norm_speed / active_wheels;
-    float raw_sync_target = (avg_norm_speed * 0.3f) + (worst_norm_speed * 0.7f);
+    float raw_sync_target = (avg_norm_speed * 0.5f) + (worst_norm_speed * 0.5f);
 
     if ((raw_sync_target > 0.0f && smoothed_sync_target < 0.0f) ||
         (raw_sync_target < 0.0f && smoothed_sync_target > 0.0f)) {
         smoothed_sync_target = raw_sync_target;
     } else {
-        smoothed_sync_target = (smoothed_sync_target * 0.8f) + (raw_sync_target * 0.2f);
+        smoothed_sync_target = (smoothed_sync_target * 0.85f) + (raw_sync_target * 0.15f);
     }
 
-    constexpr float K_sync = 0.6f;
+    constexpr float K_sync = 0.35f;
 
     if (fr) fr->update(fr_target + K_sync * (smoothed_sync_target - norm_speeds[0]));
     if (fl) fl->update(fl_target + K_sync * (smoothed_sync_target - norm_speeds[1]));

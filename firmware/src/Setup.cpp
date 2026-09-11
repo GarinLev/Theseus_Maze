@@ -100,9 +100,9 @@ void setup() {
 //     delay(100);
 //     robot.led.clear(); robot.led.show();
 // 
-//     robot.link.wait_start();
-// 
-//     robot.last_fast_millis = millis();
+    robot.link.wait_start();
+
+    robot.last_fast_millis = millis();
 
     LOG_INFO("Robot Link Successful");
 

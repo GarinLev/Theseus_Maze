@@ -66,6 +66,20 @@ void TaskMove::on_execute(uint32_t dt) {
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
     else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
 
+    float sensor_ratio = 0.6f, yaw_correction = cosf(abs(constrain(relative_yaw, -90, 90)) * DEG_TO_RAD), max_dist = 120.0f;
+
+    float d_left = robot.dist_left.get() * yaw_correction;
+    float d_right = robot.dist_right.get() * yaw_correction;
+    float a_left = robot.dist_ang_left.get() * yaw_correction;
+    float a_right = robot.dist_ang_right.get() * yaw_correction;
+
+    bool d_left_ok = (d_left >= 0.1f) && (d_left <= max_dist);
+    bool a_left_ok = (a_left >= 0.1f) && (a_left <= max_dist / sensor_ratio);
+    bool d_right_ok = (d_right >= 0.1f) && (d_right <= max_dist);
+    bool a_right_ok = (a_right >= 0.1f) && (a_right <= max_dist / sensor_ratio);
+
+    //LOG_INFO(d_left, d_right, a_left, a_right);
+
     float pitch_val = robot.imu.ypr[1];
     float absolute_pitch = fabsf(pitch_val);
 
@@ -124,7 +138,30 @@ void TaskMove::on_execute(uint32_t dt) {
             pid_dist.reset();
         }
 
-        robot.steer = pid_yaw.compute(0, relative_yaw) - dist_correction;
+
+        bool right_ok = d_right_ok || a_right_ok;
+        float right = 0.0f;
+        if (right_ok) {
+            right = (d_right_ok && a_right_ok) ? (d_right + a_right) / 2.0f 
+                : (d_right_ok) ? d_right : a_right;
+        }
+
+        bool left_ok = d_left_ok || a_left_ok;
+        float left = 0.0f;
+        if (left_ok) {
+            left = (d_left_ok && a_left_ok) ? (d_left + a_left) / 2.0f 
+                : (d_left_ok) ? d_left : a_left;
+        }
+
+        float select_angle = 0.0f;
+        if (left_ok && right_ok) {
+            select_angle = (right - left) * 0.1f;
+        } else if (left_ok || right_ok) {
+            float dist = left_ok ? left : right;
+            select_angle = 66.0f - dist;
+        }
+
+        //Srobot.steer = pid_yaw.compute(select_angle, relative_yaw) - dist_correction;
     }
     else {
         robot.rpm = 0;

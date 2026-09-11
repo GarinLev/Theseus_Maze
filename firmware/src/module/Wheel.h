@@ -25,6 +25,7 @@ public:
 
     int32_t get_encoder() const { return enc_value; }
     void reset_encoder() { enc_value = 0; }
+    float get_pwm() const { return last_pwm; }
     float get_kp() const { return _pid.get_kp(); }
     float get_ki() const { return _pid.get_ki(); }
 
@@ -45,6 +46,7 @@ private:
     volatile int8_t sign = 1;
 
     float last_rpm = 0;
+    float last_pwm = 0;
 };
 
 void enc_fr();
