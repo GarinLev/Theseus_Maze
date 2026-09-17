@@ -10,22 +10,6 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
     float real_br = br ? br->real() : 0.0f;
     float real_bl = bl ? bl->real() : 0.0f;
 
-    Serial.print(fr_target, 1);
-    Serial.print(' ');
-    Serial.print(real_fr, 1);
-    Serial.print(' ');
-    Serial.print(fl_target, 1);
-    Serial.print(' ');
-    Serial.print(real_fl, 1);
-    Serial.print(' ');
-    Serial.print(br_target, 1);
-    Serial.print(' ');
-    Serial.print(real_br, 1);
-    Serial.print(' ');
-    Serial.print(bl_target, 1);
-    Serial.print(' ');
-    Serial.println(real_bl, 1);
-
     if (fr_target == 0.0f && fl_target == 0.0f && br_target == 0.0f && bl_target == 0.0f) {
         if (fr) fr->update(0.0f);
         if (fl) fl->update(0.0f);

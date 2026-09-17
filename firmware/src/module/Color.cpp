@@ -114,7 +114,7 @@ void Color::compute(const HSVColor targets[], float outputs[], size_t count) con
 }
 
 ColorType Color::get_current_color(float threshold) const {
-    for (uint8_t i = 0; i < 4; ++i) if (last_probabilities[i] >= threshold) return (ColorType)i;
+    //for (uint8_t i = 0; i < 4; ++i) if (last_probabilities[i] >= threshold) return (ColorType)i;
     return COLOR_UNKNOWN;
 }
 

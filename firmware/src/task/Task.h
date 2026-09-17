@@ -40,27 +40,31 @@ protected:
 
 class TaskMove final : public Task {
 public:
-    TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_yaw)
-        : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw) {}
+    TaskMove(const SpeedProfile &_profile, const PID &_pid_dist, const PID &_pid_one, const PID &_pid_yaw)
+        : speed_profile(_profile), pid_dist(_pid_dist), pid_yaw(_pid_yaw), pid_one(_pid_one) {}
     const char* name() const override { return "TaskMove"; }
     void on_execute(uint32_t dt) override;
 
 private:
     void on_init() override;
     SpeedProfile speed_profile;
-    PID pid_dist, pid_yaw;
+    PID pid_dist, pid_yaw, pid_one;
     float start_encoder = 0.0f;
     float yaw_now = 0.0f;
     float last_encoder = 0.0f;
     float progress_encoder = 0.0f;
     uint32_t touch_start_time = 0;
     bool touch_was_pressed = false;
+
+    uint8_t reg_mode = 0;
+    uint8_t reg_cand = 0;
+    uint32_t reg_switch_ms = 0;
 };
 
 class TaskRotate final : public Task {
 public:
-    explicit TaskRotate(const SpeedProfile &_profile)
-        : speed_profile(_profile) {}
+    explicit TaskRotate(const float _target_angle, const PID &_pid)
+        : pid(_pid), target_angle(fabsf(_target_angle)) {}
 
     const char* name() const override { return "TaskRotate"; }
     void on_execute(uint32_t dt) override;
@@ -68,11 +72,13 @@ public:
 
 private:
     void on_init() override;
-    SpeedProfile speed_profile;
+    PID pid;
+    float target_angle;
     float prev_yaw = 0.0f;
     float unwrapped = 0.0f;
     float direction = 1.0f;
 };
+
 
 class TaskTouch final : public Task {
 public:

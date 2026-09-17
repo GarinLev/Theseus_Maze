@@ -1,21 +1,40 @@
 #ifndef FIRMWARE_IMU_H
 #define FIRMWARE_IMU_H
 
-#include <MPU6050_6Axis_MotionApps20.h>
-#include "../math/PID.h"
+#include <Arduino.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+
+#ifndef DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE
+#endif
+#include <DebugLog.h>
 
 class IMU {
 public:
-    bool init();
-    void update();
+    struct YPR {
+        float yaw;
+        float pitch;
+        float roll;
+    };
 
-    float ypr[3]{};
+    IMU();
+
+    void init();
+    void zero();
+    void update();
+    YPR get() const;
+
+    float ypr[3] = {0.0f, 0.0f, 0.0f};
 
 private:
-    PID pid;
-    MPU6050 mpu;
-    uint8_t fifo_buffer[64] = {};
-    uint16_t error_counter = 0;
+    TwoWire _wire;
+    Adafruit_BNO055 _bno;
+    YPR _offset;
+    YPR _cached;
+
+    static float normalize180(float angle);
 };
 
 #endif

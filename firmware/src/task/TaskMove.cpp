@@ -11,6 +11,10 @@ void TaskMove::on_init() {
     yaw_now = robot.imu.ypr[0];
     pid_yaw.reset();
     pid_dist.reset();
+    pid_one.reset();
+    reg_mode = 0;
+    reg_cand = 0;
+    reg_switch_ms = 0;
 }
 
 void TaskMove::on_execute(uint32_t dt) {
@@ -42,16 +46,15 @@ void TaskMove::on_execute(uint32_t dt) {
 
         float dist_u = robot.dist_up.get();
         if (dist_u < 30 && dist_u != 0) {
-            robot.rpm = 0;   // Сбрасываем скорость перед выходом
-            robot.steer = 0;
-            done();          // Завершаем текущую задачу
-            return;          // Выходим из on_execute, не добавляя новые задачи!
+            done();
+            return;
         }
 
         robot.tasks_move.push(TaskMove(
             SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
-            PID(0.15, 0, 0.04, -200, 200),
-            PID(1.1, 0, 0.1, -30, 30)
+            PID(1.3, 0, 7.0, -200, 200),
+            PID(1.7, 0, 7.0, -200, 200),
+            PID(1.4, 0, 0.2, -90, 90)
         ));
         if (left_pressed)
             robot.tasks_move.push(TaskHit(TaskHit::LEFT));
@@ -66,19 +69,22 @@ void TaskMove::on_execute(uint32_t dt) {
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
     else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
 
-    float sensor_ratio = 0.6f, yaw_correction = cosf(abs(constrain(relative_yaw, -90, 90)) * DEG_TO_RAD), max_dist = 120.0f;
+    float sensor_ratio_left = 0.77f, sensor_ratio_right = 0.529f, yaw_correction = cosf(abs(constrain(relative_yaw, -90, 90)) * DEG_TO_RAD), max_dist = 160.0f;
 
-    float d_left = robot.dist_left.get() * yaw_correction;
-    float d_right = robot.dist_right.get() * yaw_correction;
-    float a_left = robot.dist_ang_left.get() * yaw_correction;
-    float a_right = robot.dist_ang_right.get() * yaw_correction;
+    float d_left_raw = robot.dist_left.get();
+    float d_right_raw = robot.dist_right.get();
+    float a_left_raw = robot.dist_ang_left.get() * sensor_ratio_left;
+    float a_right_raw = robot.dist_ang_right.get() * sensor_ratio_right;
+
+    float d_left = d_left_raw * yaw_correction;
+    float d_right = d_right_raw * yaw_correction;
+    float a_left = a_left_raw * yaw_correction;
+    float a_right = a_right_raw * yaw_correction;
 
     bool d_left_ok = (d_left >= 0.1f) && (d_left <= max_dist);
-    bool a_left_ok = (a_left >= 0.1f) && (a_left <= max_dist / sensor_ratio);
+    bool a_left_ok = (a_left >= 0.1f) && (a_left <= max_dist);
     bool d_right_ok = (d_right >= 0.1f) && (d_right <= max_dist);
-    bool a_right_ok = (a_right >= 0.1f) && (a_right <= max_dist / sensor_ratio);
-
-    //LOG_INFO(d_left, d_right, a_left, a_right);
+    bool a_right_ok = (a_right >= 0.1f) && (a_right <= max_dist);
 
     float pitch_val = robot.imu.ypr[1];
     float absolute_pitch = fabsf(pitch_val);
@@ -108,62 +114,105 @@ void TaskMove::on_execute(uint32_t dt) {
     progress_encoder += delta_encoder * proj_total;
     last_encoder = encoder_now;
 
+    float yaw_err = 0.0f;
+    float wall_err = 0.0f;
+    float yaw_target = 0.0f;
+
     if (progress_encoder < speed_profile.get_len()) {
         float speed = speed_profile.compute(progress_encoder);
-
         if (absolute_pitch > 4.0f) {
-            if (pitch_val > 4.0f) {
-                speed = speed * 0.6f;
-            } else {
-                speed = speed * 0.6f;
-            }
+            speed = speed * 0.6f;
             if (speed < 20.0f) {
                 speed = 20.0f;
             }
         }
-
         robot.rpm = speed;
+        pid_dist.set_pd(robot.wall_pd_kp, robot.wall_pd_kd);
+        pid_one.set_pd(robot.one_pd_kp, robot.one_pd_kd);
 
-        float value_right = robot.dist_right.get();
-        float value_left = robot.dist_left.get();
+        const float a_match_tol = 20.0f;
+        bool a_left_use  = a_left_ok  && fabsf(d_left  - a_left)  <= a_match_tol;
+        bool a_right_use = a_right_ok && fabsf(d_right - a_right) <= a_match_tol;
 
-        bool correct = value_left > 10 && value_left <= 200 &&
-                       value_right > 10 && value_right <= 200;
-
-        float dist_correction = 0;
-        if (correct) {
-            float dist_err = (value_right - value_left) * proj_yaw;
-            dist_correction = pid_dist.compute(0, dist_err);
-        } else {
-            pid_dist.reset();
-        }
-
-
-        bool right_ok = d_right_ok || a_right_ok;
+        bool right_ok = d_right_ok || a_right_use;
         float right = 0.0f;
         if (right_ok) {
-            right = (d_right_ok && a_right_ok) ? (d_right + a_right) / 2.0f 
+            right = (d_right_ok && a_right_use) ? (d_right + a_right) / 2.0f
                 : (d_right_ok) ? d_right : a_right;
         }
 
-        bool left_ok = d_left_ok || a_left_ok;
+        bool left_ok = d_left_ok || a_left_use;
         float left = 0.0f;
         if (left_ok) {
-            left = (d_left_ok && a_left_ok) ? (d_left + a_left) / 2.0f 
+            left = (d_left_ok && a_left_use) ? (d_left + a_left) / 2.0f
                 : (d_left_ok) ? d_left : a_left;
         }
 
-        float select_angle = 0.0f;
+        uint8_t cand = 0;
         if (left_ok && right_ok) {
-            select_angle = (right - left) * 0.1f;
+            cand = 0;
         } else if (left_ok || right_ok) {
-            float dist = left_ok ? left : right;
-            select_angle = 66.0f - dist;
+            cand = 1;
+        } else {
+            cand = 2;
         }
 
-        //Srobot.steer = pid_yaw.compute(select_angle, relative_yaw) - dist_correction;
-    }
-    else {
+        if (cand == reg_cand) {
+            if (reg_mode != cand) {
+                reg_switch_ms += dt;
+                if (reg_switch_ms >= 100) {
+                    reg_mode = cand;
+                    reg_switch_ms = 0;
+                }
+            } else {
+                reg_switch_ms = 0;
+            }
+        } else {
+            reg_cand = cand;
+            reg_switch_ms = 0;
+        }
+
+        if (reg_mode == 0) {
+            wall_err = left - right;
+            yaw_target = pid_dist.compute(0, wall_err);
+} else if (reg_mode == 1) {
+            if (left_ok) {
+                wall_err = left - 100.0f;
+            } else {
+                wall_err = 100.0f - right;
+            }
+            yaw_target = pid_one.compute(0, wall_err);
+        } else {
+            pid_dist.reset();
+            pid_one.reset();
+            wall_err = 0.0f;
+            yaw_target = 0.0f;
+        }
+
+        float yaw_out = pid_yaw.compute(yaw_target, relative_yaw);
+
+        robot.steer = yaw_out;
+        yaw_err = yaw_target - relative_yaw;
+
+        auto pad = [](const String& s, const int w) {
+            String out = s;
+            while ((int)out.length() < w) out = ' ' + out;
+            return out;
+        };
+        auto f = [](float v) -> String { return String(v, 1); };
+
+        String line;
+        line += pad(f(d_left), 8);
+        line += "," + pad(f(a_left), 8);
+        line += "," + pad(f(d_right), 8);
+        line += "," + pad(f(a_right), 8);
+        line += "," + pad(f(wall_err), 8);
+        line += "," + pad(f(yaw_err), 8);
+        line += "," + pad(f(yaw_target), 8);
+        String mode = (reg_mode == 0) ? "BOTH" : (reg_mode == 1) ? "ONE" : "NONE";
+        line += "," + mode;
+        PRINTLN(line);
+    } else {
         robot.rpm = 0;
         robot.steer = 0;
         done();

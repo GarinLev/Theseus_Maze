@@ -10,6 +10,7 @@ public:
         , integrator(0), prev_error(0) {}
 
     void set_gains(float kp, float ki) { Kp = kp; Ki = ki; }
+    void set_pd(float kp, float kd) { Kp = kp; Kd = kd; }
     float get_kp() const { return Kp; }
     float get_ki() const { return Ki; }
     float compute(float setpoint, float process_value);

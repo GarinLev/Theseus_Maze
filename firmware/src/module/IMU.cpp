@@ -1,85 +1,44 @@
 #include "IMU.h"
-#include "Log.h"
 
-bool IMU::init() {
-    return true;
+IMU::IMU()
+    : _wire(Wire),
+      _bno(-1, 0x28, &_wire),
+      _offset{0.0f, 0.0f, 0.0f},
+      _cached{0.0f, 0.0f, 0.0f} {}
 
-    pid.reset();
-
-    if (!mpu.testConnection()) {
-        LOG_ERROR("MPU6050 connection failed!");
-        return false;
+void IMU::init() {
+    if (!_bno.begin(OPERATION_MODE_IMUPLUS)) {
+        LOG_ERROR("BNO055 not detected");
     }
+}
 
-    mpu.initialize();
+void IMU::zero() {
+    update();
 
-    uint8_t dev_status = mpu.dmpInitialize();
-
-    if (dev_status == 0) {
-        mpu.setXAccelOffset(-2224);
-        mpu.setYAccelOffset(-3280);
-        mpu.setZAccelOffset(1132);
-        mpu.setXGyroOffset(-1854);
-        mpu.setYGyroOffset(-69);
-        mpu.setZGyroOffset(-17);
-
-        mpu.setDMPEnabled(true);
-        mpu.resetFIFO();
-
-        return true;
-    }
-
-    if (dev_status != 0)
-    {
-        LOG_ERROR("Initialization failed. Code: ", dev_status);
-        return false;
-    }
-
-    delay(700);
-
-    return false;
+    _offset.yaw   = _cached.yaw;
+    _offset.pitch = _cached.pitch;
+    _offset.roll  = _cached.roll;
 }
 
 void IMU::update() {
-    ypr[0] = 0 * 180.0f / M_PI;
-    ypr[1] = 0 * 180.0f / M_PI;
-    ypr[2] = 0 * 180.0f / M_PI;
+    sensors_event_t event;
+    _bno.getEvent(&event);
 
-    return;
+    _cached.yaw   = normalize180(event.orientation.x - _offset.yaw);
+    _cached.pitch = normalize180(event.orientation.z - _offset.pitch);
+    _cached.roll  = normalize180(event.orientation.y - _offset.roll);
 
-    if (mpu.dmpGetCurrentFIFOPacket(fifo_buffer)) {
-        error_counter = 0;
+    ypr[0] = _cached.yaw;
+    ypr[1] = _cached.pitch;
+    ypr[2] = _cached.roll;
+}
 
-        Quaternion q;
-        VectorFloat gravity;
+IMU::YPR IMU::get() const {
+    return _cached;
+}
 
-        mpu.dmpGetQuaternion(&q, fifo_buffer);
-        mpu.dmpGetGravity(&gravity, &q);
-
-        float data_ypr[3];
-        mpu.dmpGetYawPitchRoll(data_ypr, &q, &gravity);
-
-        ypr[0] = data_ypr[0] * 180.0f / M_PI;
-        ypr[1] = data_ypr[1] * 180.0f / M_PI;
-        ypr[2] = data_ypr[2] * 180.0f / M_PI;
-    } else {
-        error_counter++;
-
-        if (error_counter > 5) {
-            LOG_ERROR("IMU Frozen! Re-initializing I2C and DMP...");
-
-            Wire.end();
-            delay(5);
-            Wire.begin();
-            Wire.setWireTimeout(20000, true);
-
-            if (init()) {
-                LOG_INFO("IMU Hot-Reset Successful!");
-            } else {
-                LOG_ERROR("IMU Hot-Reset Failed!");
-            }
-
-            error_counter = 0;
-        }
-    }
+float IMU::normalize180(float angle) {
+    while (angle > 180.0f)  angle -= 360.0f;
+    while (angle < -180.0f) angle += 360.0f;
+    return angle;
 }
