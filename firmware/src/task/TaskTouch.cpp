@@ -12,19 +12,19 @@ void TaskTouch::on_execute(uint32_t dt) {
     float dist = robot.dist_up.get();
 
     switch (step) {
-        case Step::INIT:
+        case Step::INIT: {
+            if (dist > 200.0f || dist == 0.0f) {
+                done();
+                break;
+            }
             robot.rpm = 0;
             robot.steer = 0;
             if (elapsed_ms - step_timer >= 150) {
-
-                if (dist > 200.0f || dist == 0.0f) {
-                    done();
-                } else {
-                    step_timer = elapsed_ms;
-                    step = Step::SEARCH;
-                }
+                step_timer = elapsed_ms;
+                step = Step::SEARCH;
             }
             break;
+        }
 
         case Step::SEARCH:
             robot.rpm = 25;

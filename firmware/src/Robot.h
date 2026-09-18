@@ -67,6 +67,7 @@ public:
     bool is_pause{false};
     bool is_last_black{false};
     uint32_t last_fast_millis{0};
+    bool force_stop{false};
 
     // Очереди задач
     using TaskStack = TaskArenaStack<10, TaskMove, TaskRotate, TaskTouch, TaskDelay, TaskSent, TaskPush, TaskBlue, TaskBlack, TaskHit, TaskLed, TaskExit, TaskCenter>;

@@ -12,12 +12,19 @@ void TaskHit::on_init() {
 void TaskHit::on_execute(uint32_t dt) {
     auto& robot = Robot::instance();
 
-    robot.rpm = -30;
+    robot.rpm = -90;
+
+    if (elapsed_ms > 2000) {
+        robot.rpm = 0;
+        robot.steer = 0;
+        done();
+        return;
+    }
 
     if (mode == RIGHT)
-        robot.steer = 20;
+        robot.steer = 30;
     else if (mode == LEFT)
-        robot.steer = -20;
+        robot.steer = -30;
 
     float progress = fabsf(robot.quad.encoder() - start_encoder);
     if (progress >= Quad_MM(75.0f)) {

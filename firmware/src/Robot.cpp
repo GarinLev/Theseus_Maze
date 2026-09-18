@@ -32,9 +32,7 @@ void Robot::loop_fast() {
     w_bl.update_sensors();
 
     update_pause();
-
-    rpm = 0.0f;
-    steer = 0.0f;
+    link.update_command_queue();
 
     // Выполнение текущей задачи
     if (!tasks_victim.isEmpty()) {
@@ -43,6 +41,9 @@ void Robot::loop_fast() {
         tasks_move.top()->execute(dt);
     } else {
         servo.write(SERVO_IDLE_ANGLE);
+        rpm = 0.0f;
+        steer = 0.0f;
+        force_stop = false;
     }
 
     const float target_speed = fabsf(rpm);
@@ -72,6 +73,8 @@ void Robot::update_tasks() {
         if (task_move->state == State::DONE && !is_pause) {
             LOG_INFO("Task ", task_move->name(), " closed");
             tasks_move.pop();
+            rpm = 0.0f;
+            steer = 0.0f;
         }
     }
 
@@ -80,6 +83,8 @@ void Robot::update_tasks() {
         if (task_victim->state == State::DONE && !is_pause) {
             LOG_INFO("Task ", task_victim->name(), " closed");
             tasks_victim.pop();
+            rpm = 0.0f;
+            steer = 0.0f;
         }
     }
 }
@@ -88,7 +93,6 @@ void Robot::update_pause() {
     if (!button.click()) {
         return;
     }
-
     is_pause = !is_pause;
 
     tasks_move.clear();

@@ -14,6 +14,7 @@ public:
     void wait_start() const;
     void update() const;
     void update_debug() const;
+    void update_command_queue();
 
     void send_sensors(const bool distance[4], uint8_t color) const;
     void log_debug(const char* message) const;
@@ -22,9 +23,13 @@ public:
 private:
     HardwareSerial* serial_base;
     HardwareSerial* serial_debug;
+    char command_queue[16];
+    uint8_t queue_head = 0;
+    uint8_t queue_tail = 0;
 
     void read_from_stream(Stream* stream, const char* label) const;
-    static void process_command(char cmd);
+    void process_command(char cmd);
+    void execute_command(char cmd);
 };
 
 #endif // FIRMWARE_LINK_H

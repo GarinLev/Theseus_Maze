@@ -50,12 +50,6 @@ void TaskMove::on_execute(uint32_t dt) {
             return;
         }
 
-        robot.tasks_move.push(TaskMove(
-            SpeedProfile(30, 100, Quad_MM(300), Quad_MM(200), Quad_MM(50)),
-            PID(1.3, 0, 7.0, -200, 200),
-            PID(1.7, 0, 7.0, -200, 200),
-            PID(1.4, 0, 0.2, -90, 90)
-        ));
         if (left_pressed)
             robot.tasks_move.push(TaskHit(TaskHit::LEFT));
         else
@@ -95,16 +89,16 @@ void TaskMove::on_execute(uint32_t dt) {
     float proj_yaw = cosf(relative_yaw * DEG_TO_RAD);
     float proj_pitch = cosf(absolute_pitch * DEG_TO_RAD);
 
+
+    const float SLIP_INTENSITY = 0.5f;
+
+
     float slip_compensation = 1.0f;
-    if (absolute_pitch > 4.0f) {
+    if (absolute_pitch > 5.0f) {
         float sin_pitch = sinf(absolute_pitch * DEG_TO_RAD);
-        if (pitch_val < 0.0f) {
-            float slip_factor = 1.0f + (sin_pitch * 0.8f);
-            slip_compensation = 1.0f / slip_factor;
-        } else {
-            float slip_factor_down = 1.0f - (sin_pitch * 0.7f);
-            slip_compensation = 1.0f / slip_factor_down;
-        }
+        bool is_going_up = (pitch_val >= 0.0f);
+        float sign = is_going_up ? -1.0f : 1.0f;
+        slip_compensation = 1.0f + (sign * sin_pitch * SLIP_INTENSITY);
     }
 
     float proj_total = proj_yaw * proj_pitch * slip_compensation;
@@ -177,9 +171,9 @@ void TaskMove::on_execute(uint32_t dt) {
             yaw_target = pid_dist.compute(0, wall_err);
 } else if (reg_mode == 1) {
             if (left_ok) {
-                wall_err = left - 100.0f;
+                wall_err = 2.0f * (left - 100.0f);
             } else {
-                wall_err = 100.0f - right;
+                wall_err = 2.0f * (100.0f - right);
             }
             yaw_target = pid_one.compute(0, wall_err);
         } else {

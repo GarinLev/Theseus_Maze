@@ -5,8 +5,8 @@ class SpeedProfile {
 public:
     SpeedProfile() = default;
 
-    SpeedProfile(float ss, float su, float l, float lu, float ld)
-        : ss(ss), su(su), l(l), lu(lu), ld(ld) {}
+    SpeedProfile(float ss, float su, float l, float lu, float ld, float se = 0)
+        : ss(ss), su(su), l(l), lu(lu), ld(ld), se(se) {}
 
     float compute(float ln) const;
     float get_len() const { return l; }
@@ -16,6 +16,7 @@ private:
     float l = 0;
     float lu = 0;
     float ld = 0;
+    float se = 0;
 };
 
 #endif

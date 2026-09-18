@@ -78,8 +78,23 @@ void setup() {
     LOG_INFO("Robot Setup Successful");
     LOG_INFO("Robot Link Waiting");
 
+    robot.led.fill(mAqua);
+    robot.led.setBrightness(64);
+    robot.led.show();
+    while (!robot.button.click()) {
+        robot.button.tick();
+    }
+    robot.led.setBrightness(255);
+    robot.led.fill(mMagenta);
+    robot.led.show();
+    delay(100);
+    robot.led.clear(); robot.led.show();
+
     robot.link.wait_start();
     robot.last_fast_millis = millis();
+
+    robot.tasks_move.push( TaskSent() );
+    robot.tasks_move.push(TaskDelay(700));
 
     LOG_INFO("Robot Link Successful");
 }

@@ -46,13 +46,13 @@ float SpeedProfile::compute(float ln) const {
     // 4. Участок 3: Торможение (valid_ld <= abs_ln)
     else if (abs_ln >= valid_ld) {
         float total_deceleration_len = valid_l - valid_ld;
-        
+
         if (total_deceleration_len < EPSILON || abs_ln >= valid_l) {
-            speed = ss; // Если тормозить негде или точка финиша пройдена
+            speed = se; // Если тормозить негде или точка финиша пройдена, выдаем конечную скорость se
         } else {
             float t = (abs_ln - valid_ld) / total_deceleration_len;
-            // Плавно снижаем скорость от су су до стартовой сс
-            speed = su + (ss - su) * smoothStep(t);
+            // Плавно снижаем скорость от su до se
+            speed = su + (se - su) * smoothStep(t);
         }
     }
 
