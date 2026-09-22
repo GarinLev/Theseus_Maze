@@ -1,13 +1,17 @@
 #include <math.h>
-
 #include "PID.h"
 
 float PID::compute(const float setpoint, const float process_value) {
+    last_setpoint = setpoint;
+
     if (isnan(process_value) || isnan(setpoint)) {
+        last_error = 0.0f;
         return out_min;
     }
 
     const float error = setpoint - process_value;
+    last_error = error;
+
     const float p_term = Kp * error;
 
     integrator += error;
@@ -44,4 +48,6 @@ float PID::compute(const float setpoint, const float process_value) {
 void PID::reset() {
     integrator = 0.0f;
     prev_error = 0.0f;
+    last_error = 0.0f;
+    last_setpoint = 0.0f;
 }

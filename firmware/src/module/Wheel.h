@@ -26,8 +26,8 @@ public:
     int32_t get_encoder() const { return enc_value; }
     void reset_encoder() { enc_value = 0; }
     float get_pwm() const { return last_pwm; }
-    float get_kp() const { return _pid.get_kp(); }
-    float get_ki() const { return _pid.get_ki(); }
+    PID& get_pid() { return _pid; }
+    const PID& get_pid() const { return _pid; }
 
     void handle_encoder_interrupt();
 

@@ -66,12 +66,11 @@ float Wheel::real() const {
 
 void Wheel::update(float pwm) {
     float speed_now = real();
-    float speed_need = _pid.compute(pwm, speed_now);
-
     if (pwm == 0) {
         set(0);
         _pid.reset();
     } else {
+        float speed_need = _pid.compute(pwm, speed_now);
         set(-speed_need);
     }
 }
@@ -82,10 +81,9 @@ void Wheel::set_pid_gains(float kp, float ki) {
 
 void Wheel::update_pi(float target) {
     if (target < 20.0f) target = 20.0f;
-    float kp = 1.2f + 0.018f * target;
-    float ki = 0.4f + 0.008f * target;
-
-    set_pid_gains(kp, ki);
+    float kp = 0.03 * target + 0.7;
+    float ki = 0.02 * target + 0.8;
+        set_pid_gains(kp, ki);
 }
 
 void Wheel::handle_encoder_interrupt() {

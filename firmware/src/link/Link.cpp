@@ -27,7 +27,7 @@ void handle_victim(bool is_left, float max_dist, bool push, TaskPush::Mode push_
     }
 }
 
-} // namespace
+}
 
 void Link::wait_start() const {
     for (;;) {
@@ -40,15 +40,15 @@ void Link::wait_start() const {
     }
 }
 
-void Link::update() const {
+void Link::update() {
     read_from_stream(serial_base, "UART");
 }
 
-void Link::update_debug() const {
+void Link::update_debug() {
     read_from_stream(serial_debug, "GET");
 }
 
-void Link::read_from_stream(Stream* stream, const char* label) const {
+void Link::read_from_stream(Stream* stream, const char* label) {
     while (stream->available()) {
         char cmd = static_cast<char>(stream->read());
 
@@ -172,7 +172,7 @@ void Link::send_sensors(const bool distance[4], uint8_t color) const {
     };
 
     serial_base->write(reinterpret_cast<const uint8_t*>(packet), sizeof(packet));
-        serial_debug->write(reinterpret_cast<const uint8_t*>(packet), sizeof(packet));
+    serial_debug->write(reinterpret_cast<const uint8_t*>(packet), sizeof(packet));
 
 }
 

@@ -13,6 +13,9 @@ public:
     void set_pd(float kp, float kd) { Kp = kp; Kd = kd; }
     float get_kp() const { return Kp; }
     float get_ki() const { return Ki; }
+    float get_last_error() const { return last_error; }
+    float get_last_setpoint() const { return last_setpoint; }
+
     float compute(float setpoint, float process_value);
     void reset();
 
@@ -24,6 +27,8 @@ private:
     float out_max = 0;
     float integrator = 0;
     float prev_error = 0;
+    float last_error = 0;
+    float last_setpoint = 0;
 };
 
 #endif

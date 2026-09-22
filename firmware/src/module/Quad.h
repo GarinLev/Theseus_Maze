@@ -22,6 +22,11 @@ public:
     float encoder() const;
     void encoder_reset() const;
 
+    float get_last_error() const { return 0.0f; }
+    float get_last_setpoint() const { return 0.0f; }
+
+    void handle_encoder_interrupt();
+
 private:
     Wheel *fr = nullptr;
     Wheel *fl = nullptr;

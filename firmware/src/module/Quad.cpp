@@ -1,5 +1,4 @@
 #include "Quad.h"
-
 #include <Arduino.h>
 
 void Quad::update(float fr_target, float fl_target, float br_target, float bl_target) const {
@@ -17,6 +16,7 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
         if (bl) bl->update(0.0f);
 
         smoothed_sync_target = 0;
+
         return;
     }
 
@@ -37,7 +37,6 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
     if (active_wheels == 0) return;
 
     float avg_target = sum_target / active_wheels;
-
     bool is_reverse = (avg_target < 0.0f);
 
     float sum_norm_speed = 0.0f;
@@ -47,9 +46,7 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
     for (int i = 0; i < 4; i++) {
         if (active[i]) {
             float target_offset = targets[i] - avg_target;
-
             norm_speeds[i] = speeds[i] - target_offset;
-
             sum_norm_speed += norm_speeds[i];
 
             if (is_reverse) {
@@ -70,32 +67,37 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
         smoothed_sync_target = (smoothed_sync_target * 0.85f) + (raw_sync_target * 0.15f);
     }
 
-    constexpr float K_sync = 0.35f;
+    float fr_cmd = fr_target;
+    float fl_cmd = fl_target;
+    float br_cmd = br_target;
+    float bl_cmd = bl_target;
 
-    if (fr) fr->update(fr_target + K_sync * (smoothed_sync_target - norm_speeds[0]));
-    if (fl) fl->update(fl_target + K_sync * (smoothed_sync_target - norm_speeds[1]));
-    if (br) br->update(br_target + K_sync * (smoothed_sync_target - norm_speeds[2]));
-    if (bl) bl->update(bl_target + K_sync * (smoothed_sync_target - norm_speeds[3]));
-}
-
-void Quad::rpm(float rpm, float steer) const {
-    update(
-        rpm + steer, rpm + steer,
-        rpm - steer, rpm - steer);
+    if (fr) fr->update(fr_cmd);
+    if (fl) fl->update(fl_cmd);
+    if (br) br->update(br_cmd);
+    if (bl) bl->update(bl_cmd);
 }
 
 float Quad::encoder() const {
-    int32_t fr_val = fr ? fr->get_encoder() : 0;
-    int32_t fl_val = fl ? fl->get_encoder() : 0;
-    int32_t br_val = br ? br->get_encoder() : 0;
-    int32_t bl_val = bl ? bl->get_encoder() : 0;
-
-    return (float)(fr_val + fl_val + br_val + bl_val) / 4;
+    float sum = 0;
+    if (fr) sum += fr->get_encoder();
+    if (fl) sum += fl->get_encoder();
+    if (br) sum += br->get_encoder();
+    if (bl) sum += bl->get_encoder();
+    return sum / 4.0f;
 }
 
 void Quad::encoder_reset() const {
-    if (fr) fr->reset_encoder();
-    if (fl) fl->reset_encoder();
-    if (br) br->reset_encoder();
-    if (bl) bl->reset_encoder();
+    if (fr) const_cast<Wheel*>(fr)->reset_encoder();
+    if (fl) const_cast<Wheel*>(fl)->reset_encoder();
+    if (br) const_cast<Wheel*>(br)->reset_encoder();
+    if (bl) const_cast<Wheel*>(bl)->reset_encoder();
+}
+
+void Quad::rpm(float target_rpm, float steer) const {
+    float fr_target = target_rpm + steer;
+    float fl_target = target_rpm + steer;
+    float br_target = target_rpm - steer;
+    float bl_target = target_rpm - steer;
+    update(fr_target, fl_target, br_target, bl_target);
 }

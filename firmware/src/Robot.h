@@ -19,7 +19,7 @@
 class Robot {
 public:
     static constexpr uint8_t PIN_SERVO = 44;
-    static constexpr int SERVO_IDLE_ANGLE = 70;
+    static constexpr int SERVO_IDLE_ANGLE = 90;
 
     static constexpr uint8_t PIN_TOUCH_R = 40;
     static constexpr uint8_t PIN_TOUCH_L = 41;

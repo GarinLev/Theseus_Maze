@@ -29,6 +29,7 @@ Robot::Robot()
       button(42) {}
 
 void setup() {
+
     Serial.begin(115200);
     Serial2.begin(9600);
     Wire.begin();

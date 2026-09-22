@@ -2,13 +2,13 @@
 #include "Task.h"
 
 #define ServoController_Right 0
-#define ServoController_Left 140
-#define ServoController_CloseStart 70
-#define ServoController_CloseRight 75
-#define ServoController_CloseLeft 65
+#define ServoController_Left 180
+#define ServoController_CloseStart 90
+#define ServoController_CloseRight 90
+#define ServoController_CloseLeft 90
 
-constexpr uint32_t SERVO_MOVE_MS = 1000;
-constexpr uint32_t SERVO_HOLD_MS = 500;
+constexpr uint32_t SERVO_MOVE_MS = 400;
+constexpr uint32_t SERVO_HOLD_MS = 100;
 
 void TaskPush::on_init() {
     step = Step::TO_TARGET;

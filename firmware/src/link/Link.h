@@ -12,8 +12,8 @@ public:
         : serial_base(base), serial_debug(debug) {}
 
     void wait_start() const;
-    void update() const;
-    void update_debug() const;
+    void update();
+    void update_debug();
     void update_command_queue();
 
     void send_sensors(const bool distance[4], uint8_t color) const;
@@ -27,7 +27,7 @@ private:
     uint8_t queue_head = 0;
     uint8_t queue_tail = 0;
 
-    void read_from_stream(Stream* stream, const char* label) const;
+    void read_from_stream(Stream* stream, const char* label);
     void process_command(char cmd);
     void execute_command(char cmd);
 };

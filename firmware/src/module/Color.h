@@ -9,11 +9,10 @@ struct HSVColor {
     float c;
 };
 
-constexpr HSVColor TARGET_WHITE  = {20.33f, 0.02f, 0.96f};
-constexpr HSVColor TARGET_BLUE   = {225.74f, 0.38f, 0.96f};
-constexpr HSVColor TARGET_BLACK  = {347.80f, 0.25f, 0.03f};
-constexpr HSVColor TARGET_SILVER = {338.34f, 0.02f, 0.99f};
-
+constexpr HSVColor TARGET_WHITE  = {202.81f, 0.03f, 0.90f};
+constexpr HSVColor TARGET_SILVER = {267.24f, 0.08f, 0.96f};
+constexpr HSVColor TARGET_BLACK  = {342.94f, 0.30f, 0.01f};
+constexpr HSVColor TARGET_BLUE   = {224.89f, 0.58f, 0.10f};
 
 enum ColorType : uint8_t {
     COLOR_WHITE = 0,
@@ -27,31 +26,28 @@ class Color {
 public:
     void init();
     void update();
-    void calibrate_color();
     void log();
 
-    float match(HSVColor target) const;
-    void compute(const HSVColor targets[], float outputs[], size_t count) const;
-    ColorType get_current_color(float threshold = 80.0f) const;
-    float read_normalized() const;
+    float distance_to(HSVColor target) const;
+    ColorType get_current_color(float max_distance = 0.40f) const;
+    float read_normalized();
 
 private:
     Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_120MS, TCS34725_GAIN_4X);
 
     const float Rf = 0.85f;
-    const float Gf = 0.99f;
-    const float Bf = 1.21f;
+    const float Gf = 0.91f;
+    const float Bf = 1.40f;
 
     uint8_t pin_led = A1;
-    float led_max = 410.0f;
-    float led_min = 25.0f;
+    uint16_t raw_led = 0; // Сырое значение analogRead
+    float led_max = 670.0f;
+    float led_min = 540.0f;
 
     void hsv();
 
     uint16_t r{0}, g{0}, b{0};
     float h{0.0f}, s{0.0f}, c{0.0f};
-
-    float last_probabilities[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 };
 
 #endif
