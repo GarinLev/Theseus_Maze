@@ -1,4 +1,5 @@
 #include "IMU.h"
+#include <math.h>
 
 IMU::IMU()
     : _wire(Wire),
@@ -35,6 +36,25 @@ void IMU::update() {
 
 IMU::YPR IMU::get() const {
     return _cached;
+}
+
+float IMU::snap_to_90(float angle) {
+    // Приводим угол к положительному диапазону [0, 360)
+    while (angle < 0.0f)   angle += 360.0f;
+    while (angle >= 360.0f) angle -= 360.0f;
+
+    // Округляем к ближайшему кратному 90
+    float snapped = roundf(angle / 90.0f) * 90.0f;
+
+    // 360° эквивалентно 0°
+    if (snapped >= 360.0f) {
+        snapped = 0.0f;
+    }
+    return snapped;
+}
+
+float IMU::get_nearest_90() const {
+    return snap_to_90(_cached.yaw);
 }
 
 float IMU::normalize180(float angle) {

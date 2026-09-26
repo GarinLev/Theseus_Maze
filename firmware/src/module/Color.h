@@ -9,10 +9,10 @@ struct HSVColor {
     float c;
 };
 
-constexpr HSVColor TARGET_WHITE  = {202.81f, 0.03f, 0.90f};
-constexpr HSVColor TARGET_SILVER = {267.24f, 0.08f, 0.96f};
-constexpr HSVColor TARGET_BLACK  = {342.94f, 0.30f, 0.01f};
-constexpr HSVColor TARGET_BLUE   = {224.89f, 0.58f, 0.10f};
+constexpr HSVColor TARGET_WHITE  = {0.00, 0.07, 1.00};
+constexpr HSVColor TARGET_SILVER = {0.00, 0.23, 1.00};
+constexpr HSVColor TARGET_BLACK  = {356.01, 0.46, 0.00};
+constexpr HSVColor TARGET_BLUE   = {225.44, 0.59, 0.28};
 
 enum ColorType : uint8_t {
     COLOR_WHITE = 0,
@@ -42,7 +42,7 @@ private:
     uint8_t pin_led = A1;
     uint16_t raw_led = 0; // Сырое значение analogRead
     float led_max = 670.0f;
-    float led_min = 540.0f;
+    float led_min = 620.0f;
 
     void hsv();
 

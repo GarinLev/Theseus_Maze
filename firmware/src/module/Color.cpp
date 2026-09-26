@@ -20,7 +20,10 @@ void Color::init() {
 
 void Color::update() {
     uint16_t r_raw, g_raw, b_raw, c_raw;
-    tcs.getRawData(&r_raw, &g_raw, &b_raw, &c_raw);
+
+  r_raw = tcs.read16(TCS34725_RDATAL);
+  g_raw = tcs.read16(TCS34725_GDATAL);
+  b_raw = tcs.read16(TCS34725_BDATAL);
 
     if (r == 0 && g == 0 && b == 0) {
         r = r_raw;
@@ -68,6 +71,12 @@ void Color::hsv() {
 }
 
 float Color::distance_to(HSVColor target) const {
+    if (this->c > 0.50f && target.c > 0.50f && this->s < 0.35f && target.s < 0.35f) {
+        float ds = (this->s - target.s) * 2.5f;
+        float dc = (this->c - target.c);
+        return sqrtf(ds * ds + dc * dc);
+    }
+
     float rad1 = this->h * (PI / 180.0f);
     float rad2 = target.h * (PI / 180.0f);
 
@@ -85,7 +94,6 @@ float Color::distance_to(HSVColor target) const {
 
     return sqrtf(dx * dx + dy * dy + dz * dz);
 }
-
 ColorType Color::get_current_color(float max_distance) const {
     constexpr HSVColor targets[] = { TARGET_WHITE, TARGET_BLUE, TARGET_BLACK, TARGET_SILVER };
     
@@ -105,6 +113,7 @@ ColorType Color::get_current_color(float max_distance) const {
     }
 
     return (ColorType)best_idx;
+
 }
 
 void Color::log() {

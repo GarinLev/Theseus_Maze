@@ -21,8 +21,9 @@ void Wheel::init() {
         enc_func, RISING);
 }
 
-void Wheel::set(float speed) const {
+void Wheel::set(float speed) {
     float constrained_speed = constrain(speed, SPEED_MIN, SPEED_MAX);
+    last_pwm = speed;
 
     if (receive) {
         constrained_speed = -constrained_speed;
@@ -81,9 +82,13 @@ void Wheel::set_pid_gains(float kp, float ki) {
 
 void Wheel::update_pi(float target) {
     if (target < 20.0f) target = 20.0f;
-    float kp = 0.03 * target + 0.7;
-    float ki = 0.02 * target + 0.8;
-        set_pid_gains(kp, ki);
+    float kp = _a + _b * target;
+    float ki = _c + _d * target;
+    set_pid_gains(kp, ki);
+}
+
+void Wheel::set_pi_coeffs(float a, float b, float c, float d) {
+    _a = a; _b = b; _c = c; _d = d;
 }
 
 void Wheel::handle_encoder_interrupt() {

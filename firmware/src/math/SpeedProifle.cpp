@@ -16,42 +16,47 @@ namespace {
 }
 
 float SpeedProfile::compute(float ln) const {
-    // 1. Защита от некорректных параметров (цепочка 0 <= lu <= ld <= l)
-    // Используем встроенные макросы Arduino вместо std::max
-    float valid_lu = max(0.0f, lu);
-    float valid_ld = max(valid_lu, ld);
-    float valid_l  = max(valid_ld, l);
+    // 1. Знак определяется направлением движения всего профиля (l),
+    // а не мгновенным шумом энкодера около нуля.
+    float sign = (l >= 0.0f) ? 1.0f : -1.0f;
 
-    float sign = (ln >= 0.0f) ? 1.0f : -1.0f;
-    float abs_ln = fabsf(ln);
+    // 2. Исключаем движение в противоположную сторону из-за люфта/отката на старте
+    float progress = ln;
+    if (l >= 0.0f && progress < 0.0f) {
+        progress = 0.0f;
+    } else if (l < 0.0f && progress > 0.0f) {
+        progress = 0.0f;
+    }
+
+    float abs_ln = fabsf(progress);
+    float valid_lu = max(0.0f, fabsf(lu));
+    float valid_ld = max(valid_lu, fabsf(ld));
+    float valid_l  = max(valid_ld, fabsf(l));
+
     float speed = ss;
+    const float EPSILON = 0.0001f;
 
-    // Малое значение для исключения деления на околонулевые величины
-    // Для 32-битного float на Arduino 1e-4f — оптимальный порог
-    const float EPSILON = 0.0001f; 
-
-    // 2. Участок 1: Разгон (0 <= abs_ln < valid_lu)
+    // 3. Участок 1: Разгон (0 <= abs_ln < valid_lu)
     if (abs_ln < valid_lu) {
         if (valid_lu < EPSILON) {
-            speed = su; // Если разгон почти нулевой длины, сразу выдаем маршевую скорость
+            speed = su;
         } else {
             float t = abs_ln / valid_lu;
             speed = ss + (su - ss) * smoothStep(t);
         }
     } 
-    // 3. Участок 2: Движение с постоянной скоростью (valid_lu <= abs_ln < valid_ld)
+    // 4. Участок 2: Движение с постоянной скоростью (valid_lu <= abs_ln < valid_ld)
     else if (abs_ln >= valid_lu && abs_ln < valid_ld) {
         speed = su;
     } 
-    // 4. Участок 3: Торможение (valid_ld <= abs_ln)
-    else if (abs_ln >= valid_ld) {
+    // 5. Участок 3: Торможение (valid_ld <= abs_ln)
+    else {
         float total_deceleration_len = valid_l - valid_ld;
 
         if (total_deceleration_len < EPSILON || abs_ln >= valid_l) {
-            speed = se; // Если тормозить негде или точка финиша пройдена, выдаем конечную скорость se
+            speed = se;
         } else {
             float t = (abs_ln - valid_ld) / total_deceleration_len;
-            // Плавно снижаем скорость от su до se
             speed = su + (se - su) * smoothStep(t);
         }
     }

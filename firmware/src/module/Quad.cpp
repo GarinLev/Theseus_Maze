@@ -1,4 +1,5 @@
 #include "Quad.h"
+#include "Log.h"
 #include <Arduino.h>
 
 void Quad::update(float fr_target, float fl_target, float br_target, float bl_target) const {
@@ -19,6 +20,9 @@ void Quad::update(float fr_target, float fl_target, float br_target, float bl_ta
 
         return;
     }
+
+    //LOG_INFO(fr->real(), fl->real(), br->real(), bl->real(),
+    //        fr->get_pwm(), fl->get_pwm(), br->get_pwm(), bl->get_pwm());
 
     float speeds[] = {real_fr, real_fl, real_br, real_bl};
     float targets[] = {fr_target, fl_target, br_target, bl_target};

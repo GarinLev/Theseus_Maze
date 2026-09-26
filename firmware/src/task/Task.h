@@ -59,6 +59,7 @@ private:
     uint8_t reg_mode = 0;
     uint8_t reg_cand = 0;
     uint32_t reg_switch_ms = 0;
+    bool reg_initialized = false;
 };
 
 class TaskRotate final : public Task {

@@ -26,6 +26,10 @@ public:
     void update();
     YPR get() const;
 
+    float get_nearest_90() const;
+
+    static float snap_to_90(float angle);
+
     float ypr[3] = {0.0f, 0.0f, 0.0f};
 
 private:

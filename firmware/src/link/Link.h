@@ -20,6 +20,7 @@ public:
     void log_debug(const char* message) const;
     void send_pause(bool paused) const;
 
+    String serial_buffer;
 private:
     HardwareSerial* serial_base;
     HardwareSerial* serial_debug;

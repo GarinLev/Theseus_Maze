@@ -13,6 +13,7 @@ void TaskRotate::on_init() {
 }
 
 void TaskRotate::on_execute(uint32_t dt) {
+    
     auto& robot = Robot::instance();
     
     float delta = robot.imu.ypr[0] - prev_yaw;
@@ -28,6 +29,7 @@ void TaskRotate::on_execute(uint32_t dt) {
     if (error > ANGLE_TOLERANCE) {
         float speed = pid.compute(0.0f, -error); 
         robot.steer = speed * direction;
+        LOG_INFO("rotate", speed, error);
     } else {
         robot.steer = 0.0f;
         done();

@@ -8,13 +8,20 @@ void TaskMove::on_init() {
     start_encoder = robot.quad.encoder();
     last_encoder = start_encoder;
     progress_encoder = 0.0f;
-    yaw_now = robot.imu.ypr[0];
+
+    // Захватываем ближайшую идеальную ось лабиринта (0, 90, 180, -90)
+    yaw_now = robot.imu.get_nearest_90();
+    if (yaw_now > 180.0f) {
+        yaw_now -= 360.0f; // 270° -> -90°
+    }
+
     pid_yaw.reset();
     pid_dist.reset();
     pid_one.reset();
     reg_mode = 0;
     reg_cand = 0;
     reg_switch_ms = 0;
+    reg_initialized = false;
 }
 
 void TaskMove::on_execute(uint32_t dt) {
@@ -59,11 +66,14 @@ void TaskMove::on_execute(uint32_t dt) {
     }
     touch_was_pressed = false;
 
+    // Теперь relative_yaw показывает отклонение именно от идеальной оси коридора
     float relative_yaw = robot.imu.ypr[0] - yaw_now;
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
     else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
 
-    float sensor_ratio_left = 0.77f, sensor_ratio_right = 0.529f, yaw_correction = cosf(abs(constrain(relative_yaw, -90, 90)) * DEG_TO_RAD), max_dist = 160.0f;
+    float sensor_ratio_left = 0.77f, sensor_ratio_right = 0.529f;
+    float yaw_correction = cosf(abs(constrain(relative_yaw, -90, 90)) * DEG_TO_RAD);
+    float max_dist = 160.0f;
 
     float d_left_raw = robot.dist_left.get();
     float d_right_raw = robot.dist_right.get();
@@ -89,9 +99,7 @@ void TaskMove::on_execute(uint32_t dt) {
     float proj_yaw = cosf(relative_yaw * DEG_TO_RAD);
     float proj_pitch = cosf(absolute_pitch * DEG_TO_RAD);
 
-
     const float SLIP_INTENSITY = 0.5f;
-
 
     float slip_compensation = 1.0f;
     if (absolute_pitch > 5.0f) {
@@ -106,13 +114,20 @@ void TaskMove::on_execute(uint32_t dt) {
     if (proj_total > 2.5f) proj_total = 2.5f;
 
     progress_encoder += delta_encoder * proj_total;
+    
+    // Защита от люфта: если едем вперед, прогресс не должен быть отрицательным
+    if (speed_profile.get_len() >= 0.0f && progress_encoder < 0.0f) {
+        progress_encoder = 0.0f;
+    }
+    
     last_encoder = encoder_now;
 
     float yaw_err = 0.0f;
     float wall_err = 0.0f;
     float yaw_target = 0.0f;
 
-    if (progress_encoder < speed_profile.get_len()) {
+    // Проверяем завершение движения по профилю
+    if (fabsf(progress_encoder) < fabsf(speed_profile.get_len())) {
         float speed = speed_profile.compute(progress_encoder);
         if (absolute_pitch > 4.0f) {
             speed = speed * 0.6f;
@@ -121,8 +136,6 @@ void TaskMove::on_execute(uint32_t dt) {
             }
         }
         robot.rpm = speed;
-        pid_dist.set_pd(robot.wall_pd_kp, robot.wall_pd_kd);
-        pid_one.set_pd(robot.one_pd_kp, robot.one_pd_kd);
 
         const float a_match_tol = 20.0f;
         bool a_left_use  = a_left_ok  && fabsf(d_left  - a_left)  <= a_match_tol;
@@ -151,34 +164,38 @@ void TaskMove::on_execute(uint32_t dt) {
             cand = 2;
         }
 
-        if (cand == reg_cand) {
-            if (reg_mode != cand) {
-                reg_switch_ms += dt;
-                if (reg_switch_ms >= 100) {
-                    reg_mode = cand;
-                    reg_switch_ms = 0;
-                }
-            } else {
-                reg_switch_ms = 0;
-            }
-        } else {
+        if (cand != reg_cand) {
             reg_cand = cand;
             reg_switch_ms = 0;
+        } else if (reg_mode != cand) {
+            if (!reg_initialized) {
+                reg_mode = cand;
+                reg_switch_ms = 0;
+                pid_dist.reset();
+                pid_one.reset();
+                pid_yaw.reset();
+            } else {
+                reg_switch_ms += dt;
+                if (reg_switch_ms >= 25) {
+                    reg_mode = cand;
+                    reg_switch_ms = 0;
+                    pid_dist.reset();
+                    pid_one.reset();
+                    pid_yaw.reset();
+                }
+            }
+        } else {
+            reg_switch_ms = 0;
         }
+        reg_initialized = true;
 
         if (reg_mode == 0) {
             wall_err = left - right;
             yaw_target = pid_dist.compute(0, wall_err);
-} else if (reg_mode == 1) {
-            if (left_ok) {
-                wall_err = 2.0f * (left - 100.0f);
-            } else {
-                wall_err = 2.0f * (100.0f - right);
-            }
+        } else if (reg_mode == 1) {
+            wall_err = left_ok ? (left - 100.0f) : (100.0f - right);
             yaw_target = pid_one.compute(0, wall_err);
         } else {
-            pid_dist.reset();
-            pid_one.reset();
             wall_err = 0.0f;
             yaw_target = 0.0f;
         }
@@ -200,11 +217,12 @@ void TaskMove::on_execute(uint32_t dt) {
         line += "," + pad(f(a_left), 8);
         line += "," + pad(f(d_right), 8);
         line += "," + pad(f(a_right), 8);
-        line += "," + pad(f(wall_err), 8);
         line += "," + pad(f(yaw_err), 8);
-        line += "," + pad(f(yaw_target), 8);
         String mode = (reg_mode == 0) ? "BOTH" : (reg_mode == 1) ? "ONE" : "NONE";
         line += "," + mode;
+        line += ": " + pad(f(robot.rpm), 3);
+        line += ": " + pad(f(robot.w_fr.get_pwm()), 3);
+        
         PRINTLN(line);
     } else {
         robot.rpm = 0;

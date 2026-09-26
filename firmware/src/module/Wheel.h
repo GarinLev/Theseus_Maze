@@ -16,12 +16,13 @@ public:
         , _pid(kp, ki, kd, out_min, out_max) {}
 
     void init();
-    void set(float speed) const;
+    void set(float speed);
     void update_sensors();
     float real() const;
     void update(float pwm);
     void set_pid_gains(float kp, float ki);
     void update_pi(float target);
+    void set_pi_coeffs(float a, float b, float c, float d);
 
     int32_t get_encoder() const { return enc_value; }
     void reset_encoder() { enc_value = 0; }
@@ -47,6 +48,8 @@ private:
 
     float last_rpm = 0;
     float last_pwm = 0;
+    // Дефолт как "k 1 0 1 0"
+    float _a = 1.0f, _b = 0.0f, _c = 1.0f, _d = 0.0f;
 };
 
 void enc_fr();

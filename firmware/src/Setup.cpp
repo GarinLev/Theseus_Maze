@@ -31,6 +31,7 @@ Robot::Robot()
 void setup() {
 
     Serial.begin(115200);
+    Serial.setTimeout(10);
     Serial2.begin(9600);
     Wire.begin();
     Wire.setWireTimeout(20000, true);

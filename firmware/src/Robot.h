@@ -35,6 +35,9 @@ public:
     void reset();
     void update_tasks();
     void update_pause();
+    void update_serial();
+
+    String serial_buffer;
 
     // Модули
     Ticker timer_slow;
@@ -55,11 +58,11 @@ public:
     uint8_t touch_pin_r{PIN_TOUCH_R};
     uint8_t touch_pin_l{PIN_TOUCH_L};
 
-    // Переменные регуляторов (нужны для TaskMove)
-    float wall_pd_kp{0.3f};
-    float wall_pd_kd{3.0f};
-    float one_pd_kp{0.3f};
-    float one_pd_kd{3.0f};
+
+    // Коэффициенты для проездов (настраиваемые через i, o, p)
+    // Дефолты: i 0.15 2 | o 0.3 3 | p 2.5 7.5
+    float drive_p[3]{0.15f, 0.3f, 2.5f}; // p1, p2, p_ang
+    float drive_d[3]{2.0f, 3.0f, 7.5f}; // d1, d2, d_ang
 
     // Состояние управления
     float rpm{0.0f};
@@ -67,7 +70,7 @@ public:
     bool is_pause{false};
     bool is_last_black{false};
     uint32_t last_fast_millis{0};
-    bool force_stop{false};
+    bool force_stop{false}; 
 
     // Очереди задач
     using TaskStack = TaskArenaStack<10, TaskMove, TaskRotate, TaskTouch, TaskDelay, TaskSent, TaskPush, TaskBlue, TaskBlack, TaskHit, TaskLed, TaskExit, TaskCenter>;

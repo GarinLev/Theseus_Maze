@@ -27,7 +27,7 @@ void TaskTouch::on_execute(uint32_t dt) {
         }
 
         case Step::SEARCH:
-            robot.rpm = 25;
+            robot.rpm = 70;
             robot.steer = 0;
 
             if (elapsed_ms - step_timer >= 5000) {
@@ -43,7 +43,7 @@ void TaskTouch::on_execute(uint32_t dt) {
             break;
 
         case Step::ALIGN:
-            robot.rpm = 20;
+            robot.rpm = 70;
             robot.steer = 0;
             if (elapsed_ms - step_timer >= 300) {
                 start_encoder = robot.quad.encoder();
@@ -52,7 +52,7 @@ void TaskTouch::on_execute(uint32_t dt) {
             break;
 
         case Step::BACK:
-            robot.rpm = -30;
+            robot.rpm = -70;
             robot.steer = 0;
 
             float progress = fabsf(robot.quad.encoder() - start_encoder);
