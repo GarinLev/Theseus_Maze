@@ -5,6 +5,7 @@
 #include <HardwareSerial.h>
 #include "DebugLogEnable.h"
 #include "Log.h"
+class Robot;
 
 class Link {
 public:
@@ -19,6 +20,8 @@ public:
     void send_sensors(const bool distance[4], uint8_t color) const;
     void log_debug(const char* message) const;
     void send_pause(bool paused) const;
+    void push_forward_sequence(Robot& robot);
+
 
     String serial_buffer;
 private:

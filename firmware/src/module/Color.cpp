@@ -1,14 +1,11 @@
 #include "Color.h"
-#include <Arduino.h>
 
-const char* COLOR_NAMES[] = { "WHITE", "BLUE", "BLACK", "SILVER" };
+const char* COLOR_NAMES[] = { "WHITE", "BLUE", "BLACK", "SILVER", "RED" };
 
 float Color::read_normalized() {
     raw_led = analogRead(pin_led);
-    
     float range = led_max - led_min;
     if (range <= 0.0f) return 0.0f;
-    
     float normalized = ((float)raw_led - led_min) / range;
     return constrain(1.0f - normalized, 0.0f, 1.0f);
 }
@@ -19,11 +16,10 @@ void Color::init() {
 }
 
 void Color::update() {
-    uint16_t r_raw, g_raw, b_raw, c_raw;
-
-  r_raw = tcs.read16(TCS34725_RDATAL);
-  g_raw = tcs.read16(TCS34725_GDATAL);
-  b_raw = tcs.read16(TCS34725_BDATAL);
+    uint16_t r_raw = tcs.read16(TCS34725_RDATAL);
+    uint16_t g_raw = tcs.read16(TCS34725_GDATAL);
+    uint16_t b_raw = tcs.read16(TCS34725_BDATAL);
+    c = tcs.read16(TCS34725_CDATAL);
 
     if (r == 0 && g == 0 && b == 0) {
         r = r_raw;
@@ -36,7 +32,10 @@ void Color::update() {
         b = (uint16_t)(b * (1.0f - alpha) + b_raw * alpha);
     }
 
-    c = read_normalized();
+    a = read_normalized();
+
+    c_norm = constrain(((float)c - c_min) / (c_max - c_min), 0.0f, 1.0f);
+
     hsv();
 }
 
@@ -70,37 +69,29 @@ void Color::hsv() {
     }
 }
 
-float Color::distance_to(HSVColor target) const {
-    if (this->c > 0.50f && target.c > 0.50f && this->s < 0.35f && target.s < 0.35f) {
-        float ds = (this->s - target.s) * 2.5f;
-        float dc = (this->c - target.c);
-        return sqrtf(ds * ds + dc * dc);
-    }
-
-    float rad1 = this->h * (PI / 180.0f);
-    float rad2 = target.h * (PI / 180.0f);
+float Color::distance_to(const ColorVector& target) const {
+    float rad1 = this->h * DEG_TO_RAD;
+    float rad2 = target.h * DEG_TO_RAD;
 
     float x1 = this->s * cosf(rad1);
     float y1 = this->s * sinf(rad1);
-    float z1 = this->c;
 
     float x2 = target.s * cosf(rad2);
     float y2 = target.s * sinf(rad2);
-    float z2 = target.c;
 
     float dx = x1 - x2;
     float dy = y1 - y2;
-    float dz = z1 - z2;
+    float da = this->a - target.a;
+    float dc = this->c_norm - target.c_norm;
 
-    return sqrtf(dx * dx + dy * dy + dz * dz);
+    return sqrtf(dx * dx + dy * dy + da * da + dc * dc);
 }
+
 ColorType Color::get_current_color(float max_distance) const {
-    constexpr HSVColor targets[] = { TARGET_WHITE, TARGET_BLUE, TARGET_BLACK, TARGET_SILVER };
-    
     int best_idx = -1;
     float min_dist = 999.0f;
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 5; ++i) {
         float d = distance_to(targets[i]);
         if (d < min_dist) {
             min_dist = d;
@@ -113,34 +104,60 @@ ColorType Color::get_current_color(float max_distance) const {
     }
 
     return (ColorType)best_idx;
+}
 
+void Color::calibrate(ColorType color) {
+    if (color >= COLOR_UNKNOWN) return;
+    update();
+    targets[color] = { h, s, a, c_norm };
+
+    Serial.print(F("\n[CALIBRATED 4D] "));
+    Serial.print(COLOR_NAMES[color]);
+    Serial.print(F(" -> (H: ")); Serial.print(h, 1);
+    Serial.print(F(", S: ")); Serial.print(s, 2);
+    Serial.print(F(", A: ")); Serial.print(a, 2);
+    Serial.print(F(", C_norm: ")); Serial.print(c_norm, 2);
+    Serial.println(F(")\n"));
+}
+
+void Color::handle_command(const String& cmd) {
+    String c_str = cmd;
+    c_str.trim();
+    for (int i = 0; i < 5; ++i) {
+        if (c_str.equalsIgnoreCase(COLOR_NAMES[i])) {
+            calibrate((ColorType)i);
+            return;
+        }
+    }
 }
 
 void Color::log() {
     update();
-    Serial.print("[RAW_ANALOG] Pin ");
-    Serial.print(pin_led);
-    Serial.print(": ");
-    Serial.print(raw_led);
-    Serial.print(" | RGB: ");
-    Serial.print(r); Serial.print(", ");
-    Serial.print(g); Serial.print(", ");
-    Serial.println(b);
+    ColorType curr = get_current_color(0.45f); // 0.45 - оптимум для 4D
 
-    Serial.print(h, 2); Serial.print(" ");
-    Serial.print(s, 2); Serial.print(" ");
-    Serial.print(c, 2); Serial.println(" ");
+    Serial.println(F("\n================= COLOR DIAGNOSTICS (4D) ================="));
+    Serial.print(F("[RAW] ADC Pin: ")); Serial.print(raw_led);
+    Serial.print(F(" | Clear Raw: ")); Serial.print(c);
+    Serial.print(F(" | RGB: ("));
+    Serial.print(r); Serial.print(F(", "));
+    Serial.print(g); Serial.print(F(", "));
+    Serial.print(b); Serial.println(F(")"));
 
-    constexpr HSVColor targets[] = { TARGET_WHITE, TARGET_BLUE, TARGET_BLACK, TARGET_SILVER };
-    Serial.print("[DISTANCES] ");
-    for (uint8_t i = 0; i < 4; ++i) {
-        Serial.print(COLOR_NAMES[i]); Serial.print(": ");
-        Serial.print(distance_to(targets[i]), 3); Serial.print(" | ");
+    Serial.print(F("[4D COORD] Hue: ")); Serial.print(h, 1);
+    Serial.print(F(" | Sat: ")); Serial.print(s, 2);
+    Serial.print(F(" | A: ")); Serial.print(a, 2);
+    Serial.print(F(" | C_norm: ")); Serial.println(c_norm, 2);
+
+    Serial.print(F("[DIST 4D] "));
+    for (uint8_t i = 0; i < 5; ++i) {
+        Serial.print(COLOR_NAMES[i]);
+        Serial.print(F(": "));
+        Serial.print(distance_to(targets[i]), 3);
+        if (i < 4) Serial.print(F(" | "));
     }
     Serial.println();
 
-
-    ColorType curr = get_current_color(0.40f);
-    Serial.print("[RESULT] Color: ");
+    Serial.print(F("[RESULT] Detected Color -> "));
     Serial.println(curr == COLOR_UNKNOWN ? "UNKNOWN" : COLOR_NAMES[curr]);
+    Serial.println(F("==========================================================\n"));
 }

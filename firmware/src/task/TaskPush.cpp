@@ -7,8 +7,8 @@
 #define ServoController_CloseRight 90
 #define ServoController_CloseLeft 90
 
-constexpr uint32_t SERVO_MOVE_MS = 1000;
-constexpr uint32_t SERVO_HOLD_MS = 1000;
+constexpr uint32_t SERVO_MOVE_MS = 220;
+constexpr uint32_t SERVO_HOLD_MS = 300;
 
 void TaskPush::on_init() {
     step = Step::TO_TARGET;

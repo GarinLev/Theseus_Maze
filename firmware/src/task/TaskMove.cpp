@@ -35,7 +35,9 @@ void TaskMove::on_execute(uint32_t dt) {
         robot.steer = 0;
         robot.tasks_move.push(TaskBlack());
         done();
-        return;
+       return;
+    } else {
+        robot.color.log();
     }
 
     if (left_pressed != right_pressed) {
@@ -57,6 +59,7 @@ void TaskMove::on_execute(uint32_t dt) {
             return;
         }
 
+        robot.link.push_forward_sequence(robot);
         if (left_pressed)
             robot.tasks_move.push(TaskHit(TaskHit::LEFT));
         else
@@ -66,7 +69,6 @@ void TaskMove::on_execute(uint32_t dt) {
     }
     touch_was_pressed = false;
 
-    // Теперь relative_yaw показывает отклонение именно от идеальной оси коридора
     float relative_yaw = robot.imu.ypr[0] - yaw_now;
     if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
     else if (relative_yaw < -180.0f) relative_yaw += 360.0f;
@@ -99,7 +101,7 @@ void TaskMove::on_execute(uint32_t dt) {
     float proj_yaw = cosf(relative_yaw * DEG_TO_RAD);
     float proj_pitch = cosf(absolute_pitch * DEG_TO_RAD);
 
-    const float SLIP_INTENSITY = 0.5f;
+    const float SLIP_INTENSITY = 0.65f;
 
     float slip_compensation = 1.0f;
     if (absolute_pitch > 5.0f) {
@@ -223,7 +225,7 @@ void TaskMove::on_execute(uint32_t dt) {
         line += ": " + pad(f(robot.rpm), 3);
         line += ": " + pad(f(robot.w_fr.get_pwm()), 3);
         
-        PRINTLN(line);
+        //PRINTLN(line);
     } else {
         robot.rpm = 0;
         robot.steer = 0;

@@ -1,33 +1,30 @@
 #ifndef TASK_STACK_H
 #define TASK_STACK_H
 
-#include <new>
 #include <stdint.h>
 #include <stddef.h>
+#include "task/Task.h"
 
-#include <etl/largest.h>
-#include <etl/type_traits.h>
-#include <etl/utility.h>
+// Placement new для AVR (не требует <new>)
+inline void* operator new(size_t, void* ptr) noexcept { return ptr; }
 
-#include "Task.h"
-
-template <size_t MAX_TASKS, typename... TaskTypes>
+template <size_t MaxTasks, size_t BytesPerTaskEstimate = 64>
 class TaskArenaStack {
-    enum : size_t {
-        ITEM_SIZE  = etl::largest<TaskTypes...>::size,
-        ITEM_ALIGN = etl::largest<TaskTypes...>::alignment,
-        ARENA_SIZE = MAX_TASKS * (ITEM_SIZE + ITEM_ALIGN - 1),
-    };
+public:
+    static constexpr size_t BufferSize = MaxTasks * BytesPerTaskEstimate;
+    static constexpr size_t max_tasks = MaxTasks;
 
-    alignas(ITEM_ALIGN) uint8_t arena[ARENA_SIZE];
-    size_t arena_offset = 0;
+private:
+    // Буфер памяти под разнородные задачи
+    alignas(2) uint8_t memory[BufferSize];
+    Task* tasks[MaxTasks];
+    uint16_t offsets[MaxTasks];
 
-    Task* stack[MAX_TASKS];
-    size_t task_count = 0;
+    size_t count = 0;
+    size_t current_offset = 0;
 
 public:
     TaskArenaStack() = default;
-
     TaskArenaStack(const TaskArenaStack&) = delete;
     TaskArenaStack& operator=(const TaskArenaStack&) = delete;
 
@@ -35,59 +32,81 @@ public:
         clear();
     }
 
-    template <typename T>
-    bool push(T&& task_obj) {
-        if (task_count >= MAX_TASKS) return false;
+    // Поддержка вызова push(TaskDelay(700)) или push(rot)
+    template <typename ConcreteTask>
+    bool push(const ConcreteTask& task) {
+        if (count >= MaxTasks) return false;
 
-        using UnqualifiedT = typename etl::remove_cv<typename etl::remove_reference<T>::type>::type;
-        static_assert(sizeof(UnqualifiedT) <= ITEM_SIZE, "Task type is too large for this stack");
+        // Выравнивание по 2 байта (для работы с парами регистров на AVR)
+        size_t aligned_offset = (current_offset + 1) & ~((size_t)1);
+        size_t next_offset = aligned_offset + sizeof(ConcreteTask);
+        if (next_offset > BufferSize) return false;
 
-        constexpr size_t align = alignof(UnqualifiedT);
-        size_t current_addr = reinterpret_cast<size_t>(&arena[arena_offset]);
-        size_t aligned_addr = (current_addr + align - 1) & ~(align - 1);
-        size_t padding = aligned_addr - current_addr;
+        void* place = (void*)(memory + aligned_offset);
+        Task* new_task = new (place) ConcreteTask(task);
 
-        if (arena_offset + padding + sizeof(UnqualifiedT) > ARENA_SIZE) {
-            return false;
-        }
-
-        arena_offset += padding;
-        Task* created = new (&arena[arena_offset]) UnqualifiedT(etl::forward<T>(task_obj));
-        arena_offset += sizeof(UnqualifiedT);
-
-        stack[task_count++] = created;
+        offsets[count] = current_offset; // точка возврата памяти для pop()
+        tasks[count] = new_task;
+        count++;
+        current_offset = next_offset;
         return true;
     }
 
-    void pop() {
-        if (isEmpty()) return;
+    // Экономичный пуш без копирования: emplace<TaskDelay>(700)
+    template <typename ConcreteTask, typename... Args>
+    bool emplace(Args... args) {
+        if (count >= MaxTasks) return false;
 
-        Task* top_task = stack[task_count - 1];
+        size_t aligned_offset = (current_offset + 1) & ~((size_t)1);
+        size_t next_offset = aligned_offset + sizeof(ConcreteTask);
+        if (next_offset > BufferSize) return false;
 
-        top_task->~Task();
-        arena_offset = reinterpret_cast<uint8_t*>(top_task) - arena;
+        void* place = (void*)(memory + aligned_offset);
+        Task* new_task = new (place) ConcreteTask(args...);
 
-        --task_count;
+        offsets[count] = current_offset;
+        tasks[count] = new_task;
+        count++;
+        current_offset = next_offset;
+        return true;
     }
 
-    void clear() {
-        while (!isEmpty()) {
-            pop();
-        }
-        arena_offset = 0;
+    // Удаление верхней задачи с возвратом байтов в буфер (LIFO)
+    void pop() {
+        if (count == 0) return;
+        count--;
+        tasks[count]->~Task();
+        current_offset = offsets[count];
     }
 
     Task* top() {
-        return isEmpty() ? nullptr : stack[task_count - 1];
+        return (count > 0) ? tasks[count - 1] : nullptr;
     }
 
-    const Task* top() const {
-        return isEmpty() ? nullptr : stack[task_count - 1];
+    void clear() {
+        while (count > 0) {
+            pop();
+        }
+        current_offset = 0;
     }
 
-    bool isEmpty() const { return task_count == 0; }
-    bool isFull() const { return task_count >= MAX_TASKS; }
-    size_t size() const { return task_count; }
+    // Совместимость с кодом Robot.cpp и Link.cpp
+    bool isEmpty() const { return count == 0; }
+    bool empty() const { return count == 0; }
+    size_t size() const { return count; }
+
+    // Свободное место в буфере (в байтах) с учётом выравнивания следующего push
+    size_t free_bytes() const {
+        const size_t aligned_offset = (current_offset + 1) & ~((size_t)1);
+        return BufferSize - aligned_offset;
+    }
+
+    // Занятое место в буфере (в байтах)
+    size_t used_bytes() const { return current_offset; }
+
+    Task* operator[](size_t index) {
+        return (index < count) ? tasks[index] : nullptr;
+    }
 };
 
 #endif // TASK_STACK_H

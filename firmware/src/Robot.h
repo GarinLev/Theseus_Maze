@@ -58,9 +58,7 @@ public:
     uint8_t touch_pin_r{PIN_TOUCH_R};
     uint8_t touch_pin_l{PIN_TOUCH_L};
 
-
-    // Коэффициенты для проездов (настраиваемые через i, o, p)
-    // Дефолты: i 0.15 2 | o 0.3 3 | p 2.5 7.5
+    // Коэффициенты для проездов
     float drive_p[3]{0.15f, 0.3f, 2.5f}; // p1, p2, p_ang
     float drive_d[3]{2.0f, 3.0f, 7.5f}; // d1, d2, d_ang
 
@@ -72,10 +70,16 @@ public:
     uint32_t last_fast_millis{0};
     bool force_stop{false}; 
 
+    // Типы очередей:
+    using MoveQueue   = TaskArenaStack<10, 80>; // Буфер 800 байт (под тяжелые TaskMove с 3x PID)
+    using VictimQueue = TaskArenaStack<10, 32>; // Буфер 320 байт (под сервы/толкатели)
+
     // Очереди задач
-    using TaskStack = TaskArenaStack<10, TaskMove, TaskRotate, TaskTouch, TaskDelay, TaskSent, TaskPush, TaskBlue, TaskBlack, TaskHit, TaskLed, TaskExit, TaskCenter>;
-    TaskStack tasks_move;
-    TaskStack tasks_victim;
+    MoveQueue   tasks_move;
+    VictimQueue tasks_victim;
+
+    // Алиас для удобства (если в новом коде захотите обращаться как tasks_dispenser)
+    VictimQueue& tasks_dispenser = tasks_victim;
 
 private:
     Robot();
