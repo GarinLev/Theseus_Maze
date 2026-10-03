@@ -60,6 +60,12 @@ private:
     uint8_t reg_cand = 0;
     uint32_t reg_switch_ms = 0;
     bool reg_initialized = false;
+
+    // --- Переменные для обработки рампы ---
+    bool ramp_mode = false;
+    bool ramp_leveled = false;
+    float ramp_flat_start_enc = 0.0f;
+    uint32_t ramp_detect_ms = 0;
 };
 
 class TaskRotate final : public Task {
@@ -123,6 +129,16 @@ private:
     uint8_t zero_count_down = 0;
     uint8_t zero_count_left = 0;
     uint8_t cycle_count = 0;
+};
+
+class TaskSentF final : public Task {
+public:
+    explicit TaskSentF() = default;
+    const char* name() const override { return "TaskSentF"; }
+    void on_execute(uint32_t dt) override;
+
+private:
+    void on_init() override;
 };
 
 class TaskPush final : public Task {

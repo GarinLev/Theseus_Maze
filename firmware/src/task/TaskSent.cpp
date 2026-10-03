@@ -46,3 +46,16 @@ void TaskSent::on_execute(uint32_t dt) {
 
     done();
 }
+
+void TaskSentF::on_init() {
+
+}
+
+void TaskSentF::on_execute(uint32_t dt) {
+    auto& robot = Robot::instance();
+
+
+
+    done();
+}
+

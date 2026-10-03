@@ -9,8 +9,7 @@ void TaskMove::on_init() {
     last_encoder = start_encoder;
     progress_encoder = 0.0f;
 
-        robot.color.reset_median();
-
+    robot.color.reset_median();
 
     // Захватываем ближайшую идеальную ось лабиринта (0, 90, 180, -90)
     yaw_now = robot.imu.get_nearest_90();
@@ -25,6 +24,12 @@ void TaskMove::on_init() {
     reg_cand = 0;
     reg_switch_ms = 0;
     reg_initialized = false;
+
+    // Сброс состояния рампы
+    ramp_mode = false;
+    ramp_leveled = false;
+    ramp_flat_start_enc = 0.0f;
+    ramp_detect_ms = 0;
 }
 
 void TaskMove::on_execute(uint32_t dt) {
@@ -38,10 +43,10 @@ void TaskMove::on_execute(uint32_t dt) {
         robot.steer = 0;
         robot.tasks_move.push(TaskBlack());
         done();
-       return;
+        return;
     }
 
-    if (left_pressed != right_pressed) {
+    if ((left_pressed != right_pressed) && fabsf(progress_encoder) >= fabsf(speed_profile.get_len()) * 0.6f) {
         if (!touch_was_pressed) {
             touch_was_pressed = true;
             touch_start_time = elapsed_ms;
@@ -51,6 +56,7 @@ void TaskMove::on_execute(uint32_t dt) {
             robot.steer = 0;
             return;
         }
+
         robot.rpm = 0;
         robot.steer = 0;
 
@@ -102,19 +108,13 @@ void TaskMove::on_execute(uint32_t dt) {
     float proj_yaw = cosf(relative_yaw * DEG_TO_RAD);
     float proj_pitch = cosf(absolute_pitch * DEG_TO_RAD);
 
-    const float SLIP_INTENSITY = 0.65f;
-
     float slip_compensation = 1.0f;
-    if (absolute_pitch > 5.0f) {
-        float sin_pitch = sinf(absolute_pitch * DEG_TO_RAD);
-        bool is_going_up = (pitch_val >= 0.0f);
-        float sign = is_going_up ? -1.0f : 1.0f;
-        slip_compensation = 1.0f + (sign * sin_pitch * SLIP_INTENSITY);
-    }
+    if (absolute_pitch > 15.0f) {
+        slip_compensation = 0;
+    }   
+    LOG_INFO("absolute_pitch", absolute_pitch);   
 
     float proj_total = proj_yaw * proj_pitch * slip_compensation;
-    if (proj_total < 0.05f) proj_total = 0.05f;
-    if (proj_total > 2.5f) proj_total = 2.5f;
 
     progress_encoder += delta_encoder * proj_total;
     
@@ -125,27 +125,56 @@ void TaskMove::on_execute(uint32_t dt) {
     
     last_encoder = encoder_now;
 
-    float yaw_err = 0.0f;
-    float wall_err = 0.0f;
-    float yaw_target = 0.0f;
+    // --- ПРОВЕРКА УСЛОВИЯ РАМПЫ (С ЗАЩИТОЙ ОТ КОЧЕК/БАМПОВ) ---
+    const float half_cell = fabsf(speed_profile.get_len()) * 0.5f;
 
-    // Проверяем завершение движения по профилю
-    if (fabsf(progress_encoder) < fabsf(speed_profile.get_len())) {
+    if (!ramp_mode) {
+        // Условие: больше половины клетки и угол pitch > 17
+        if (fabsf(progress_encoder) >= half_cell && absolute_pitch > 17.0f) {
+            ramp_detect_ms += dt;
+            // Подтверждаем рампу, если угол держится не менее 250 мс
+            if (ramp_detect_ms >= 250) {
+                ramp_mode = true;
+            }
+        } else {
+            ramp_detect_ms = 0;
+        }
+    }
+
+    // Обработка логики преодоления и съезда с рампы
+    if (ramp_mode) {
+        if (!ramp_leveled) {
+            // Едем вперед, пока pitch не уменьшится до 5 градусов
+            if (absolute_pitch <= 5.0f) {
+                ramp_leveled = true;
+                ramp_flat_start_enc = encoder_now; // Фиксируем позицию для отсчета 15 см
+            }
+        } else {
+            // Проезжаем ровно 15 см (150 мм) после выравнивания
+            if (fabsf(encoder_now - ramp_flat_start_enc) >= Quad_MM(150)) {
+                robot.rpm = 0;
+                robot.steer = 0;
+                done();
+                return;
+            }
+        }
+    }
+
+    // Проверяем: продолжаем ехать или останавливаемся
+    bool profile_active = (fabsf(progress_encoder) < fabsf(speed_profile.get_len()));
+
+    if (profile_active || ramp_mode) {
         if (fabsf(progress_encoder) >= fabsf(speed_profile.get_len()) * 0.6f) {
             robot.color.push_median();
         }
 
+        // Если градус больше 10 или мы в режиме рампы — отключаем торможение по профилю
+        bool no_decel = (absolute_pitch > 10.0f) || ramp_mode;
+        float speed = speed_profile.compute(progress_encoder, no_decel);
 
-        float speed = speed_profile.compute(progress_encoder);
-        if (absolute_pitch > 4.0f) {
-            speed = speed * 0.6f;
-            if (speed < 20.0f) {
-                speed = 20.0f;
-            }
-        
-        }
         robot.rpm = speed;
 
+        // --- РЕГУЛЯТОР УДЕРЖАНИЯ КУРСА И СТЕН ---
         const float a_match_tol = 20.0f;
         bool a_left_use  = a_left_ok  && fabsf(d_left  - a_left)  <= a_match_tol;
         bool a_right_use = a_right_ok && fabsf(d_right - a_right) <= a_match_tol;
@@ -192,11 +221,14 @@ void TaskMove::on_execute(uint32_t dt) {
                     pid_one.reset();
                     pid_yaw.reset();
                 }
-            }
+            }   
         } else {
             reg_switch_ms = 0;
         }
         reg_initialized = true;
+
+        float wall_err = 0.0f;
+        float yaw_target = 0.0f;
 
         if (reg_mode == 0) {
             wall_err = left - right;
@@ -210,30 +242,10 @@ void TaskMove::on_execute(uint32_t dt) {
         }
 
         float yaw_out = pid_yaw.compute(yaw_target, relative_yaw);
-
         robot.steer = yaw_out;
-        yaw_err = yaw_target - relative_yaw;
 
-        auto pad = [](const String& s, const int w) {
-            String out = s;
-            while ((int)out.length() < w) out = ' ' + out;
-            return out;
-        };
-        auto f = [](float v) -> String { return String(v, 1); };
-
-        String line;
-        line += pad(f(d_left), 8);
-        line += "," + pad(f(a_left), 8);
-        line += "," + pad(f(d_right), 8);
-        line += "," + pad(f(a_right), 8);
-        line += "," + pad(f(yaw_err), 8);
-        String mode = (reg_mode == 0) ? "BOTH" : (reg_mode == 1) ? "ONE" : "NONE";
-        line += "," + mode;
-        line += ": " + pad(f(robot.rpm), 3);
-        line += ": " + pad(f(robot.w_fr.get_pwm()), 3);
-        
-        //PRINTLN(line);
     } else {
+        // Обычная остановка в конце клетки (если рампы не было)
         robot.rpm = 0;
         robot.steer = 0;
         done();

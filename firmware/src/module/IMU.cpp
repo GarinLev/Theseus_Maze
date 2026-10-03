@@ -10,17 +10,34 @@ IMU::IMU()
 
 void IMU::init() {
     if (!_bno.begin(OPERATION_MODE_IMUPLUS)) {
-        LOG_ERROR("BNO055 not   detected");
+        LOG_ERROR("BNO055 not detected");
         Robot::instance().error_status |= 1;
+        return;
     }
+
+    // Даем процессору BNO055 время сойтись по гравитации (акселерометру)
+    delay(400);
+
+    // Первоначальный сброс смещения
+    zero();
 }
 
 void IMU::zero() {
-    update();
+    sensors_event_t event;
+    _bno.getEvent(&event);
 
-    _offset.yaw   = _cached.yaw;
-    _offset.pitch = _cached.pitch;
-    _offset.roll  = _cached.roll;
+    // Сохраняем сырые показания ориентации датчика, а не _cached!
+    _offset.yaw   = event.orientation.x;
+    _offset.pitch = event.orientation.z;
+    _offset.roll  = event.orientation.y;
+
+    _cached.yaw   = 0.0f;
+    _cached.pitch = 0.0f;
+    _cached.roll  = 0.0f;
+
+    ypr[0] = 0.0f;
+    ypr[1] = 0.0f;
+    ypr[2] = 0.0f;
 }
 
 void IMU::update() {
@@ -34,6 +51,8 @@ void IMU::update() {
     ypr[0] = _cached.yaw;
     ypr[1] = _cached.pitch;
     ypr[2] = _cached.roll;
+
+    LOG_INFO(ypr[0], ypr[1], ypr[2]);
 }
 
 IMU::YPR IMU::get() const {

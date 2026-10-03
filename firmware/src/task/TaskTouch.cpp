@@ -13,7 +13,7 @@ void TaskTouch::on_execute(uint32_t dt) {
 
     switch (step) {
         case Step::INIT: {
-            if (dist > 200.0f || dist == 0.0f || fabs(robot.imu.get().pitch) > 5.0f) {
+            if (dist > 200.0f || dist == 0.0f) {
                 done();
                 break;
             }

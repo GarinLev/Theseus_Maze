@@ -167,16 +167,12 @@ void Link::execute_command(char cmd) {
             break;
         }
         case 'r': {
-            robot.tasks_move.push(TaskSent());
-            robot.tasks_move.push(TaskTouch(Quad_MM(50)));
-            push_forward_sequence(robot);
+            serial_base->write("f");
             robot.tasks_move.push(TaskRotate(92, PID(1.5, 0, 0, -200, 200)));
             break;
         }
         case 'l': {
             robot.tasks_move.push(TaskSent());
-            robot.tasks_move.push(TaskTouch(Quad_MM(50)));
-            push_forward_sequence(robot);
             TaskRotate rot(92, PID(1.5, 0, 0, -200, 200));
             rot.set_direction(-1);
             robot.tasks_move.push(rot);
@@ -184,8 +180,6 @@ void Link::execute_command(char cmd) {
         }
         case 'd': {
             robot.tasks_move.push(TaskSent());
-            robot.tasks_move.push(TaskTouch(Quad_MM(50)));
-            push_forward_sequence(robot);
             robot.tasks_move.push(TaskRotate(180, PID(2.5, 0, 0, -200, 200)));
             break;
         }

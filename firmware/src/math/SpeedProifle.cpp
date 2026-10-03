@@ -15,9 +15,9 @@ namespace {
     }
 }
 
-float SpeedProfile::compute(float ln) const {
+float SpeedProfile::compute(float ln, bool no_decel) const {
     // 1. Знак определяется направлением движения всего профиля (l),
-    // а не мгновенным шумом энкодера около нуля.
+    // а не м   гновенным шумом энкодера около нуля.
     float sign = (l >= 0.0f) ? 1.0f : -1.0f;
 
     // 2. Исключаем движение в противоположную сторону из-за люфта/отката на старте
@@ -46,7 +46,8 @@ float SpeedProfile::compute(float ln) const {
         }
     } 
     // 4. Участок 2: Движение с постоянной скоростью (valid_lu <= abs_ln < valid_ld)
-    else if (abs_ln >= valid_lu && abs_ln < valid_ld) {
+    // Если включен no_decel — продолжаем ехать на маршевой скорости su и не тормозим
+    else if (abs_ln >= valid_lu && (abs_ln < valid_ld || no_decel)) {
         speed = su;
     } 
     // 5. Участок 3: Торможение (valid_ld <= abs_ln)

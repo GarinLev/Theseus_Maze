@@ -8,7 +8,7 @@ public:
     SpeedProfile(float ss, float su, float l, float lu, float ld, float se = 0)
         : ss(ss), su(su), l(l), lu(lu), ld(ld), se(se) {}
 
-    float compute(float ln) const;
+    float compute(float ln, bool no_decel = false) const;
     float get_len() const { return l; }
 private:
     float ss = 0;
