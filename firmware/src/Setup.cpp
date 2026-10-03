@@ -74,15 +74,53 @@ void setup() {
     robot.servo.attach(Robot::PIN_SERVO);
     robot.servo.write(Robot::SERVO_IDLE_ANGLE);
 
+    if (robot.error_status != 0) {
+        LOG_ERROR("Robot Setup Error");
+        for(int i = 0; i < (5); ++i) {
+            robot.led.fill(mMaroon);
+            robot.led.show();
+            delay(100);
+            robot.led.fill(mWhite);
+            robot.led.show();
+            delay(100);
+        }
+        robot.led.clear();
+        robot.led.show();
+    }
+
+
     robot.timer_slow.start();
     robot.timer_fast.start();
 
     LOG_INFO("Robot Setup Successful");
     LOG_INFO("Robot Link Waiting");
 
+
     robot.led.fill(mAqua);
     robot.led.setBrightness(64);
+
+    uint8_t errors_count = robot.error_status;
+    if (errors_count > 7) {
+        errors_count = 7;
+    }
+
+    if (errors_count != 0) {
+        robot.led.fill(mGray);
+    }
+
+    for (uint8_t i = 0; i < 7; i++) {
+        if (i < errors_count) {
+            if (errors_count != 7) {
+                robot.led.set(i, mOrange);
+            } else {
+                robot.led.set(i, mRed);   
+            }
+            
+        }
+    }
+
     robot.led.show();
+
     while (!robot.button.click()) {
         robot.button.tick();
     }

@@ -115,6 +115,7 @@ void Robot::update_pause() {
         led.clear();
         servo.attach(PIN_SERVO);
         servo.write(SERVO_IDLE_ANGLE);
+        imu.zero();
     }
     led.show();
     led.setBrightness(255);

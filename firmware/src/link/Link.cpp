@@ -4,24 +4,23 @@
 
 namespace {
 
-
-
 void handle_victim(bool is_left, float max_dist, bool push, TaskPush::Mode push_mode = TaskPush::Mode::RIGHT) {
     auto& robot = Robot::instance();
     float d = is_left ? robot.dist_left.get() : robot.dist_right.get();
 
-    if (d > 0.0f && d < max_dist) {
+    if ((d > 0.0f && d < max_dist) && robot.tasks_victim.isEmpty()) {
         if (push) {
             robot.tasks_victim.push(TaskPush(push_mode));
         }
         robot.tasks_victim.push(TaskLed());
-    } else {
+    } else if (d <= 0.0f && d > max_dist) {
         LOG_INFO("Not.", d);
+    } else {
+        LOG_INFO("Not. Task working");
     }
 }
 
 }
-
 
 void Link::push_forward_sequence(Robot& robot) {
     robot.tasks_move.push(TaskMove(
@@ -32,7 +31,6 @@ void Link::push_forward_sequence(Robot& robot) {
     ));
     robot.tasks_move.push(TaskBlue());
 }
-
 
 void Link::wait_start() const {
     for (;;) {
@@ -73,6 +71,26 @@ void Link::send_pause(bool paused) const {
 
 void Link::process_command(char cmd) {
     auto& robot = Robot::instance();
+
+    if (cmd == 'C') {
+        String data = "";
+        uint32_t start_time = millis();
+        while (millis() - start_time < 50) {
+            if (serial_base->available() || serial_debug->available()) {
+                char c = (serial_base->available()) ? serial_base->read() : serial_debug->read();
+                if (c == '\n' || c == '\r') break;
+                data += c;
+            }
+        }
+        data.trim();
+
+        if (data.length() == 0 || data.equalsIgnoreCase("DUMP")) {
+            robot.color.dump_calibration_code();
+        } else {
+            robot.color.handle_command(data);
+        }
+        return;
+    }
 
     if (cmd == 'k') {
         String data = "";
@@ -233,13 +251,12 @@ void Link::send_sensors(const bool distance[4], uint8_t color) const {
         static_cast<char>('0' + (distance[1] ? 1 : 0)),
         static_cast<char>('0' + (distance[2] ? 1 : 0)),
         static_cast<char>('0' + (distance[3] ? 1 : 0)),
-        static_cast<char>('0' + (color <= 2 ? color : 0)),
-        '\n'
+        static_cast<char>('0' + (color <= 3 ? color : 0)),
+        '\n'    
     };
     
     serial_base->write(reinterpret_cast<const uint8_t*>(packet), sizeof(packet));
     serial_debug->write(reinterpret_cast<const uint8_t*>(packet), sizeof(packet));
-
 }
 
 void Link::log_debug(const char* message) const {

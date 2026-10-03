@@ -34,7 +34,8 @@ void TaskSent::on_execute(uint32_t dt) {
     bool is_left  = (zero_count_left < 2);
 
     uint8_t num_sent = 0;
-    if (robot.color.get_current_color() == COLOR_SILVER) num_sent = 2;
+    if (robot.color.get_median_color() == COLOR_SILVER) num_sent = 2;
+    if (robot.color.get_median_color() == COLOR_BLUE) num_sent = 3;
     if (robot.is_last_black) {
         robot.is_last_black = false;
         num_sent = 1;

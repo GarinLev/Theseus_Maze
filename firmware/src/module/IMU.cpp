@@ -1,5 +1,6 @@
 #include "IMU.h"
 #include <math.h>
+#include "Robot.h"
 
 IMU::IMU()
     : _wire(Wire),
@@ -9,7 +10,8 @@ IMU::IMU()
 
 void IMU::init() {
     if (!_bno.begin(OPERATION_MODE_IMUPLUS)) {
-        LOG_ERROR("BNO055 not detected");
+        LOG_ERROR("BNO055 not   detected");
+        Robot::instance().error_status |= 1;
     }
 }
 

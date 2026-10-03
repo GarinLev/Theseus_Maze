@@ -16,6 +16,7 @@
 #include "task/Stack.h"
 #include "task/Task.h"
 
+
 class Robot {
 public:
     static constexpr uint8_t PIN_SERVO = 44;
@@ -71,15 +72,15 @@ public:
     bool force_stop{false}; 
 
     // Типы очередей:
-    using MoveQueue   = TaskArenaStack<10, 80>; // Буфер 800 байт (под тяжелые TaskMove с 3x PID)
-    using VictimQueue = TaskArenaStack<10, 32>; // Буфер 320 байт (под сервы/толкатели)
+    using MoveQueue   = TaskArenaStack<10, 80>;
+    using VictimQueue = TaskArenaStack<10, 32>;
 
-    // Очереди задач
     MoveQueue   tasks_move;
     VictimQueue tasks_victim;
 
-    // Алиас для удобства (если в новом коде захотите обращаться как tasks_dispenser)
     VictimQueue& tasks_dispenser = tasks_victim;
+
+    uint8_t error_status{0};
 
 private:
     Robot();

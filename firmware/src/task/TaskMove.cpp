@@ -9,6 +9,9 @@ void TaskMove::on_init() {
     last_encoder = start_encoder;
     progress_encoder = 0.0f;
 
+        robot.color.reset_median();
+
+
     // Захватываем ближайшую идеальную ось лабиринта (0, 90, 180, -90)
     yaw_now = robot.imu.get_nearest_90();
     if (yaw_now > 180.0f) {
@@ -36,8 +39,6 @@ void TaskMove::on_execute(uint32_t dt) {
         robot.tasks_move.push(TaskBlack());
         done();
        return;
-    } else {
-        robot.color.log();
     }
 
     if (left_pressed != right_pressed) {
@@ -130,12 +131,18 @@ void TaskMove::on_execute(uint32_t dt) {
 
     // Проверяем завершение движения по профилю
     if (fabsf(progress_encoder) < fabsf(speed_profile.get_len())) {
+        if (fabsf(progress_encoder) >= fabsf(speed_profile.get_len()) * 0.6f) {
+            robot.color.push_median();
+        }
+
+
         float speed = speed_profile.compute(progress_encoder);
         if (absolute_pitch > 4.0f) {
             speed = speed * 0.6f;
             if (speed < 20.0f) {
                 speed = 20.0f;
             }
+        
         }
         robot.rpm = speed;
 

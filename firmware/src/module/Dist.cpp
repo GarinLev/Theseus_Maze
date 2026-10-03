@@ -1,5 +1,6 @@
 #include "Dist.h"
 #include "Log.h"
+#include "Robot.h"
 #include <AceSorting.h>
 
 void Dist::write_address() {
@@ -15,6 +16,7 @@ void Dist::write_address() {
     if (!vl.init()) {
         LOG_ERROR("Initialization failed. Addr: ", address, ", pin: ", pin);
         initialized = false;
+        Robot::instance().error_status |= 2;
         return;
     }
 

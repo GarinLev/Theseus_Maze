@@ -27,12 +27,20 @@ public:
     void log();
 
     void calibrate(ColorType color);
+    void dump_calibration_code();
 
     float distance_to(const ColorVector& target) const;
-    ColorType get_current_color(float max_distance = 0.45f) const;
+    ColorType get_current_color(float max_distance = 0.50f) const;
 
     float read_normalized();
     void handle_command(const String& cmd);
+
+    // --- Методы для накопления и получения среднего значения ---
+    void push_median();
+    ColorVector get_median() const;
+    ColorType get_median_color(float max_distance = 0.50f) const;
+    void reset_median();
+    void clear_median() { reset_median(); }
 
 private:
     Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_24MS, TCS34725_GAIN_4X);
@@ -44,23 +52,31 @@ private:
     uint8_t pin_led = A1;
     uint16_t raw_led = 0;
     float led_max = 670.0f;
-    float led_min = 565.0f;
+    float led_min = 550.0f;
 
     float c_min = 12.0f;
-    float c_max = 210.0f;
+    float c_max = 350.0f;
 
     void hsv();
 
     uint16_t r{0}, g{0}, b{0}, c{0};
     float h{0.0f}, s{0.0f}, a{0.0f}, c_norm{0.0f};
 
-    ColorVector targets[5] = {
-        {   0.0f, 0.02f, 1.00f, 1.00f }, // WHITE
-        { 224.0f, 0.58f, 0.08f, 0.15f }, // BLUE
-        { 345.0f, 0.39f, 0.00f, 0.00f }, // BLACK
-        {   0.0f, 0.05f, 0.55f, 0.65f }, // SILVER
-        {  10.0f, 0.65f, 0.15f, 0.25f }  // RED
-    };
+    // Накопители для вычисления среднего
+    float median_sum_cos{0.0f};
+    float median_sum_sin{0.0f};
+    float median_sum_s{0.0f};
+    float median_sum_a{0.0f};
+    float median_sum_c{0.0f};
+    uint32_t median_count{0};
+    
+ColorVector targets[5] = {
+    { 296.4f, 0.03f, 1.00f, 0.70f }, // WHITE
+    { 210.9f, 0.64f, 0.21f, 0.21f }, // BLUE
+    { 349.4f, 0.46f, 0.02f, 0.01f }, // BLACK
+    { 330.0f, 0.14f, 0.54f, 0.36f }, // SILVER
+    { 352.1f, 0.75f, 0.37f, 0.13f }  // RED
+};
 };
 
-#endif                                                      
+#endif // FIRMWARE_COLOR_H
